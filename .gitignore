@@ -23,6 +23,7 @@ AntropyGameFiles/[Uu]ser[Ss]ettings/
 
 # Visual Studio cache directory
 .vs/
+AntropyGameFiles/.vs/
 
 # Gradle cache directory
 .gradle/
