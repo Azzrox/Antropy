@@ -70,3 +70,4 @@ crashlytics-build.properties
 
 
 Antropy/Library/ArtifactDB
+**/Library/
