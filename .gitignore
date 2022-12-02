@@ -11,13 +11,13 @@
 /[Ll]ogs/
 /[Mm]emoryCaptures/
 
-*/Antropy/Library/
-*/Antropy/Temp/
-*/Antropy/Obj/
-*/Antropy/Build/
-*/Antropy/Builds/
-*/Antropy/Logs/
-*/Antropy/MemoryCaptures/
+/Antropy/Library/
+/Antropy/Temp/
+/Antropy/Obj/
+/Antropy/Build/
+/Antropy/Builds/
+/Antropy/Logs/
+/Antropy/MemoryCaptures/
 
 # Asset meta data should only be ignored when the corresponding asset is also ignored
 !/[Aa]ssets/**/*.meta
@@ -69,3 +69,4 @@ crashlytics-build.properties
 
 
 
+Antropy/Library/ArtifactDB
