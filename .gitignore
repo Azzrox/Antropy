@@ -11,6 +11,14 @@ Antropy/[Bb]uilds/
 Antropy/[Ll]ogs/
 Antropy/[Mm]emoryCaptures/
 
+Antropy/Library/
+Antropy/Temp/
+Antropy/Obj/
+Antropy/Build/
+Antropy/Builds/
+Antropy/Logs/
+Antropy/MemoryCaptures/
+
 # Asset meta data should only be ignored when the corresponding asset is also ignored
 !/[Aa]ssets/**/*.meta
 
@@ -58,5 +66,6 @@ sysinfo.txt
 
 # Crashlytics generated file
 crashlytics-build.properties
+
 
 
