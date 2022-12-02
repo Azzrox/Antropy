@@ -3,21 +3,21 @@
 # Get latest from https://github.com/github/gitignore/blob/master/Unity.gitignore
 #
 
-Antropy/[Ll]ibrary/
-Antropy/[Tt]emp/
-Antropy/[Oo]bj/
-Antropy/[Bb]uild/
-Antropy/[Bb]uilds/
-Antropy/[Ll]ogs/
-Antropy/[Mm]emoryCaptures/
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Mm]emoryCaptures/
 
-Antropy/Library/
-Antropy/Temp/
-Antropy/Obj/
-Antropy/Build/
-Antropy/Builds/
-Antropy/Logs/
-Antropy/MemoryCaptures/
+*/Antropy/Library/
+*/Antropy/Temp/
+*/Antropy/Obj/
+*/Antropy/Build/
+*/Antropy/Builds/
+*/Antropy/Logs/
+*/Antropy/MemoryCaptures/
 
 # Asset meta data should only be ignored when the corresponding asset is also ignored
 !/[Aa]ssets/**/*.meta
