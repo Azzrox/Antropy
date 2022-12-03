@@ -2,13 +2,15 @@
 #
 # Get latest from https://github.com/github/gitignore/blob/master/Unity.gitignore
 #
-/[Ll]ibrary/
-/[Tt]emp/
-/[Oo]bj/
-/[Bb]uild/
-/[Bb]uilds/
-/[Ll]ogs/
-/[Mm]emoryCaptures/
+AntropyGameFiles/[Ll]ibrary/
+AntropyGameFiles/[Tt]emp/
+AntropyGameFiles/[Oo]bj/
+AntropyGameFiles/[Bb]uild/
+AntropyGameFiles/[Bb]uilds/
+AntropyGameFiles/[Ll]ogs/
+AntropyGameFiles/[Mm]emoryCaptures/
+AntropyGameFiles/[Uu]ser[Ss]ettings/
+
 
 # Asset meta data should only be ignored when the corresponding asset is also ignored
 !/[Aa]ssets/**/*.meta
@@ -21,6 +23,7 @@
 
 # Visual Studio cache directory
 .vs/
+AntropyGameFiles/.vs/
 
 # Gradle cache directory
 .gradle/
