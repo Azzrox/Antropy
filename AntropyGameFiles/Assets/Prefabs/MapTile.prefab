@@ -96,11 +96,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e16cee68bfed70d4891409537e00ef97, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  resolution: 15
   tyleType: 0
   grasGradient:
     serializedVersion: 2
-    key0: {r: 0.018600862, g: 0.5377358, b: 0.050528195, a: 1}
-    key1: {r: 0, g: 1, b: 0.13845205, a: 1}
+    key0: {r: 0.059333075, g: 0.3773585, b: 0.09735968, a: 1}
+    key1: {r: 0.2045774, g: 0.9716981, b: 0.0061111883, a: 1}
     key2: {r: 0, g: 0, b: 0, a: 0}
     key3: {r: 0, g: 0, b: 0, a: 0}
     key4: {r: 0, g: 0, b: 0, a: 0}
@@ -128,8 +129,8 @@ MonoBehaviour:
     m_NumAlphaKeys: 2
   waterGradient:
     serializedVersion: 2
-    key0: {r: 1, g: 1, b: 1, a: 1}
-    key1: {r: 1, g: 1, b: 1, a: 1}
+    key0: {r: 0, g: 0.03169751, b: 1, a: 1}
+    key1: {r: 0, g: 0.8834348, b: 1, a: 1}
     key2: {r: 0, g: 0, b: 0, a: 0}
     key3: {r: 0, g: 0, b: 0, a: 0}
     key4: {r: 0, g: 0, b: 0, a: 0}
@@ -157,8 +158,8 @@ MonoBehaviour:
     m_NumAlphaKeys: 2
   stonesGradient:
     serializedVersion: 2
-    key0: {r: 1, g: 1, b: 1, a: 1}
-    key1: {r: 1, g: 1, b: 1, a: 1}
+    key0: {r: 0.2264151, g: 0.21502313, b: 0.21502313, a: 1}
+    key1: {r: 0.4528302, g: 0.36596653, b: 0.36596653, a: 1}
     key2: {r: 0, g: 0, b: 0, a: 0}
     key3: {r: 0, g: 0, b: 0, a: 0}
     key4: {r: 0, g: 0, b: 0, a: 0}
@@ -186,8 +187,8 @@ MonoBehaviour:
     m_NumAlphaKeys: 2
   soilGradient:
     serializedVersion: 2
-    key0: {r: 1, g: 1, b: 1, a: 1}
-    key1: {r: 1, g: 1, b: 1, a: 1}
+    key0: {r: 0.4811321, g: 0.19434872, b: 0.039337814, a: 1}
+    key1: {r: 0.754717, g: 0.45886213, b: 0.1257861, a: 1}
     key2: {r: 0, g: 0, b: 0, a: 0}
     key3: {r: 0, g: 0, b: 0, a: 0}
     key4: {r: 0, g: 0, b: 0, a: 0}

@@ -13,6 +13,10 @@ public class MapTileGeneration : MonoBehaviour
     private Vector3[] vertices;
     private int[] triangles;
     private Color[] colors;
+
+    float minTerrainHeight = float.MaxValue;
+    float maxTerrainHeight = float.MinValue;
+
     public int resolution = 5;
 
     public enum TyleType {gras, water, stones, soil}
@@ -36,6 +40,37 @@ public class MapTileGeneration : MonoBehaviour
 
     }
 
+    //void Update()
+    //{
+    //    Gradient gradient = new Gradient { };
+    //    //get the correct color per type
+    //    switch (tyleType)
+    //    {
+    //        case TyleType.gras:
+    //            gradient = grasGradient; break;
+    //        case TyleType.water:
+    //            gradient = waterGradient; break;
+    //        case TyleType.stones:
+    //            gradient = stonesGradient; break;
+    //        case TyleType.soil:
+    //            gradient = soilGradient; break;
+    //    }
+
+    //    //color the vertices
+    //    for (int i = 0, z = 0; z <= resolution; z++)
+    //    {
+    //        for (int x = 0; x <= resolution; x++)
+    //        {
+    //            float grade = vertices[i].y / (maxTerrainHeight - minTerrainHeight);
+    //            colors[i] = gradient.Evaluate(grade);
+
+    //            i++;
+    //        }
+    //    }
+
+    //    mesh.colors = colors;
+    //}
+
     void CreateShape ()
     {
         float originX = transform.position.x;
@@ -45,15 +80,14 @@ public class MapTileGeneration : MonoBehaviour
         vertices = new Vector3[(resolution + 1) * (resolution + 1)];
         colors = new Color[vertices.Length];
 
-        float minTerrainHeight = float.MaxValue;
-        float maxTerrainHeight = float.MinValue;
+
 
         //generate the verctives of our mesh
         for (int i = 0, z = 0; z <= resolution; z++)
         {
             for (int x = 0; x <= resolution; x++)
             {
-                float y = Mathf.PerlinNoise((originX*resolution + x) * noise, (originZ*resolution + z) * noise) * 0.15f;
+                float y = Mathf.PerlinNoise((originX*resolution + x) * noise, (originZ*resolution + z) * noise) * 0.05f;
 
                 //set the water bit lower
                 if (tyleType == TyleType.water && x != 0 && x != resolution && z != 0 && z != resolution) { y -= 0.2f; }
