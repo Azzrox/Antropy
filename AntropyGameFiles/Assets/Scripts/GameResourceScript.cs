@@ -12,16 +12,16 @@ public class GameResourceScript: MonoBehaviour
   /// <summary>
   /// Singleton Game Resources
   /// </summary>
-  public static GameResourceScript ResourceInstance;
-  public MapScript MapInstance;
+  public static GameResourceScript resource_instance;
+  public MapScript map_instance;
 
   void Awake()
   {
     //Keep the instance alive
-    ResourceInstance = this;                          // linking the self-reference
-    DontDestroyOnLoad(transform.gameObject); // set to dont destroy
+    resource_instance = this;                      
+    DontDestroyOnLoad(transform.gameObject);
 
-    //get all instances
-    MapInstance = MapScript.MapInstance;
+    //get all instance
+    //map_instance = MapScript.map_instance;
   }
 }

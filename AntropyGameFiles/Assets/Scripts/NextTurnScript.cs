@@ -14,50 +14,91 @@ public class NextTurnScript : MonoBehaviour
 
   private void Awake()
   {
-    game_resources = GameResourceScript.ResourceInstance;
+    game_resources = GameResourceScript.resource_instance;
   }
 
+  /// <summary>
+  /// Turn Sequence, bind this to a button
+  /// </summary>
   void NextTurn() 
   {
     AntTurn();
     MapTurn();
     WeatherTurn();
     EventTurn();
+    SeasonTurn();
     MessageTurn();
   }
 
   void AntTurn() 
-  { 
-  
+  {
+    //Insert Ant Turn
+
+    //Ant Gather from Tiles
+    //change the tile object
+    //game_resources.
+    TileScript[,] game_map = game_resources.map_instance.GameMap;
+
+    for (int i = 0; i < game_resources.map_instance.rows; i++)
+    {
+      for (int j = 0; j < game_resources.map_instance.columns; j++)
+      {
+        if(game_map[i, j].OwnedByPlayer) 
+        {
+          //game_map[i, j].CalculateNewResourceAmount(ant_gather_rate);
+          //game_map[i, j].CalculateNewResourceAmountFlat(ant_gather_amount);
+        }
+
+      }
+    }
   }
 
-  void MapTurn() 
+  public void MapTurn() 
   {
-    //change the tile object
-    TileScript[,] game_map = game_resources.MapInstance.GameMap;
+    //Insert Map Turn
 
-    for (int i = 0; i < game_resources.MapInstance.rows; i++)
+    //change the tile object
+    TileScript[,] game_map = game_resources.map_instance.GameMap;
+
+    for (int i = 0; i < game_resources.map_instance.rows; i++)
     {
-      for (int j = 0; j < game_resources.MapInstance.columns; j++)
+      for (int j = 0; j < game_resources.map_instance.columns; j++)
       {
-        game_map[i, j].CalculateNewResourceAmount(tile_resource_rate);
+        //constant growth +
+        //game_map[i, j].CalculateNewResourceAmount(tile_resource_rate);
+
+        //test
+        if (game_map[i, j].TileType == 1 || game_map[i, j].TileType == 2)
+        {
+          game_map[i, j].ResourceAmount = Random.Range(0, 1000);
+          //game_map[i, j].MaxResourceAmount = 650;
+        }
+
+        //check if the growth if we reached a threshhold to update the tile mesh
+        game_resources.map_instance.TileErrosionCheck(game_map[i, j]);
+
+        Debug.Log(name + ": [" + i + "," + j + "]" + game_map[i, j].ResourceAmount);
       }
     }
   }
 
   void WeatherTurn()
   {
-
+    //Insert Weather Turn
   }
 
   void EventTurn() 
   {
-    
-  
+    //Insert Event Turn
   }
 
   void MessageTurn() 
-  { 
-  
+  {
+    //Insert Message Turn
+  }
+
+  void SeasonTurn() 
+  {
+    //Insert Season Turn
   }
 }
