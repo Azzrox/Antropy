@@ -4,16 +4,24 @@ using UnityEditor;
 using UnityEngine;
 
 /// <summary>
-/// Resource Instance of the Project
+/// Resources of the Project
 /// </summary>
 public class GameResourceScript: MonoBehaviour
 {
-  public static GameResourceScript instance;
-  public static TileScript[,]  map_matrix;
+
+  /// <summary>
+  /// Singleton Game Resources
+  /// </summary>
+  public static GameResourceScript ResourceInstance;
+  public MapScript MapInstance;
 
   void Awake()
   {
-    instance = this;                          // linking the self-reference
+    //Keep the instance alive
+    ResourceInstance = this;                          // linking the self-reference
     DontDestroyOnLoad(transform.gameObject); // set to dont destroy
+
+    //get all instances
+    MapInstance = MapScript.MapInstance;
   }
 }

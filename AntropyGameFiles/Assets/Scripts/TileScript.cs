@@ -14,7 +14,7 @@ public class TileScript : MonoBehaviour
   /// <summary>
   /// Resources on the tile
   /// </summary>
-  public int resource_amount;
+  public double resource_amount;
 
   /// <summary>
   /// Tile sprite
@@ -30,7 +30,7 @@ public class TileScript : MonoBehaviour
   {
     mesh_renderer = GetComponent<MeshRenderer>();
     type = 0;
-    type = resource_amount = 0;
+    resource_amount = 255;
   }
 
   /// <summary>
@@ -51,7 +51,7 @@ public class TileScript : MonoBehaviour
   /// <summary>
   /// Tile resources, getter and setter
   /// </summary>
-  public int ResourceAmount
+  public double ResourceAmount
   {
     get 
     {
@@ -61,6 +61,15 @@ public class TileScript : MonoBehaviour
     {
       resource_amount = value;
     }
+  }
+
+  /// <summary>
+  /// Calculate new tile resource count
+  /// </summary>
+  /// <param name="percentage_of_change"></param>
+  public void CalculateNewResourceAmount(double percentage_of_change) 
+  {
+    ResourceAmount += (ResourceAmount / 100) * percentage_of_change;
   }
 
   /// <summary>

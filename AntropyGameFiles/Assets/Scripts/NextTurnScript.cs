@@ -9,13 +9,12 @@ public class NextTurnScript : MonoBehaviour
   public float tile_resource_rate;
   public float event_rate;
   public float weather_rate;
-  MapScript map_script;
-
+  GameResourceScript game_resources;
 
 
   private void Awake()
   {
-    map_script = GetComponent<MapScript>();
+    game_resources = GameResourceScript.ResourceInstance;
   }
 
   void NextTurn() 
@@ -33,9 +32,17 @@ public class NextTurnScript : MonoBehaviour
   }
 
   void MapTurn() 
-  { 
+  {
+    //change the tile object
+    TileScript[,] game_map = game_resources.MapInstance.GameMap;
 
-    
+    for (int i = 0; i < game_resources.MapInstance.rows; i++)
+    {
+      for (int j = 0; j < game_resources.MapInstance.columns; j++)
+      {
+        game_map[i, j].CalculateNewResourceAmount(tile_resource_rate);
+      }
+    }
   }
 
   void WeatherTurn()

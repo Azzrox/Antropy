@@ -5,6 +5,12 @@ using UnityEngine;
 
 public class MapScript : MonoBehaviour
 {
+
+  /// <summary>
+  /// Singleton Game Map
+  /// </summary>
+  public static MapScript MapInstance;
+
   /// <summary>
   /// rows map
   /// </summary>
@@ -28,6 +34,10 @@ public class MapScript : MonoBehaviour
   private void Awake()
   {
     map_matrix = new TileScript[rows, columns];
+
+    //Keep the instance alive
+    MapInstance = this;
+    DontDestroyOnLoad(transform.gameObject);
   }
 
   private void Start()
@@ -64,7 +74,7 @@ public class MapScript : MonoBehaviour
     }
   }
 
-  TileScript[,] GameMap 
+  public TileScript[,] GameMap 
   {
     get
     {
