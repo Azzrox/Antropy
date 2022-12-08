@@ -22,6 +22,12 @@ public class MapTileGeneration : MonoBehaviour
     public enum TyleType {gras, water, stones, soil}
     public TyleType tyleType;
 
+    [Header("Decoration")]
+    [SerializeField] private float density;
+    [SerializeField] private float size;
+    [SerializeField] private GameObject grassPrefab;
+    //[SerializeField] private GameObject stonePrefab;
+
     [Header("Colors")]
 
     [SerializeField] private Gradient grasGradient;
@@ -34,6 +40,7 @@ public class MapTileGeneration : MonoBehaviour
     {
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
+        density = Mathf.Clamp(density, 0f, 1f);
 
         CreateShape();
         UpdateMesh();
@@ -80,7 +87,7 @@ public class MapTileGeneration : MonoBehaviour
         vertices = new Vector3[(resolution + 1) * (resolution + 1)];
         colors = new Color[vertices.Length];
 
-
+        GameObject foliage;
 
         //generate the verctives of our mesh
         for (int i = 0, z = 0; z <= resolution; z++)
@@ -89,8 +96,19 @@ public class MapTileGeneration : MonoBehaviour
             {
                 float y = Mathf.PerlinNoise((originX*resolution + x) * noise, (originZ*resolution + z) * noise) * 0.05f;
 
-                //set the water bit lower
-                if (tyleType == TyleType.water && x != 0 && x != resolution && z != 0 && z != resolution) { y -= 0.2f; }
+                //filter vertices, that touch the border
+                if (x != 0 && x != resolution && z != 0 && z != resolution)
+                {
+                    //set the water bit lower
+                    if (tyleType == TyleType.water) { y -= 0.2f; }
+
+                    //add foliage
+                    if (tyleType == TyleType.gras && density >= Random.value) 
+                    {
+                        foliage = Instantiate(grassPrefab, new Vector3((float)(x + Random.value*0.2f) / resolution + originX, y, (float)(z + Random.value*0.2f) / resolution + originZ), Quaternion.AngleAxis(Random.value*360f,Vector3.up), gameObject.transform);
+                        foliage.transform.localScale = new Vector3((1f + Random.value*0.2f)*size, (1f + Random.value * 0.2f) * size, (1f + Random.value * 0.2f)*size);
+                    }
+                }
 
                 if (minTerrainHeight > y) { minTerrainHeight = y; }
                 if (maxTerrainHeight < y) { maxTerrainHeight = y; }
@@ -151,7 +169,6 @@ public class MapTileGeneration : MonoBehaviour
             }
             vert++;
         }
-        
 
     }
 

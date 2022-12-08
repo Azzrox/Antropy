@@ -98,6 +98,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   resolution: 15
   tyleType: 0
+  density: 0.8
+  size: 0.5
+  grassPrefab: {fileID: 6671550061291770464, guid: 874d6c5c0221e2e498ba81b63cafd860, type: 3}
   grasGradient:
     serializedVersion: 2
     key0: {r: 0.059333075, g: 0.3773585, b: 0.09735968, a: 1}
