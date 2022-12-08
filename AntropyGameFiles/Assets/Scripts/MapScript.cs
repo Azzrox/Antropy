@@ -18,31 +18,32 @@ public class MapScript : MonoBehaviour
   /// <summary>
   /// Matrix of the Map
   /// </summary>
-  TileScript[,] mapMatrix;
+  TileScript[,] map_matrix;
 
   /// <summary>
   /// TilePrefabs: [0]stone, [1]grass, [2]soil, [3]water
   /// </summary>
-  public List<Transform> tilePrefabs = new List<Transform>();
+  public List<Transform> tile_prefabs = new List<Transform>();
 
   private void Awake()
   {
-    mapMatrix = new TileScript[rows, columns];
+    map_matrix = new TileScript[rows, columns];
   }
 
   private void Start()
   {
     spawnRandomMap();
+    
   }
 
-  void spawnRandomMap() 
+  void spawnRandomMap()
   {
-    for (int i = 0; i < rows; i++) 
-    { 
-      for(int j = 0; j < columns; j++) 
+    for (int i = 0; i < rows; i++)
+    {
+      for (int j = 0; j < columns; j++)
       {
         int tile_type = Random.Range(0, 3);
-        var tile_entry = Instantiate(tilePrefabs[tile_type]) as Transform;
+        var tile_entry = Instantiate(tile_prefabs[tile_type]) as Transform;
         TileScript new_tile = tile_entry.GetComponent<TileScript>();
         new_tile.TileType = tile_type;
 
@@ -58,8 +59,16 @@ public class MapScript : MonoBehaviour
         new_tile.transform.position = new Vector3(i, 0, j);
 
         //save the script in the matrix
-        mapMatrix[i, j] = new_tile;
+        map_matrix[i, j] = new_tile;
       }
+    }
+  }
+
+  TileScript[,] GameMap 
+  {
+    get
+    {
+      return map_matrix;
     }
   }
 }

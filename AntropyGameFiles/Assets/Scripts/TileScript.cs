@@ -21,6 +21,11 @@ public class TileScript : MonoBehaviour
   /// </summary>
   public MeshRenderer mesh_renderer;
 
+  /// <summary>
+  /// Owned by player
+  /// </summary>
+  bool owned_by_player = false;
+
   private void Awake()
   {
     mesh_renderer = GetComponent<MeshRenderer>();
@@ -59,7 +64,7 @@ public class TileScript : MonoBehaviour
   }
 
   /// <summary>
-  /// Tile mesh render
+  /// Tile mesh render, getter and setter
   /// </summary>
   public MeshRenderer MeshRendererTile
   {
@@ -70,6 +75,21 @@ public class TileScript : MonoBehaviour
     set 
     {
       mesh_renderer = value;
+    }
+  }
+
+  /// <summary>
+  /// Owner Status, getter/setter
+  /// </summary>
+  public bool OwnedByPlayer 
+  {
+    get
+    {
+      return owned_by_player;
+    }
+    set
+    {
+      owned_by_player = value;
     }
   }
   
