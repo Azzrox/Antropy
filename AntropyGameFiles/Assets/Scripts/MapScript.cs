@@ -216,9 +216,6 @@ public class MapScript : MonoBehaviour
         //update to gras
         tile.MeshRendererTile.material = tile_material[1];
         tile.TileType = 1;
-        // rend.material.mainTexture = ;
-        //Assets/Textures/Water.mat
-        //Assets/Textures/Anthill.mat
       }
     }
   }

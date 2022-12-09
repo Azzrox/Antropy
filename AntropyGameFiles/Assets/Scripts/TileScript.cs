@@ -17,6 +17,11 @@ public class TileScript : MonoBehaviour
   int type;
 
   /// <summary>
+  /// Ants on tile
+  /// </summary>
+  int ants_present;
+
+  /// <summary>
   /// Resources on the tile
   /// </summary>
   double resource_amount;
@@ -43,6 +48,7 @@ public class TileScript : MonoBehaviour
     resource_amount = 0;
     resource_max_amount = 0;
     distance_anthill = 0;
+    ants_present = 0;
   }
 
   /// <summary>
@@ -57,6 +63,21 @@ public class TileScript : MonoBehaviour
     set
     {
       type = value;
+    }
+  }
+
+  /// <summary>
+  /// Ants on Tile, getter and setter
+  /// </summary>
+  public int AntsPresent
+  {
+    get
+    {
+      return ants_present;
+    }
+    set
+    {
+      ants_present = value;
     }
   }
 

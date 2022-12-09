@@ -26,25 +26,6 @@ public class NextTurnScript : MonoBehaviour
   void AntTurn() 
   {
     //Insert Ant Turn
-    /*
-    //Ant Gather from Tiles
-    //change the tile object
-    //game_resources.
-    TileScript[,] game_map = MapScript.map_instance.GameMap;
-
-    for (int i = 0; i < MapScript.map_instance.rows; i++)
-    {
-      for (int j = 0; j < MapScript.map_instance.columns; j++)
-      {
-        if(game_map[i, j].OwnedByPlayer) 
-        {
-          //game_map[i, j].CalculateNewResourceAmount(ant_gather_rate);
-          //game_map[i, j].CalculateNewResourceAmountFlat(ant_gather_amount);
-        }
-
-      }
-    }
-    */
   }
 
   void MapTurn() 
@@ -64,7 +45,7 @@ public class NextTurnScript : MonoBehaviour
         //check if the growth if we reached a threshhold to update the tile mesh
         MapScript.map_instance.TileErrosionCheck(game_map[i, j]);
 
-        Debug.Log(name + ": [" + i + "," + j + "]" + game_map[i, j].ResourceAmount);
+        //Debug.Log(name + ": [" + i + "," + j + "]" + game_map[i, j].ResourceAmount);
       }
     }
   }
