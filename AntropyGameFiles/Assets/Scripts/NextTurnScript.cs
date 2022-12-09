@@ -13,7 +13,7 @@ public class NextTurnScript : MonoBehaviour
   /// <summary>
   /// Turn Sequence, bind this to a button
   /// </summary>
-  void NextTurn() 
+  public void NextTurn() 
   {
     AntTurn();
     MapTurn();
@@ -26,7 +26,7 @@ public class NextTurnScript : MonoBehaviour
   void AntTurn() 
   {
     //Insert Ant Turn
-
+    /*
     //Ant Gather from Tiles
     //change the tile object
     //game_resources.
@@ -44,9 +44,10 @@ public class NextTurnScript : MonoBehaviour
 
       }
     }
+    */
   }
 
-  public void MapTurn() 
+  void MapTurn() 
   {
     //Insert Map Turn
 
@@ -58,14 +59,7 @@ public class NextTurnScript : MonoBehaviour
       for (int j = 0; j < MapScript.map_instance.columns; j++)
       {
         //constant growth +
-        //game_map[i, j].CalculateNewResourceAmount(tile_resource_rate);
-
-        //TEST DELETE LATER
-        if (game_map[i, j].TileType == 1 || game_map[i, j].TileType == 2)
-        {
-          game_map[i, j].ResourceAmount = Random.Range(0, 1000);
-          //game_map[i, j].MaxResourceAmount = 650;
-        }
+        game_map[i, j].CalculateNewResourceAmount(tile_resource_rate);
 
         //check if the growth if we reached a threshhold to update the tile mesh
         MapScript.map_instance.TileErrosionCheck(game_map[i, j]);

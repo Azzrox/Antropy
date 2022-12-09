@@ -238,7 +238,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ant_growth_rate: 0
-  tile_resource_rate: 0
+  tile_resource_rate: -10
   event_rate: 0
   weather_rate: 0
 --- !u!1 &127692076
@@ -327,7 +327,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 51932181}
         m_TargetAssemblyTypeName: NextTurnScript, Assembly-CSharp
-        m_MethodName: MapTurn
+        m_MethodName: NextTurn
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

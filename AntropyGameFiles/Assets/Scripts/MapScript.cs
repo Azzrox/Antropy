@@ -123,7 +123,7 @@ public class MapScript : MonoBehaviour
   void RandomResourceTile(int i, int j, int distance_anthill) 
   {
 
-    int tile_type = Random.Range(0, 3);
+    int tile_type = Random.Range(0, 4);
     var tile_entry = Instantiate(tile_prefabs[tile_type], this.transform) as Transform;
     TileScript new_tile = tile_entry.GetComponent<TileScript>();
     new_tile.TileType = tile_type;
