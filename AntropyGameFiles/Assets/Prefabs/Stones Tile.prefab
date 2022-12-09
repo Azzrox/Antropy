@@ -12,8 +12,9 @@ GameObject:
   - component: {fileID: 6490856156205094239}
   - component: {fileID: 6490856156205094236}
   - component: {fileID: 6490856156205094237}
+  - component: {fileID: 1955278565170114836}
   m_Layer: 0
-  m_Name: MapTile
+  m_Name: Stones Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -97,7 +98,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   resolution: 15
-  tyleType: 0
+  tyleType: 2
   grassDensity: 0.8
   stoneDensity: 0.1
   soilDensity: 0.05
@@ -220,3 +221,15 @@ MonoBehaviour:
     m_Mode: 0
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
+--- !u!114 &1955278565170114836
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6490856156205094234}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbdfbb3bc840aa24da5a72bc88657f29, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
