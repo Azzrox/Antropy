@@ -23,10 +23,12 @@ public class MapTileGeneration : MonoBehaviour
     public TyleType tyleType;
 
     [Header("Decoration")]
-    [SerializeField] private float density;
+    [SerializeField] private float grassDensity;
+    [SerializeField] private float stoneDensity;
+    [SerializeField] private float soilDensity;
     [SerializeField] private float size;
     [SerializeField] private GameObject grassPrefab;
-    //[SerializeField] private GameObject stonePrefab;
+    [SerializeField] private GameObject stonePrefab;
 
     [Header("Colors")]
 
@@ -40,7 +42,8 @@ public class MapTileGeneration : MonoBehaviour
     {
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
-        density = Mathf.Clamp(density, 0f, 1f);
+        grassDensity = Mathf.Clamp(grassDensity, 0f, 1f);
+        stoneDensity = Mathf.Clamp(stoneDensity, 0f, 1f);
 
         CreateShape();
         UpdateMesh();
@@ -103,11 +106,19 @@ public class MapTileGeneration : MonoBehaviour
                     if (tyleType == TyleType.water) { y -= 0.2f; }
 
                     //add foliage
-                    if (tyleType == TyleType.gras && density >= Random.value) 
+                    if ((tyleType == TyleType.gras && grassDensity >= Random.value)
+                        || (tyleType == TyleType.soil && soilDensity >= Random.value)) 
                     {
                         foliage = Instantiate(grassPrefab, new Vector3((float)(x + Random.value*0.2f) / resolution + originX, y, (float)(z + Random.value*0.2f) / resolution + originZ), Quaternion.AngleAxis(Random.value*360f,Vector3.up), gameObject.transform);
                         foliage.transform.localScale = new Vector3((1f + Random.value*0.2f)*size, (1f + Random.value * 0.2f) * size, (1f + Random.value * 0.2f)*size);
                     }
+                    //add rocks and stones
+                    else if (tyleType == TyleType.stones && stoneDensity >= Random.value)
+                    {
+                        foliage = Instantiate(stonePrefab, new Vector3((float)(x + Random.value * 0.2f) / resolution + originX, y + 0.025f, (float)(z + Random.value * 0.2f) / resolution + originZ), Random.rotation, gameObject.transform);
+                        foliage.transform.localScale = new Vector3((1f + Random.value * 0.2f) * size, (1f + Random.value * 0.2f) * size, (1f + Random.value * 0.2f) * size);
+                    }
+
                 }
 
                 if (minTerrainHeight > y) { minTerrainHeight = y; }
