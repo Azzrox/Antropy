@@ -31,11 +31,6 @@ public class MapScript : MonoBehaviour
   /// </summary>
   public List<Transform> tile_prefabs = new List<Transform>();
 
-  /// <summary>
-  /// TileMaterial: [0]stone, [1]grass, [2]soil, [3]water, [4]anthill
-  /// </summary>
-  public List<Material> tile_material = new List<Material>();
-
 
   /// <summary>
   /// threshhold to update to grass
@@ -56,12 +51,14 @@ public class MapScript : MonoBehaviour
     DontDestroyOnLoad(transform.gameObject);
   }
 
+  /*
   private void Start()
   {
     SpawnRandomMap();
   }
+  */
 
-  void SpawnRandomMap()
+  public void SpawnRandomMap()
   {
     for (int i = 0; i < rows; i++)
     {
@@ -79,26 +76,7 @@ public class MapScript : MonoBehaviour
         }
       }
     }
-  }
-
-  void SpawnWeightedMap() 
-  {
-    for (int i = 0; i < rows; i++)
-    {
-      int distance_anthill = 0;
-      for (int j = 0; j < columns; j++)
-      {
-        if (i == 0 && j == 0)
-        {
-          CreateAnthillTile(i, j);
-        }
-        else
-        {
-          RandomResourceTile(i, j, distance_anthill);
-          distance_anthill++;
-        }
-      }
-    }
+    GameObject.Find("AssignAnts").SetActive(false);
   }
 
   void CreateAnthillTile(int i, int j) 
@@ -108,13 +86,18 @@ public class MapScript : MonoBehaviour
     TileScript new_tile = tile_entry.GetComponent<TileScript>();
     new_tile.TileType = tile_type;
     new_tile.TileDistance = -1;
+    new_tile.XPos = i;
+    new_tile.ZPos = j;
     new_tile.name = (TileName(tile_type) + ": [" + i + "," + j + "]");
-
-    //either the full mesh or just the material, for later use
-    new_tile.MeshRendererTile = tile_entry.GetComponent<MeshRenderer>();
 
     //position of the spawn
     new_tile.transform.position = new Vector3(i, 0, j);
+
+    //Assign ants on tile
+    new_tile.AssignedAnts = 0;
+
+    //Assign button canvas
+    new_tile.CanvasAssign = GameObject.Find("AssignAnts");
 
     //save the script in the matrix
     map_matrix[i, j] = new_tile;
@@ -129,6 +112,8 @@ public class MapScript : MonoBehaviour
     new_tile.TileType = tile_type;
     new_tile.TileDistance = distance_anthill;
     new_tile.name = (TileName(tile_type) + ": [" + i + "," + j + "]");
+    new_tile.XPos = i;
+    new_tile.ZPos = j;
 
     //Random Amount of resources on the tile
     if (new_tile.TileType == 1 || new_tile.TileType == 2)
@@ -137,11 +122,17 @@ public class MapScript : MonoBehaviour
       new_tile.MaxResourceAmount = 650;
     }
 
-    //either the full mesh or just the material, for later use
-    new_tile.MeshRendererTile = tile_entry.GetComponent<MeshRenderer>();
+    ////either the full mesh or just the material, for later use
+    //new_tile.MeshRendererTile = tile_entry.GetComponent<MeshRenderer>();
 
     //position of the spawn
     new_tile.transform.position = new Vector3(i, 0, j);
+
+    //Assign ants on tile
+    new_tile.AssignedAnts = 0;
+
+    //Assign button canvas
+    new_tile.CanvasAssign = GameObject.Find("AssignAnts");
 
     //save the script in the matrix
     map_matrix[i, j] = new_tile;
@@ -200,6 +191,9 @@ public class MapScript : MonoBehaviour
 
   public void TileErrosionCheck(TileScript tile)
   {
+    //exchange the whole prefab not just the material
+
+    /*
     if(tile.TileType == 1) 
     { 
       if(tile.ResourceAmount < soil_threshold) 
@@ -218,5 +212,7 @@ public class MapScript : MonoBehaviour
         tile.TileType = 1;
       }
     }
+     */
   }
+
 }

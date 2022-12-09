@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting.Dependencies.NCalc;
@@ -11,6 +10,11 @@ public class TileScript : MonoBehaviour
   /// </summary>
   int distance_anthill;
 
+  //TODO 
+  //x, z position fehlen
+  int xPos;
+  int zPos;
+
   /// <summary>
   /// Type of the tile
   /// </summary>
@@ -19,7 +23,13 @@ public class TileScript : MonoBehaviour
   /// <summary>
   /// Ants on tile
   /// </summary>
-  int ants_present;
+  int assignedAnts;
+
+
+  /// <summary>
+  /// Free Ants Global
+  /// </summary>
+  int freeAnts;
 
   /// <summary>
   /// Resources on the tile
@@ -32,23 +42,53 @@ public class TileScript : MonoBehaviour
   int resource_max_amount;
 
   /// <summary>
-  /// Tile sprite
-  /// </summary>
-  MeshRenderer mesh_renderer;
-
-  /// <summary>
   /// Owned by player
   /// </summary>
   bool owned_by_player = false;
 
+  /// <summary>
+  /// Canvas for menu buttons
+  /// </summary>
+  public GameObject canvas;
+
   private void Awake()
   {
-    mesh_renderer = GetComponent<MeshRenderer>();
     type = 0;
     resource_amount = 0;
     resource_max_amount = 0;
     distance_anthill = 0;
-    ants_present = 0;
+    assignedAnts = 0;
+    freeAnts = 0;
+  }
+
+  /// <summary>
+  ///  Ants on Tile, getter and setter
+  /// </summary>
+  public int AssignedAnts
+  {
+    get
+    {
+      return assignedAnts;
+    }
+    set
+    {
+      assignedAnts = value;
+    }
+  }
+
+  /// <summary>
+  ///  Canvas for menu buttons, getter and setter
+  /// </summary>
+  public GameObject CanvasAssign
+  {
+    get
+    {
+      return canvas;
+    }
+    set
+    {
+      canvas = value;
+    }
   }
 
   /// <summary>
@@ -63,21 +103,6 @@ public class TileScript : MonoBehaviour
     set
     {
       type = value;
-    }
-  }
-
-  /// <summary>
-  /// Ants on Tile, getter and setter
-  /// </summary>
-  public int AntsPresent
-  {
-    get
-    {
-      return ants_present;
-    }
-    set
-    {
-      ants_present = value;
     }
   }
 
@@ -108,6 +133,51 @@ public class TileScript : MonoBehaviour
     set 
     {
       resource_amount = value;
+    }
+  }
+
+  /// <summary>
+  /// Tile resources, getter and setter
+  /// </summary>
+  public int FreeAnts
+  {
+    get
+    {
+      return freeAnts;
+    }
+    set
+    {
+      freeAnts = value;
+    }
+  }
+
+  /// <summary>
+  /// XPos tile, getter and setter
+  /// </summary>
+  public int XPos
+  {
+    get
+    {
+      return xPos;
+    }
+    set
+    {
+      xPos = value;
+    }
+  }
+
+  /// <summary>
+  /// YPos tile, getter and setter
+  /// </summary>
+  public int ZPos
+  {
+    get
+    {
+      return zPos;
+    }
+    set
+    {
+      zPos = value;
     }
   }
 
@@ -165,21 +235,6 @@ public class TileScript : MonoBehaviour
   }
 
   /// <summary>
-  /// Tile mesh render, getter and setter
-  /// </summary>
-  public MeshRenderer MeshRendererTile
-  {
-    get 
-    {
-      return mesh_renderer;
-    }
-    set 
-    {
-      mesh_renderer = value;
-    }
-  }
-
-  /// <summary>
   /// Owner Status, getter/setter
   /// </summary>
   public bool OwnedByPlayer 
@@ -193,5 +248,22 @@ public class TileScript : MonoBehaviour
       owned_by_player = value;
     }
   }
-  
+
+  private void OnMouseDown()
+  {
+    //if (gameManager.isGameActive){
+    Debug.Log("in click mode");
+    canvas.SetActive(true);
+
+    AntCounter antCounter = canvas.GetComponent<AntCounter>();
+    antCounter.tile = this;
+    antCounter.UpdateAntText();
+
+
+    Debug.Log("element clicked" + Random.Range(0, 40) + " pos: " + XPos + "|" + ZPos);
+
+    //antCounter.a
+    //}
+  }
+
 }
