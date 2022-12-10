@@ -65,11 +65,14 @@ public class AntCounterAnthill : MonoBehaviour
       foreach (Transform child in room.transform)
       {
          Debug.Log(child.name);
-         child.gameObject.SetActive(false);
-         Debug.Log(room.AssignedAnts);
-         //NO time factor that is why the room gets built instantly
-         gameManager.freeAnts += room.AssignedAnts;
-         room.AssignedAnts = 0;
+         if (child.gameObject.active == true)
+         {
+            child.gameObject.SetActive(false);
+            Debug.Log(room.AssignedAnts);
+            //NO time factor that is why the room gets built instantly
+            gameManager.freeAnts += room.AssignedAnts;
+            room.AssignedAnts = 0;
+         }
       }
 
       gameObject.SetActive(false);
