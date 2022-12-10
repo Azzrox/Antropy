@@ -6,7 +6,31 @@ EditorUserSettings:
   serializedVersion: 4
   m_ConfigSettings:
     RecentlyUsedSceneGuid-0:
+      value: 5b0255545453085e5c080f7240720d4446164d7e7a2b72627f2d4936b5b4676a
+      flags: 0
+    RecentlyUsedSceneGuid-1:
+      value: 51060107570c5d0b545d5c7a15750c4417164a2b2d2d75637c2c4b37e0b83639
+      flags: 0
+    RecentlyUsedSceneGuid-2:
+      value: 0201015e0151580b08575b7b43220b444715417b2f7022667f7f1c61e4b0613d
+      flags: 0
+    RecentlyUsedSceneGuid-3:
+      value: 5157005654535d5d5d0c5d2142770944414f4b2e2a7e2268747a1b64bbb06168
+      flags: 0
+    RecentlyUsedSceneGuid-4:
       value: 5a5757560101590a5d0c0e24427b5d44434e4c7a7b7a23677f2b4565b7b5353a
+      flags: 0
+    RecentlyUsedSceneGuid-5:
+      value: 0753520055075f5f0958587a147a0644404f49797b7f246929781b66b1e6303e
+      flags: 0
+    UnityEditor.ShaderGraph.Blackboard:
+      value: 18135939215a0a5004000b0e15254b524c030a3f2964643d120d1230e9e93a3fd6e826abbd3c3e302a07a37e0901373ae01e0008f707250d171df81a53a5405d41895ac825e0100ec20313c0d91cddccd3d0c7efcca9bd898e91f3abada9b7a1a3a0fdaef9f8ae97fee3bcbc90f1cedec488eddf8ede8b9de882819dee9f90ca9b8cd18689c988c6c4
+      flags: 0
+    UnityEditor.ShaderGraph.FloatingWindowsLayout2:
+      value: 181344140043005e1a220d3b1f364b524c0c5a27130c293326201334cee5322ca0bd30e8eb293a707b0fd0180b3d0a36fc0d3d04e649500d1002ee0b5dbd1d2c27c00ad113cb1e10e41f1addc80993b984879ab888bbb7898c8df0a5a4a3bfaaa0bde7f69580f3d2a3b5f1bfbbc3cbebc7cca4c1d8849396eb839f81ee8382828b84d58189d489898cc1e2809da3aebe96e3fe8dd7bddbf1cfc9cdfc32e3ff3037353aeaebe8e5d1efee21c16b32deda2527c82a2ed3d6d5daca26dac0d6c5db5f8784
+      flags: 0
+    UnityEditor.ShaderGraph.InspectorWindow:
+      value: 18135939215a0a5004000b0e15254b524c1119263f2d6a722016393ce1eb3d36e5d339f9a560393d3511ea7046333e09f7181d02f50a06241708ee0b05bd4a435f95548717f73713d91006c1c309d0effad0d2f9ddffa5828991f2a2a4a0bfaaa7a1f2abf9f9ae95e6edf38e9ccbddc18390ac86d4849394ea829f83f291cb918380d18497d3888b89dff4d9f3c4f7f2c1f4b98b
       flags: 0
     vcSharedLogLevel:
       value: 0d5e400f0650
