@@ -30,7 +30,7 @@ public class ClickMenu : MonoBehaviour
             canvas.SetActive(true);
             
             AntCounter antCounter = canvas.GetComponent<AntCounter>();
-            antCounter.tile = this;
+            //antCounter.tile = this;
             antCounter.UpdateAntText();
 
             

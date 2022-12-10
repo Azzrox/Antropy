@@ -8,7 +8,7 @@ using TMPro;
 public class AntCounter : MonoBehaviour
 {
     public int antsAssigned = 0;
-    public ClickMenu tile;
+    public TileScript tile;
     public Button plusButton;
     public Button minusButton;
     public Button confirmButton;
@@ -16,10 +16,14 @@ public class AntCounter : MonoBehaviour
     public TextMeshProUGUI assignedAntsText; 
     private GameManagerUI gameManager;
 
-    // Start is called before the first frame update
-    void Start()
+  private void Awake()
+  {
+    gameManager = GameObject.Find("Game Manager").GetComponent<GameManagerUI>();
+  }
+
+  // Start is called before the first frame update
+  void Start()
     {
-        gameManager = GameObject.Find("Game Manager").GetComponent<GameManagerUI>();
         plusButton.onClick.AddListener(IncreaseAnts);
         minusButton.onClick.AddListener(DecreaseAnts);
         confirmButton.onClick.AddListener(Confirm);
@@ -37,7 +41,7 @@ public class AntCounter : MonoBehaviour
         int freeAnts = gameManager.freeAnts;
         if (freeAnts > 0)
         {
-            tile.assignedAnts += 1;
+            tile.AssignedAnts += 1;
             gameManager.freeAnts -= 1;
             UpdateAntText();
         }
@@ -45,9 +49,9 @@ public class AntCounter : MonoBehaviour
 
     void DecreaseAnts()
     {
-        if (tile.assignedAnts > 0)
+        if (tile.AssignedAnts > 0)
         {
-            tile.assignedAnts -= 1;
+            tile.AssignedAnts -= 1;
             gameManager.freeAnts += 1;
             UpdateAntText();
 
@@ -62,12 +66,12 @@ public class AntCounter : MonoBehaviour
 
     public void UpdateAntText(){
         freeAnts.text = "Free ants: " + gameManager.freeAnts + "/" + gameManager.totalAnts;
-        if (tile.assignedAnts == 1)
+        if (tile.AssignedAnts == 1)
         {
-            assignedAntsText.text = "assign " + tile.assignedAnts + " ant";
+            assignedAntsText.text = "assign " + tile.AssignedAnts + " ant";
         } else
         {
-            assignedAntsText.text = "assign " + tile.assignedAnts + " ants";
+            assignedAntsText.text = "assign " + tile.AssignedAnts + " ants";
         }
     }
 }

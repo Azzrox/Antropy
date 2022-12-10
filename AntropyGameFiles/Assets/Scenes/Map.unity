@@ -505,7 +505,7 @@ GameObject:
   - component: {fileID: 1186095616}
   - component: {fileID: 1186095615}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: NextTurnCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

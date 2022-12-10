@@ -5,10 +5,10 @@ using UnityEngine;
 public class NextTurnScript : MonoBehaviour
 {
   
-  public float ant_growth_rate;
-  public float tile_resource_rate;
-  public float event_rate;
-  public float weather_rate;
+  public float antGrowthRate;
+  public float tileResourceRate;
+  public float eventRate;
+  public float weatherRate;
 
   /// <summary>
   /// Turn Sequence, bind this to a button
@@ -31,21 +31,20 @@ public class NextTurnScript : MonoBehaviour
   void MapTurn() 
   {
     //Insert Map Turn
-
     //change the tile object
-    TileScript[,] game_map = MapScript.map_instance.GameMap;//game_resources.map_instance.GameMap;
+    TileScript[,] gameMap = MapScript.mapInstance.GameMap;//game_resources.map_instance.GameMap;
 
-    for (int i = 0; i < MapScript.map_instance.rows; i++)
+    for (int i = 0; i < MapScript.mapInstance.rows; i++)
     {
-      for (int j = 0; j < MapScript.map_instance.columns; j++)
+      for (int j = 0; j < MapScript.mapInstance.columns; j++)
       {
         //constant growth +
-        game_map[i, j].CalculateNewResourceAmount(tile_resource_rate);
+        gameMap[i, j].CalculateNewResourceAmount(tileResourceRate);
 
         //check if the growth if we reached a threshhold to update the tile mesh
-        MapScript.map_instance.TileErrosionCheck(game_map[i, j]);
+        MapScript.mapInstance.TileErrosionCheck(gameMap[i, j]);
 
-        //Debug.Log(name + ": [" + i + "," + j + "]" + game_map[i, j].ResourceAmount);
+        Debug.Log(name + ": [" + i + "," + j + "]" + gameMap[i, j].ResourceAmount);
       }
     }
   }

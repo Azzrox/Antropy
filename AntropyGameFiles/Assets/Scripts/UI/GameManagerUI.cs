@@ -8,10 +8,11 @@ public class GameManagerUI : MonoBehaviour
     public int freeAnts;
     public GameObject redTile;
     public GameObject blackTile;
-    // Start is called before the first frame update
-    void Start()
+
+  void Start()
     {
-        SpawnTiles(3,4);
+    //SpawnTiles(3,4);
+    MapScript.mapInstance.SpawnRandomMap();
     }
 
     // Update is called once per frame
