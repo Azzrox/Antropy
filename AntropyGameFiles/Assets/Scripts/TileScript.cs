@@ -10,8 +10,9 @@ public class TileScript : MonoBehaviour
   /// </summary>
   int distance_anthill;
 
-  //TODO 
-  //x, z position fehlen
+  /// <summary>
+  /// X,Z Pos of the tile
+  /// </summary>
   int xPos;
   int zPos;
 
@@ -34,7 +35,7 @@ public class TileScript : MonoBehaviour
   /// <summary>
   /// Resources on the tile
   /// </summary>
-  double resource_amount;
+  double resourceAmount;
 
   /// <summary>
   /// Maximum of resources a tile can hold
@@ -44,7 +45,7 @@ public class TileScript : MonoBehaviour
   /// <summary>
   /// Owned by player
   /// </summary>
-  bool owned_by_player = false;
+  bool ownedByPlayer = false;
 
   /// <summary>
   /// Canvas for menu buttons
@@ -54,12 +55,66 @@ public class TileScript : MonoBehaviour
   private void Awake()
   {
     type = 0;
-    resource_amount = 0;
+    resourceAmount = 0;
     resource_max_amount = 0;
     distance_anthill = 0;
     assignedAnts = 0;
     freeAnts = 0;
   }
+
+  /// <summary>
+  /// Assignment Over
+  /// </summary>
+  private void OnMouseDown()
+  {
+    Debug.Log("in click mode");
+    canvas.SetActive(true);
+
+    AntCounter antCounter = canvas.GetComponent<AntCounter>();
+    antCounter.tile = this;
+    antCounter.UpdateAntText();
+
+    Debug.Log("element clicked" + Random.Range(0, 40) + " pos: " + XPos + "|" + ZPos);
+  }
+
+  /// <summary>
+  /// Calculate new tile resource count
+  /// </summary>
+  /// <param name="percentage_of_change"> multiplicator </param>
+  public void CalculateNewResourceAmount(double percentage_of_change)
+  {
+    ResourceAmount += (ResourceAmount / 100) * percentage_of_change;
+
+    if (ResourceAmount < 0)
+    {
+      ResourceAmount = 0;
+    }
+
+    if (ResourceAmount > MaxResourceAmount)
+    {
+      ResourceAmount = MaxResourceAmount;
+    }
+  }
+
+  /// <summary>
+  /// Adds an integer number to the current resource amount on the tile
+  /// </summary>
+  /// <param name="amount_of_change"></param>
+  public void CalculateNewResourceAmountFlat(int amount_of_change)
+  {
+    ResourceAmount += amount_of_change;
+
+    if (ResourceAmount < 0)
+    {
+      ResourceAmount = 0;
+    }
+
+    if (ResourceAmount > MaxResourceAmount)
+    {
+      ResourceAmount = MaxResourceAmount;
+    }
+  }
+
 
   /// <summary>
   ///  Ants on Tile, getter and setter
@@ -128,11 +183,11 @@ public class TileScript : MonoBehaviour
   {
     get 
     {
-      return resource_amount;
+      return resourceAmount;
     }
     set 
     {
-      resource_amount = value;
+      resourceAmount = value;
     }
   }
 
@@ -197,73 +252,17 @@ public class TileScript : MonoBehaviour
   }
 
   /// <summary>
-  /// Calculate new tile resource count
-  /// </summary>
-  /// <param name="percentage_of_change"> multiplicator </param>
-  public void CalculateNewResourceAmount(double percentage_of_change) 
-  {
-    ResourceAmount += (ResourceAmount / 100) * percentage_of_change;
-
-    if(ResourceAmount < 0) 
-    {
-      ResourceAmount = 0;
-    }
-
-    if (ResourceAmount > MaxResourceAmount)
-    {
-      ResourceAmount = MaxResourceAmount;
-    }
-  }
-
-  /// <summary>
-  /// Adds an integer number to the current resource amount on the tile
-  /// </summary>
-  /// <param name="amount_of_change"></param>
-  public void CalculateNewResourceAmountFlat(int amount_of_change) 
-  {
-    ResourceAmount += amount_of_change;
-
-    if (ResourceAmount < 0)
-    {
-      ResourceAmount = 0;
-    }
-
-    if (ResourceAmount > MaxResourceAmount)
-    {
-      ResourceAmount = MaxResourceAmount;
-    }
-  }
-
-  /// <summary>
   /// Owner Status, getter/setter
   /// </summary>
   public bool OwnedByPlayer 
   {
     get
     {
-      return owned_by_player;
+      return ownedByPlayer;
     }
     set
     {
-      owned_by_player = value;
+      ownedByPlayer = value;
     }
   }
-
-  private void OnMouseDown()
-  {
-    //if (gameManager.isGameActive){
-    Debug.Log("in click mode");
-    canvas.SetActive(true);
-
-    AntCounter antCounter = canvas.GetComponent<AntCounter>();
-    antCounter.tile = this;
-    antCounter.UpdateAntText();
-
-
-    Debug.Log("element clicked" + Random.Range(0, 40) + " pos: " + XPos + "|" + ZPos);
-
-    //antCounter.a
-    //}
-  }
-
 }

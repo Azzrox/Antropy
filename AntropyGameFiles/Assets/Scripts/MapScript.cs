@@ -9,7 +9,7 @@ public class MapScript : MonoBehaviour
   /// <summary>
   /// Singleton Game Map
   /// </summary>
-  public static MapScript map_instance;
+  public static MapScript mapInstance;
 
   /// <summary>
   /// rows map
@@ -24,39 +24,32 @@ public class MapScript : MonoBehaviour
   /// <summary>
   /// Matrix of the Map
   /// </summary>
-  TileScript[,] map_matrix;
+  TileScript[,] mapMatrix;
 
   /// <summary>
   /// TilePrefabs: [0]stone, [1]grass, [2]soil, [3]water, [4]anthill
   /// </summary>
-  public List<Transform> tile_prefabs = new List<Transform>();
+  public List<Transform> tilePrefabs = new List<Transform>();
 
 
   /// <summary>
   /// threshhold to update to grass
   /// </summary>
-  public int grass_threshhold;
+  public int grassThreshhold;
 
   /// <summary>
   /// threshhold to update to soil
   /// </summary>
-  public int soil_threshold;
+  public int soilThreshold;
 
   private void Awake()
   {
-    map_matrix = new TileScript[rows, columns];
+    mapMatrix = new TileScript[rows, columns];
 
     //Keep the instance alive
-    map_instance = this;
+    mapInstance = this;
     DontDestroyOnLoad(transform.gameObject);
   }
-
-  /*
-  private void Start()
-  {
-    SpawnRandomMap();
-  }
-  */
 
   public void SpawnRandomMap()
   {
@@ -81,61 +74,58 @@ public class MapScript : MonoBehaviour
 
   void CreateAnthillTile(int i, int j) 
   {
-    int tile_type = 4;
-    var tile_entry = Instantiate(tile_prefabs[tile_type], this.transform) as Transform;
-    TileScript new_tile = tile_entry.GetComponent<TileScript>();
-    new_tile.TileType = tile_type;
-    new_tile.TileDistance = -1;
-    new_tile.XPos = i;
-    new_tile.ZPos = j;
-    new_tile.name = (TileName(tile_type) + ": [" + i + "," + j + "]");
+    int tileType = 4;
+    var tileEntry = Instantiate(tilePrefabs[tileType], this.transform) as Transform;
+    TileScript newTile = tileEntry.GetComponent<TileScript>();
+    newTile.TileType = tileType;
+    newTile.TileDistance = -1;
+    newTile.XPos = i;
+    newTile.ZPos = j;
+    newTile.name = (TileName(tileType) + ": [" + i + "," + j + "]");
 
     //position of the spawn
-    new_tile.transform.position = new Vector3(i, 0, j);
+    newTile.transform.position = new Vector3(i, 0, j);
 
     //Assign ants on tile
-    new_tile.AssignedAnts = 0;
+    newTile.AssignedAnts = 0;
 
     //Assign button canvas
-    new_tile.CanvasAssign = GameObject.Find("AssignAnts");
+    newTile.CanvasAssign = GameObject.Find("AssignAnts");
 
     //save the script in the matrix
-    map_matrix[i, j] = new_tile;
+    mapMatrix[i, j] = newTile;
   }
 
   void RandomResourceTile(int i, int j, int distance_anthill) 
   {
 
-    int tile_type = Random.Range(0, 4);
-    var tile_entry = Instantiate(tile_prefabs[tile_type], this.transform) as Transform;
-    TileScript new_tile = tile_entry.GetComponent<TileScript>();
-    new_tile.TileType = tile_type;
-    new_tile.TileDistance = distance_anthill;
-    new_tile.name = (TileName(tile_type) + ": [" + i + "," + j + "]");
-    new_tile.XPos = i;
-    new_tile.ZPos = j;
+    int tileType = Random.Range(0, 4);
+    var tileEntry = Instantiate(tilePrefabs[tileType], this.transform) as Transform;
+    TileScript newTile = tileEntry.GetComponent<TileScript>();
+    newTile.TileType = tileType;
+    newTile.TileDistance = distance_anthill;
+    newTile.name = (TileName(tileType) + ": [" + i + "," + j + "]");
+    newTile.XPos = i;
+    newTile.ZPos = j;
 
     //Random Amount of resources on the tile
-    if (new_tile.TileType == 1 || new_tile.TileType == 2)
+    if (newTile.TileType == 1 || newTile.TileType == 2)
     {
-      new_tile.ResourceAmount = Random.Range(250, 500);
-      new_tile.MaxResourceAmount = 650;
+      newTile.ResourceAmount = Random.Range(250, 500);
+      newTile.MaxResourceAmount = 650;
     }
 
-    ////either the full mesh or just the material, for later use
-    //new_tile.MeshRendererTile = tile_entry.GetComponent<MeshRenderer>();
-
     //position of the spawn
-    new_tile.transform.position = new Vector3(i, 0, j);
+    newTile.transform.position = new Vector3(i, 0, j);
 
     //Assign ants on tile
-    new_tile.AssignedAnts = 0;
+    newTile.AssignedAnts = 0;
 
     //Assign button canvas
-    new_tile.CanvasAssign = GameObject.Find("AssignAnts");
+    newTile.CanvasAssign = GameObject.Find("AssignAnts");
 
     //save the script in the matrix
-    map_matrix[i, j] = new_tile;
+    mapMatrix[i, j] = newTile;
   }
 
   string TileName(int type) 
@@ -174,7 +164,7 @@ public class MapScript : MonoBehaviour
   {
     get
     {
-      return map_matrix;
+      return mapMatrix;
     }
   }
 
@@ -185,7 +175,7 @@ public class MapScript : MonoBehaviour
   {
     get
     {
-      return map_instance;
+      return mapInstance;
     }
   }
 
@@ -193,26 +183,61 @@ public class MapScript : MonoBehaviour
   {
     //exchange the whole prefab not just the material
 
-    /*
+    
     if(tile.TileType == 1) 
     { 
-      if(tile.ResourceAmount < soil_threshold) 
+      if(tile.ResourceAmount < soilThreshold) 
       {
         //update to soil
-        tile.MeshRendererTile.material = tile_material[2];
+        //tile.MeshRendererTile.material = tile_material[2];
         tile.TileType = 2;
+
+        var tileEntry = Instantiate(tilePrefabs[tile.TileType], tile.GetComponentInParent<Transform>().transform) as Transform;
+        TileScript newTile = tileEntry.GetComponent<TileScript>();
+        newTile.TileType = tile.TileType;
+        newTile.TileDistance = tile.TileDistance;
+        newTile.name = (TileName(tile.TileType) + ": [" + tile.XPos + "," + tile.ZPos + "]");
+        newTile.XPos = tile.XPos;
+        newTile.ZPos = tile.ZPos;
+
+        //
+        //Debug.Log("Test if nullptr" + newTile.TileType);
+
+        MapScript.mapInstance.GameMap[tile.XPos, tile.ZPos] = newTile;
+        //Destroy(tile.gameObject);
+        Debug.Log("Test if nullptr" + MapScript.mapInstance.GameMap[tile.XPos, tile.ZPos].TileType);
+        //Destroy(tile.gameObject);
       }
     }
     else if (tile.TileType == 2)
     {
-      if (tile.ResourceAmount >= grass_threshhold)
+      if (tile.ResourceAmount >= grassThreshhold)
       {
         //update to gras
-        tile.MeshRendererTile.material = tile_material[1];
         tile.TileType = 1;
+        Debug.Log("TRANSFORM" + tile.transform);
+        var tileEntry = Instantiate(tilePrefabs[tile.TileType], tile.GetComponentInParent<Transform>().transform) as Transform;
+        TileScript newTile = tileEntry.GetComponent<TileScript>();
+        newTile = tile;
+        newTile.TileType = tile.TileType;
+        newTile.TileDistance = tile.TileDistance;
+        newTile.name = (TileName(tile.TileType) + ": [" + tile.XPos + "," + tile.ZPos + "]");
+        newTile.XPos = tile.XPos;
+        newTile.ZPos = tile.ZPos;
+
+        //
+        //Debug.Log("Test if nullptr" + newTile.TileType);
+
+        MapScript.mapInstance.GameMap[tile.XPos, tile.ZPos] = newTile;
+        //Destroy(tile.gameObject);
+        //
+        //Debug.Log("Test if nullptr" + newTile.TileType);
+        //Destroy(tile.gameObject);
+        Debug.Log("Test if nullptr" + MapScript.mapInstance.GameMap[tile.XPos, tile.ZPos].TileType);
+        //Destroy(tile.gameObject);
       }
     }
-     */
+    
   }
 
 }

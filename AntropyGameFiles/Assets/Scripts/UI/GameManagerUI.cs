@@ -20,7 +20,7 @@ public class GameManagerUI : MonoBehaviour
   void Start()
     {
     //SpawnTiles(3,4);
-    MapScript.map_instance.SpawnRandomMap();
+    MapScript.mapInstance.SpawnRandomMap();
     }
 
     // Update is called once per frame

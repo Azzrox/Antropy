@@ -181,7 +181,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Button
+  m_text: 'Next Turn
+
+'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -851,10 +853,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 262ccfb392af6094e9c0c1798abb7bc6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ant_growth_rate: 0
-  tile_resource_rate: 0
-  event_rate: 0
-  weather_rate: 0
+  antGrowthRate: 0
+  tileResourceRate: 10
+  eventRate: 0
+  weatherRate: 0
 --- !u!114 &1024580172
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -868,10 +870,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IgnoreReversedGraphics: 1
-  m_BlockingObjects: 0
+  m_BlockingObjects: 2
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 2147483647
 --- !u!114 &1024580173
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -884,7 +886,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
@@ -972,9 +974,9 @@ RectTransform:
   m_Father: {fileID: 1024580175}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -277.1, y: -176.8}
+  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: -90, y: 16}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1185153865
@@ -1224,14 +1226,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rows: 5
   columns: 5
-  tile_prefabs:
+  tilePrefabs:
   - {fileID: 6490856156205094238, guid: cfc2af4279e27ef47850cbaffa7fde79, type: 3}
   - {fileID: 6490856156205094238, guid: 57c81b6233a39cb42ba92b407af19a75, type: 3}
   - {fileID: 6490856156205094238, guid: 842d29e1b7c6be14686dd23e86dabd96, type: 3}
   - {fileID: 6490856156205094238, guid: 3d9d65be36a93904b9d6c8770220b812, type: 3}
   - {fileID: 3506134794464494661, guid: b7787d4f6e62a7b4baf8b70d55be5730, type: 3}
-  grass_threshhold: 600
-  soil_threshold: 350
+  grassThreshhold: 0
+  soilThreshold: 0
 --- !u!4 &1241786169
 Transform:
   m_ObjectHideFlags: 0
