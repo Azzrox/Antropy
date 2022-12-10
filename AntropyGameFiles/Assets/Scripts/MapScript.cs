@@ -183,7 +183,6 @@ public class MapScript : MonoBehaviour
   {
     //exchange the whole prefab not just the material
 
-    
     if(tile.TileType == 1) 
     { 
       if(tile.ResourceAmount < soilThreshold) 
@@ -200,13 +199,9 @@ public class MapScript : MonoBehaviour
         newTile.XPos = tile.XPos;
         newTile.ZPos = tile.ZPos;
 
-        //
-        //Debug.Log("Test if nullptr" + newTile.TileType);
-
         MapScript.mapInstance.GameMap[tile.XPos, tile.ZPos] = newTile;
         //Destroy(tile.gameObject);
         Debug.Log("Test if nullptr" + MapScript.mapInstance.GameMap[tile.XPos, tile.ZPos].TileType);
-        //Destroy(tile.gameObject);
       }
     }
     else if (tile.TileType == 2)
@@ -215,7 +210,7 @@ public class MapScript : MonoBehaviour
       {
         //update to gras
         tile.TileType = 1;
-        Debug.Log("TRANSFORM" + tile.transform);
+        //Debug.Log("TRANSFORM" + tile.transform);
         var tileEntry = Instantiate(tilePrefabs[tile.TileType], tile.GetComponentInParent<Transform>().transform) as Transform;
         TileScript newTile = tileEntry.GetComponent<TileScript>();
         newTile = tile;
@@ -225,13 +220,8 @@ public class MapScript : MonoBehaviour
         newTile.XPos = tile.XPos;
         newTile.ZPos = tile.ZPos;
 
-        //
         //Debug.Log("Test if nullptr" + newTile.TileType);
-
         MapScript.mapInstance.GameMap[tile.XPos, tile.ZPos] = newTile;
-        //Destroy(tile.gameObject);
-        //
-        //Debug.Log("Test if nullptr" + newTile.TileType);
         //Destroy(tile.gameObject);
         Debug.Log("Test if nullptr" + MapScript.mapInstance.GameMap[tile.XPos, tile.ZPos].TileType);
         //Destroy(tile.gameObject);

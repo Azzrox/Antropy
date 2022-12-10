@@ -31,7 +31,6 @@ public class NextTurnScript : MonoBehaviour
   void MapTurn() 
   {
     //Insert Map Turn
-
     //change the tile object
     TileScript[,] gameMap = MapScript.mapInstance.GameMap;//game_resources.map_instance.GameMap;
 

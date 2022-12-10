@@ -24,7 +24,6 @@ public class AntCounter : MonoBehaviour
   // Start is called before the first frame update
   void Start()
     {
-        
         plusButton.onClick.AddListener(IncreaseAnts);
         minusButton.onClick.AddListener(DecreaseAnts);
         confirmButton.onClick.AddListener(Confirm);

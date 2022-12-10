@@ -8,7 +8,7 @@ public class TileScript : MonoBehaviour
   /// <summary>
   /// Eucledian Distance to the anthill in steps (no diagonal)
   /// </summary>
-  int distance_anthill;
+  int distanceAnthill;
 
   /// <summary>
   /// X,Z Pos of the tile
@@ -57,7 +57,7 @@ public class TileScript : MonoBehaviour
     type = 0;
     resourceAmount = 0;
     resource_max_amount = 0;
-    distance_anthill = 0;
+    distanceAnthill = 0;
     assignedAnts = 0;
     freeAnts = 0;
   }
@@ -168,11 +168,11 @@ public class TileScript : MonoBehaviour
   {
     get
     {
-      return distance_anthill;
+      return distanceAnthill;
     }
     set
     {
-      distance_anthill = value;
+      distanceAnthill = value;
     }
   }
 
