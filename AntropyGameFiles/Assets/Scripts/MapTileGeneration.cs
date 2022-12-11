@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter))]
@@ -21,6 +22,7 @@ public class MapTileGeneration : MonoBehaviour
 
     public enum TyleType {gras, water, stones, soil}
     public TyleType tyleType;
+    //private bool3x3 isNeighbourWater = false;
 
     [Header("Decoration")]
     [SerializeField] private float density;
@@ -92,25 +94,30 @@ public class MapTileGeneration : MonoBehaviour
             {
                 float y = Mathf.PerlinNoise((originX*resolution + x) * noise, (originZ*resolution + z) * noise) * 0.05f;
 
+                //set the water bit lower
+                if (tyleType == TyleType.water)
+                {
+                    int[] distanceToEdge = { x, z, resolution - x, resolution - z };
+                    y -= Mathf.Sqrt((float)Mathf.Min(distanceToEdge)/resolution/8f);
+                }
+
+
                 //filter vertices, that touch the border
                 if (x != 0 && x != resolution && z != 0 && z != resolution)
                 {
-                    //set the water bit lower
-                    if (tyleType == TyleType.water) { y -= 0.2f; }
-
                     //add foliage
-                    if (tyleType != TyleType.water && density >= Random.value)
+                    if (tyleType != TyleType.water && density >= UnityEngine.Random.value)
                     {
                         //random rotation
                         Quaternion decorationRotation = Quaternion.identity;
                         if (tyleType == TyleType.gras || tyleType == TyleType.soil)
-                        { decorationRotation = Quaternion.AngleAxis(Random.value * 360f, Vector3.up); }
+                        { decorationRotation = Quaternion.AngleAxis(UnityEngine.Random.value * 360f, Vector3.up); }
                         else if (tyleType == TyleType.stones)
-                        { decorationRotation = Random.rotation; }
+                        { decorationRotation = UnityEngine.Random.rotation; }
 
 
-                        foliage = Instantiate(decorationPrefab, new Vector3((float)(x + Random.value * 0.2f) / resolution + originX, y, (float)(z + Random.value * 0.2f) / resolution + originZ), decorationRotation, gameObject.transform);
-                        foliage.transform.localScale = new Vector3((1f + Random.value * 0.2f) * size, (1f + Random.value * 0.2f) * size, (1f + Random.value * 0.2f) * size);
+                        foliage = Instantiate(decorationPrefab, new Vector3((float)(x + UnityEngine.Random.value * 0.2f) / resolution + originX, y, (float)(z + UnityEngine.Random.value * 0.2f) / resolution + originZ), decorationRotation, gameObject.transform);
+                        foliage.transform.localScale = new Vector3((1f + UnityEngine.Random.value * 0.2f) * size, (1f + UnityEngine.Random.value * 0.2f) * size, (1f + UnityEngine.Random.value * 0.2f) * size);
 
                     }
                 }
