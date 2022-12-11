@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: grassMaterial
+  m_Name: dryGrassMaterial
   m_Shader: {fileID: -6465566751694194690, guid: 9d2477504880cd04c87781f26f0bc0a5, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
@@ -104,7 +104,7 @@ Material:
     - _Cutoff: 0.5
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
-    - _Dry: 0
+    - _Dry: 1
     - _DstBlend: 0
     - _EnvironmentReflections: 1
     - _GlossMapScale: 0
