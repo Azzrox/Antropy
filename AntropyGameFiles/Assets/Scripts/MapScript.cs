@@ -63,8 +63,6 @@ public class MapScript : MonoBehaviour
       }
     }
     GameObject.Find("AssignAnts").SetActive(false);
-    GameObject.Find("Anthill").SetActive(false);
-
   }
 
   /// <summary>

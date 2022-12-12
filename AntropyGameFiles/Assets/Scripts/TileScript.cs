@@ -48,11 +48,6 @@ public class TileScript : MonoBehaviour
   /// </summary>
   bool ownedByPlayer = false;
 
-  /// <summary>
-  /// Canvas for menu buttons
-  /// </summary>
-  public GameObject canvas;
-
   private void Awake()
   {
     //resource_max_amount = 0;
@@ -66,7 +61,12 @@ public class TileScript : MonoBehaviour
   private void OnMouseDown()
   {
     Debug.Log("in click mode");
-    canvas.SetActive(true);
+    GameObject uiAssignAnts = GameObject.Find("AssignAnts");
+    uiAssignAnts.GetComponent<Canvas>().enabled = true;
+
+    AntCounter antCounter = uiAssignAnts.GetComponent<AntCounter>();
+    antCounter.SetAssignedAnts(XPos, ZPos, assignedAnts, 10, false);
+    antCounter.UpdateAntText();
 
     if(xPos == 0 && zPos == 0) 
     {
@@ -138,20 +138,6 @@ public class TileScript : MonoBehaviour
     }
   }
 
-  /// <summary>
-  ///  Canvas for menu buttons, getter and setter
-  /// </summary>
-  public GameObject CanvasAssign
-  {
-    get
-    {
-      return canvas;
-    }
-    set
-    {
-      canvas = value;
-    }
-  }
 
   /// <summary>
   /// Tile type, getter and setter
