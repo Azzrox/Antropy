@@ -24,10 +24,23 @@ public class GameManager : MonoBehaviour
     //anthill specific properties (assuming a fixed list of chambers)
     public int[] assignedHillAnts;
 
-
+    public float distanceGatheringReductionRate;
+    public float resourceGatherRate = 0.95f;
+    public int tileRegrowAmount = 20;
+    public float weatherAcessMultiplier;
+    public float weatherRegrowMultiplier;
     public int resources;
-    public int currentSeason;
-    public int currentWeather;
+    public int currentlyGathering;
+
+    /// <summary>
+    /// [0]Spring, [1]Summer, [2]Autumn, [3]Winter
+    /// </summary>
+    public int currentSeason = 0;
+
+    /// <summary>
+    /// [0]sun, [1]rain, [2]overcast, [3]fog, [4] snow
+    /// </summary>
+    public int currentWeather = 0;
 
     public int hatcheryLevel;
     public int storageLevel;
@@ -40,6 +53,59 @@ public class GameManager : MonoBehaviour
     public int maxAntsResourceTile;
     public int maxAntsAnthillTile;
 
+    //Weather
+
+    /// <summary>
+    /// Sun, easy tile access
+    /// </summary>
+    public float sunAccess;
+
+    /// <summary>
+    /// Sun, no regrow bonus
+    /// </summary>
+    public float sunRegrow;
+
+    /// <summary>
+    /// Rain, slower tile access
+    /// </summary>
+    public float rainAccess;
+
+    /// <summary>
+    /// Rain, major regrow bonus
+    /// </summary>
+    public float rainRegrow;
+
+    /// <summary>
+    /// Overcast,  normal tile access
+    /// </summary>
+    public float overcastAccess;
+
+    /// <summary>
+    /// Overcast,  no regrow bonus 
+    /// </summary>
+    public float overcastRegrow;
+
+    /// <summary>
+    /// Fog, slower tile access,  minor regrow bonus
+    /// </summary>
+    public float fogAccess;
+
+    /// <summary>
+    /// Fog, minor regrow bonus
+    /// </summary>
+    public float fogRegrow;
+
+    /// <summary>
+    /// Snow, no tile access
+    /// </summary>
+    public float snowAccess;
+
+    /// <summary>
+    /// Snow,  negative regrow bonus
+    /// </summary>
+    public float snowRegrow;
+
+    //Turns
     /// <summary>
     /// Current Turn Number
     /// </summary>
@@ -67,6 +133,7 @@ public class GameManager : MonoBehaviour
 
   public MapScript mapInstance;
     public MapCameraScript cameraInstance;
+    public WeatherScript weatherInstance;
 
 
 
@@ -91,6 +158,7 @@ public class GameManager : MonoBehaviour
 
         mapInstance = GameObject.Find("MapTiles").GetComponent<MapScript>();
         cameraInstance = GameObject.Find("MapControls").GetComponent<MapCameraScript>();
+        //weatherInstance = GameObject.Find("Weather").GetComponent<WeatherScript>();
   }
 
   [System.Serializable]

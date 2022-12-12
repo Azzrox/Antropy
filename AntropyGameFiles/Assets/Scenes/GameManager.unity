@@ -155,9 +155,12 @@ MonoBehaviour:
   playerName: 
   totalAnts: 100
   freeAnts: 100
-  rows: 10
-  columns: 10
+  rows: 50
+  columns: 50
   assignedHillAnts: 
+  distanceGatheringReductionRate: 0.95
+  resourceGatherRate: 4
+  tileRegrowAmount: 20
   resources: 0
   currentSeason: 0
   currentWeather: 0
