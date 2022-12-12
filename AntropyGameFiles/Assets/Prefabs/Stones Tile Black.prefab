@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 6490856156205094236}
   - component: {fileID: 6490856156205094237}
   - component: {fileID: 1955278565170114836}
-  - component: {fileID: 7781203475202370489}
   m_Layer: 0
   m_Name: Stones Tile Black
   m_TagString: Untagged
@@ -148,16 +147,3 @@ MonoBehaviour:
   resource_max_amount: 0
   explored: 0
   visible: 0
---- !u!65 &7781203475202370489
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6490856156205094234}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 0.5, z: 1}
-  m_Center: {x: 0.5, y: -0.1, z: 0.5}

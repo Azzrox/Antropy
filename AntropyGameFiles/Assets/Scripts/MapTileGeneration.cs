@@ -132,9 +132,11 @@ public class MapTileGeneration : MonoBehaviour
             }
         }
 
-        //add water
-        if (tyleType == TyleType.water) { Instantiate(decorationPrefab, new Vector3(originX, transform.position.y - 0.08f, originZ), Quaternion.identity, gameObject.transform); }
-
+    //add water
+    if (decorationPrefab != null)
+    {
+      if (tyleType == TyleType.water) { Instantiate(decorationPrefab, new Vector3(originX, transform.position.y - 0.08f, originZ), Quaternion.identity, gameObject.transform); }
+    }
         Gradient gradient = colorGradient;
 
         //color the vertices
