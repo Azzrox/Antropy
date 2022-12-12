@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter))]
@@ -21,29 +22,23 @@ public class MapTileGeneration : MonoBehaviour
 
     public enum TyleType {gras, water, stones, soil}
     public TyleType tyleType;
+    //private bool3x3 isNeighbourWater = false;
 
     [Header("Decoration")]
-    [SerializeField] private float grassDensity;
-    [SerializeField] private float stoneDensity;
-    [SerializeField] private float soilDensity;
+    [SerializeField] private float density;
     [SerializeField] private float size;
-    [SerializeField] private GameObject grassPrefab;
-    [SerializeField] private GameObject stonePrefab;
+    [SerializeField] private GameObject decorationPrefab;
 
     [Header("Colors")]
 
-    [SerializeField] private Gradient grasGradient;
-    [SerializeField] private Gradient waterGradient;
-    [SerializeField] private Gradient stonesGradient;
-    [SerializeField] private Gradient soilGradient;
+    [SerializeField] private Gradient colorGradient;
 
     // Start is called before the first frame update
     void Start()
     {
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
-        grassDensity = Mathf.Clamp(grassDensity, 0f, 1f);
-        stoneDensity = Mathf.Clamp(stoneDensity, 0f, 1f);
+        density = Mathf.Clamp(density, 0f, 1f);
 
         CreateShape();
         UpdateMesh();
@@ -99,28 +94,33 @@ public class MapTileGeneration : MonoBehaviour
             {
                 float y = Mathf.PerlinNoise((originX*resolution + x) * noise, (originZ*resolution + z) * noise) * 0.05f;
 
+                //set the water bit lower
+                if (tyleType == TyleType.water)
+                {
+                    int[] distanceToEdge = { x, z, resolution - x, resolution - z };
+                    y -= Mathf.Sqrt((float)Mathf.Min(distanceToEdge)/resolution/8f);
+                }
+
+
                 //filter vertices, that touch the border
                 if (x != 0 && x != resolution && z != 0 && z != resolution)
                 {
-                    //set the water bit lower
-                    if (tyleType == TyleType.water) { y -= 0.2f; }
-
                     //add foliage
-                    if ((tyleType == TyleType.gras && grassDensity >= Random.value)
-                        || (tyleType == TyleType.soil && soilDensity >= Random.value)) 
+                    if (tyleType != TyleType.water && density >= UnityEngine.Random.value)
                     {
-                        foliage = Instantiate(grassPrefab, new Vector3((float)(x + Random.value*0.2f) / resolution + originX, y, (float)(z + Random.value*0.2f) / resolution + originZ), Quaternion.AngleAxis(Random.value*360f,Vector3.up), gameObject.transform);
-                        foliage.transform.localScale = new Vector3((1f + Random.value*0.2f)*size, (1f + Random.value * 0.2f) * size, (1f + Random.value * 0.2f)*size);
-                    }
-                    //add rocks and stones
-                    else if (tyleType == TyleType.stones && stoneDensity >= Random.value)
-                    {
-                        foliage = Instantiate(stonePrefab, new Vector3((float)(x + Random.value * 0.2f) / resolution + originX, y + 0.025f, (float)(z + Random.value * 0.2f) / resolution + originZ), Random.rotation, gameObject.transform);
-                        foliage.transform.localScale = new Vector3((1f + Random.value * 0.2f) * size, (1f + Random.value * 0.2f) * size, (1f + Random.value * 0.2f) * size);
-                    }
+                        //random rotation
+                        Quaternion decorationRotation = Quaternion.identity;
+                        if (tyleType == TyleType.gras || tyleType == TyleType.soil)
+                        { decorationRotation = Quaternion.AngleAxis(UnityEngine.Random.value * 360f, Vector3.up); }
+                        else if (tyleType == TyleType.stones)
+                        { decorationRotation = UnityEngine.Random.rotation; }
 
+
+                        foliage = Instantiate(decorationPrefab, new Vector3((float)(x + UnityEngine.Random.value * 0.2f) / resolution + originX, y, (float)(z + UnityEngine.Random.value * 0.2f) / resolution + originZ), decorationRotation, gameObject.transform);
+                        foliage.transform.localScale = new Vector3((1f + UnityEngine.Random.value * 0.2f) * size, (1f + UnityEngine.Random.value * 0.2f) * size, (1f + UnityEngine.Random.value * 0.2f) * size);
+
+                    }
                 }
-
                 if (minTerrainHeight > y) { minTerrainHeight = y; }
                 if (maxTerrainHeight < y) { maxTerrainHeight = y; }
 
@@ -130,19 +130,10 @@ public class MapTileGeneration : MonoBehaviour
             }
         }
 
-        Gradient gradient = new Gradient{};
-        //get the correct color per type
-        switch (tyleType)
-        {
-            case TyleType.gras:
-                gradient = grasGradient; break;
-            case TyleType.water:
-                gradient = waterGradient; break;
-            case TyleType.stones:
-                gradient = stonesGradient; break;
-            case TyleType.soil:
-                gradient = soilGradient; break;
-        }
+        //add water
+        if (tyleType == TyleType.water) { Instantiate(decorationPrefab, new Vector3(originX, transform.position.y - 0.08f, originZ), Quaternion.identity, gameObject.transform); }
+
+        Gradient gradient = colorGradient;
 
         //color the vertices
         for (int i = 0, z = 0; z <= resolution; z++)

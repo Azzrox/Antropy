@@ -7,8 +7,11 @@ using TMPro;
 
 public class AntCounter : MonoBehaviour
 {
-    public int antsAssigned = 0;
-    public TileScript tile;
+    private int posX;
+    private int posZ;
+    private int assignedAnts;
+    private int maxAssignedAnts;
+    private bool isAntHill;
     public Button plusButton;
     public Button minusButton;
     public Button confirmButton;
@@ -39,21 +42,24 @@ public class AntCounter : MonoBehaviour
     void IncreaseAnts()
     {
         int freeAnts = gameManager.freeAnts;
-        if (freeAnts > 0)
+        if (freeAnts > 0 && assignedAnts < maxAssignedAnts)
         {
-            tile.AssignedAnts += 1;
+            assignedAnts += 1;
             gameManager.freeAnts -= 1;
+            SetAssignedAnts_remote();
             UpdateAntText();
         }
     } 
 
     void DecreaseAnts()
     {
-        if (tile.AssignedAnts > 0)
+        if (assignedAnts > 0)
         {
-            tile.AssignedAnts -= 1;
+            assignedAnts -= 1;
             gameManager.freeAnts += 1;
+            SetAssignedAnts_remote();
             UpdateAntText();
+            
 
         }
     }
@@ -61,17 +67,40 @@ public class AntCounter : MonoBehaviour
     void Confirm()
     {
         //GetComponentInParent<GameObject>().SetActive(false);
-        gameObject.SetActive(false);
+        gameObject.GetComponent<Canvas>().enabled = false;
+    }
+    public void SetAssignedAnts(int ix, int iz, int asAnts, int maxAnts, bool isHill)
+    {
+        // could be replaced by ix, iy to get values from matrix
+        posX = ix;
+        posZ = iz;
+        assignedAnts = asAnts;
+        maxAssignedAnts = maxAnts;
+        isAntHill = isHill;
+    }
+    public void SetAssignedAnts_remote(){
+        if (isAntHill)
+        {
+            MapScript.mapInstance.GameMap[posX,posZ].AssignedAnts = assignedAnts;
+        } else{
+            MapScript.mapInstance.GameMap[posX,posZ].AssignedAnts = assignedAnts;
+        }
+        
     }
 
     public void UpdateAntText(){
-        freeAnts.text = "Free ants: " + gameManager.freeAnts + "/" + gameManager.totalAnts;
-        if (tile.AssignedAnts == 1)
+        if (isAntHill)
         {
-            assignedAntsText.text = "assign " + tile.AssignedAnts + " ant";
+
+        } else 
+        {   freeAnts.text = "Free ants: " + gameManager.freeAnts + "/" + gameManager.totalAnts;
+        }
+        if (assignedAnts == 1)
+        {
+            assignedAntsText.text = "assign " + assignedAnts + " ant";
         } else
         {
-            assignedAntsText.text = "assign " + tile.AssignedAnts + " ants";
+            assignedAntsText.text = "assign " + assignedAnts + " ants";
         }
     }
 }

@@ -6,6 +6,7 @@ public class GameManagerUI : MonoBehaviour
 {
     public int totalAnts;
     public int freeAnts;
+    public int resources;
     public GameObject redTile;
     public GameObject blackTile;
 

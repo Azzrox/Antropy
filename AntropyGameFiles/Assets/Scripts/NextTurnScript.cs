@@ -10,6 +10,13 @@ public class NextTurnScript : MonoBehaviour
   public float eventRate;
   public float weatherRate;
 
+  private GameManagerUI gameManager;
+
+  private void Awake()
+  {
+    gameManager = GameObject.Find("Game Manager").GetComponent<GameManagerUI>();
+  }
+
   /// <summary>
   /// Turn Sequence, bind this to a button
   /// </summary>
@@ -26,6 +33,21 @@ public class NextTurnScript : MonoBehaviour
   void AntTurn() 
   {
     //Insert Ant Turn
+    TileScript[,] gameMap = MapScript.mapInstance.GameMap;//game_resources.map_instance.GameMap;
+    for (int i = 0; i < MapScript.mapInstance.rows; i++)
+    {
+      for (int j = 0; j < MapScript.mapInstance.columns; j++)
+      {
+        //gameMap[i, j].CalculateNewResourceAmountFlat(50);
+        if(gameMap[i, j].OwnedByPlayer) 
+        {
+          //calculate gathering rate (basic idea)
+          int gathering_rate = 20;
+          gameManager.resources += gathering_rate;
+          gameMap[i, j].CalculateNewResourceAmount(-gathering_rate);
+        }
+      }
+    }
   }
 
   void MapTurn() 
@@ -39,7 +61,8 @@ public class NextTurnScript : MonoBehaviour
       for (int j = 0; j < MapScript.mapInstance.columns; j++)
       {
         //constant growth +
-        gameMap[i, j].CalculateNewResourceAmount(tileResourceRate);
+        //gameMap[i, j].CalculateNewResourceAmount(tileResourceRate);
+        gameMap[i, j].CalculateNewResourceAmountFlat(20);
 
         //check if the growth if we reached a threshhold to update the tile mesh
         MapScript.mapInstance.TileErrosionCheck(gameMap[i, j]);
