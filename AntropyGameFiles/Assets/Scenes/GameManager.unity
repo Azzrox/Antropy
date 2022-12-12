@@ -155,8 +155,8 @@ MonoBehaviour:
   playerName: 
   totalAnts: 100
   freeAnts: 100
-  rows: 10
-  columns: 10
+  rows: 50
+  columns: 50
   assignedHillAnts: 
   resources: 0
   currentSeason: 0
@@ -171,6 +171,9 @@ MonoBehaviour:
   maxAntsAnthillTile: 20
   MaxTurnCount: 1000
   currentTurnCount: 0
+  grassWeight: 0.5
+  resourceWeight: 0.05
+  soilWeight: 0.3
   mapInstance: {fileID: 0}
   cameraInstance: {fileID: 0}
 --- !u!4 &1398438779

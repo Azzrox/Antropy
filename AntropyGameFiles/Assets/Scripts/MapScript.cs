@@ -66,7 +66,8 @@ public class MapScript : MonoBehaviour
         }
         else 
         {
-          RandomResourceTile(i, j, distance_anthill);
+          WeightResourceTile(i, j, distance_anthill, rows + columns);
+          //RandomResourceTile(i, j, distance_anthill);
           distance_anthill++;
         }
       }
@@ -95,7 +96,7 @@ public class MapScript : MonoBehaviour
               sameFound = 1;
             }
         }
-        if(sameFound == 0 && i != 0 && j != 0) 
+        if(sameFound == 0 && (j != 0 || i != 0)) 
         { 
           if(j + 1 > columns - 1) 
           {
@@ -105,6 +106,10 @@ public class MapScript : MonoBehaviour
           {
             ExchangeTilePrefab(mapMatrix[i, j], mapMatrix[i, j + 1].TileType);
           }
+        }
+        if (i < 3 && j < 3 && (j != 0 || i != 0))
+        {
+          ExchangeTilePrefab(mapMatrix[i, j], 1);
         }
       }
     }
@@ -126,6 +131,8 @@ public class MapScript : MonoBehaviour
     newTile.ZPos = j;
     newTile.name = (TileName(tileType) + ": [" + i + "," + j + "]");
     newTile.IsAntHill = true;
+    newTile.Explored = false;
+    newTile.Visible = false;
 
     //position of the spawn
     newTile.transform.position = new Vector3(i, 0, j);
@@ -167,6 +174,53 @@ public class MapScript : MonoBehaviour
     {
       newTile.ResourceAmount = Random.Range(250, 500);
       newTile.MaxResourceAmount = 650;
+    }
+
+    //position of the spawn
+    newTile.transform.position = new Vector3(i, 0, j);
+
+    //Assign ants on tile
+    newTile.AssignedAnts = 0;
+
+    //save the script in the matrix
+    mapMatrix[i, j] = newTile;
+  }
+
+  void WeightResourceTile(int i, int j, int distance_anthill, int maxdist)
+  {
+
+    //weights
+    int basemax = 500;
+    int tileType = Random.Range(0, 4);
+    if (Random.Range(0, maxdist) > i+j + (maxdist) * GameManager.Instance.grassWeight)
+    {
+      tileType = 1;
+    }
+
+    var tileEntry = Instantiate(tilePrefabs[tileType], this.transform) as Transform;
+    TileScript newTile = tileEntry.GetComponent<TileScript>();
+    newTile.TileType = tileType;
+    newTile.TileDistance = distance_anthill;
+    newTile.name = (TileName(tileType) + ": [" + i + "," + j + "]");
+    newTile.XPos = i;
+    newTile.ZPos = j;
+    newTile.IsAntHill = false;
+    newTile.Explored = false;
+    newTile.Visible = false;
+
+    //Random Amount of resources on the tile
+    if (newTile.TileType == 1 || newTile.TileType == 2)
+    {
+      newTile.MaxResourceAmount = 500;
+      for (int k = 0; k < i+j; k++)
+      {
+        newTile.MaxResourceAmount = (int)(newTile.MaxResourceAmount + (newTile.MaxResourceAmount * GameManager.Instance.resourceWeight));
+      }
+      newTile.ResourceAmount = Random.Range(250, newTile.MaxResourceAmount);
+      if (newTile.TileType == 2)
+      {
+        newTile.ResourceAmount = (int)(GameManager.Instance.soilWeight * newTile.ResourceAmount);
+      }
     }
 
     //position of the spawn
@@ -266,6 +320,8 @@ public class MapScript : MonoBehaviour
     newTile.TileDistance = tile.TileDistance;
     newTile.XPos = tile.XPos;
     newTile.ZPos = tile.ZPos;
+    newTile.Explored = false;
+    newTile.Visible = false;
 
     newTile.ResourceAmount = tile.ResourceAmount;
     
@@ -278,7 +334,16 @@ public class MapScript : MonoBehaviour
     //Resources on the Tile only soil and grass can have resources
     if(newTileType == 1 || newTileType == 2) 
     {
-      newTile.MaxResourceAmount = 650;
+      newTile.MaxResourceAmount = 500;
+      for (int k = 0; k < newTile.XPos + newTile.ZPos; k++)
+      {
+        newTile.MaxResourceAmount = (int)(newTile.MaxResourceAmount + (newTile.MaxResourceAmount * GameManager.Instance.resourceWeight));
+      }
+      newTile.ResourceAmount = Random.Range(250, newTile.MaxResourceAmount);
+      if (newTile.TileType == 2)
+      {
+        newTile.ResourceAmount = (int)(GameManager.Instance.soilWeight * newTile.ResourceAmount);
+      }
     }
     else 
     {

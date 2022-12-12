@@ -50,8 +50,22 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public int currentTurnCount;
 
+    /// <summary>
+    /// Weight for the grass creating closer to less = more grass closer
+    /// </summary>
+    public float grassWeight = 1.5f;
+    /// <summary>
+    /// Weight for the max resources and current resources on tile, more = more resources further away
+    /// </summary>
+    public float resourceWeight = 0.05f;
 
-    public MapScript mapInstance;
+    /// <summary>
+    /// Weight for the max resources and current resources on tile, less = less resources on soil tiles
+    /// </summary>
+    public float soilWeight = 0.3f;
+
+
+  public MapScript mapInstance;
     public MapCameraScript cameraInstance;
 
 
