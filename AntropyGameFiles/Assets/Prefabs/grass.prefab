@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6671550061291770494}
   - component: {fileID: 6671550061291770495}
   m_Layer: 0
-  m_Name: lush grass
+  m_Name: grass
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -40,7 +40,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6671550061291770464}
-  m_Mesh: {fileID: -462981019419857548, guid: 579f013b67924894ea710362667e83eb, type: 3}
+  m_Mesh: {fileID: -462981019419857548, guid: 82c142a00e505a942b106e42976e657c, type: 3}
 --- !u!23 &6671550061291770495
 MeshRenderer:
   m_ObjectHideFlags: 0

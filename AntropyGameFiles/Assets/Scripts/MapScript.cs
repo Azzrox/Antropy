@@ -69,6 +69,7 @@ public class MapScript : MonoBehaviour
         }
       }
     }
+    GameObject.Find("AssignAnts").SetActive(false);
   }
 
   void CreateAnthillTile(int i, int j) 
@@ -87,6 +88,9 @@ public class MapScript : MonoBehaviour
 
     //Assign ants on tile
     newTile.AssignedAnts = 0;
+
+    //Assign button canvas
+    newTile.CanvasAssign = GameObject.Find("AssignAnts");
 
     //save the script in the matrix
     mapMatrix[i, j] = newTile;
@@ -116,6 +120,9 @@ public class MapScript : MonoBehaviour
 
     //Assign ants on tile
     newTile.AssignedAnts = 0;
+
+    //Assign button canvas
+    newTile.CanvasAssign = GameObject.Find("AssignAnts");
 
     //save the script in the matrix
     mapMatrix[i, j] = newTile;
@@ -176,64 +183,51 @@ public class MapScript : MonoBehaviour
   {
     //exchange the whole prefab not just the material
 
-    Debug.Log("Type" + tile.TileType);
-
-    if (tile.TileType == 1) 
-    {
-      Debug.Log("Soil: Test if nullptr" + tile.ResourceAmount);
-      if (tile.ResourceAmount < soilThreshold) 
+    if(tile.TileType == 1) 
+    { 
+      if(tile.ResourceAmount < soilThreshold) 
       {
         //update to soil
         //tile.MeshRendererTile.material = tile_material[2];
-        //tile.TileType = 2;
-        int newType = 2;
-        var tileEntry = Instantiate(tilePrefabs[newType], GameObject.Find("MapTiles").transform) as Transform;
-        TileScript newTile = tileEntry.GetComponent<TileScript>();
-        tileEntry.name = (TileName(newType) + ": [" + tile.XPos + "," + tile.ZPos + "]");
-        tileEntry.position = tile.transform.position;
+        tile.TileType = 2;
 
-        newTile.TileType = newType;
+        var tileEntry = Instantiate(tilePrefabs[tile.TileType], tile.GetComponentInParent<Transform>().transform) as Transform;
+        TileScript newTile = tileEntry.GetComponent<TileScript>();
+        newTile.TileType = tile.TileType;
         newTile.TileDistance = tile.TileDistance;
+        newTile.name = (TileName(tile.TileType) + ": [" + tile.XPos + "," + tile.ZPos + "]");
         newTile.XPos = tile.XPos;
         newTile.ZPos = tile.ZPos;
-        newTile.ResourceAmount = tile.ResourceAmount;
-        newTile.MaxResourceAmount = tile.MaxResourceAmount;
 
-        mapMatrix[tile.XPos, tile.ZPos] = tileEntry.GetComponent<TileScript>();
-        Destroy(tile.gameObject);
-        Debug.Log("To Soil: Test if nullptr" + MapScript.mapInstance.GameMap[tile.XPos, tile.ZPos].TileType);
-        //return;
+        MapScript.mapInstance.GameMap[tile.XPos, tile.ZPos] = newTile;
+        //Destroy(tile.gameObject);
+        Debug.Log("Test if nullptr" + MapScript.mapInstance.GameMap[tile.XPos, tile.ZPos].TileType);
       }
     }
     else if (tile.TileType == 2)
     {
-      Debug.Log("Grass: Test if nullptr" + tile.ResourceAmount);
       if (tile.ResourceAmount >= grassThreshhold)
       {
         //update to gras
-        int newType = 1;
-        var tileEntry = Instantiate(tilePrefabs[newType], GameObject.Find("MapTiles").transform) as Transform;
-        tileEntry.name = (TileName(newType) + ": [" + tile.XPos + "," + tile.ZPos + "]");
-        tileEntry.position = tile.transform.position;
-
+        tile.TileType = 1;
+        //Debug.Log("TRANSFORM" + tile.transform);
+        var tileEntry = Instantiate(tilePrefabs[tile.TileType], tile.GetComponentInParent<Transform>().transform) as Transform;
         TileScript newTile = tileEntry.GetComponent<TileScript>();
-        newTile.ResourceAmount = tile.ResourceAmount;
-        newTile.TileType = newType;
+        newTile = tile;
+        newTile.TileType = tile.TileType;
         newTile.TileDistance = tile.TileDistance;
+        newTile.name = (TileName(tile.TileType) + ": [" + tile.XPos + "," + tile.ZPos + "]");
         newTile.XPos = tile.XPos;
         newTile.ZPos = tile.ZPos;
-        newTile.MaxResourceAmount = tile.MaxResourceAmount;
-        newTile.FreeAnts = tile.FreeAnts;
-        newTile.AssignedAnts = tile.AssignedAnts;
 
         //Debug.Log("Test if nullptr" + newTile.TileType);
-        mapMatrix[tile.XPos, tile.ZPos] = tileEntry.GetComponent<TileScript>();
-        Destroy(tile.gameObject);
-        Debug.Log("To Grass: Test if nullptr" + MapScript.mapInstance.GameMap[tile.XPos, tile.ZPos].TileType);
+        MapScript.mapInstance.GameMap[tile.XPos, tile.ZPos] = newTile;
         //Destroy(tile.gameObject);
-        //return;
+        Debug.Log("Test if nullptr" + MapScript.mapInstance.GameMap[tile.XPos, tile.ZPos].TileType);
+        //Destroy(tile.gameObject);
       }
     }
+    
   }
 
 }
