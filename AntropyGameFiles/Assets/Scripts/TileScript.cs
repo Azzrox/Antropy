@@ -48,11 +48,6 @@ public class TileScript : MonoBehaviour
   /// </summary>
   bool ownedByPlayer = false;
 
-  /// <summary>
-  /// Canvas for menu buttons
-  /// </summary>
-  public GameObject canvas;
-
   private void Awake()
   {
     //type = 0;
@@ -69,10 +64,11 @@ public class TileScript : MonoBehaviour
   private void OnMouseDown()
   {
     Debug.Log("in click mode");
-    canvas.SetActive(true);
+    GameObject uiAssignAnts = GameObject.Find("AssignAnts");
+    uiAssignAnts.GetComponent<Canvas>().enabled = true;
 
-    AntCounter antCounter = canvas.GetComponent<AntCounter>();
-    antCounter.tile = this;
+    AntCounter antCounter = uiAssignAnts.GetComponent<AntCounter>();
+    antCounter.SetAssignedAnts(XPos, ZPos, assignedAnts, 10, false);
     antCounter.UpdateAntText();
 
     Debug.Log("element clicked" + UnityEngine.Random.Range(0, 40) + " pos: " + XPos + "|" + ZPos);
@@ -132,20 +128,6 @@ public class TileScript : MonoBehaviour
     }
   }
 
-  /// <summary>
-  ///  Canvas for menu buttons, getter and setter
-  /// </summary>
-  public GameObject CanvasAssign
-  {
-    get
-    {
-      return canvas;
-    }
-    set
-    {
-      canvas = value;
-    }
-  }
 
   /// <summary>
   /// Tile type, getter and setter
