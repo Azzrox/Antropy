@@ -3,9 +3,7 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags:
-  - RoomsL1
-  - TunnelsL1
+  tags: []
   layers:
   - Default
   - TransparentFX
@@ -42,16 +40,4 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
-    locked: 0
-  - name: Background
-    uniqueID: 1330299911
-    locked: 0
-  - name: Tunnels
-    uniqueID: 519515727
-    locked: 0
-  - name: Rooms
-    uniqueID: 2553347963
-    locked: 0
-  - name: LockedRoom
-    uniqueID: 2493641415
     locked: 0
