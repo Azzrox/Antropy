@@ -4,5 +4,11 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/GameManager.unity
+    guid: 61d9046d3f548ec4d95dd883a4b02c1a
+  - enabled: 1
+    path: Assets/Scenes/Prototype_v0TestMapErosion.unity
+    guid: 3b22afe0ce92cb149bb3769cd16e77a7
   m_configObjects: {}

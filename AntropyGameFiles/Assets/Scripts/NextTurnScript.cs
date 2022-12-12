@@ -4,17 +4,11 @@ using UnityEngine;
 
 public class NextTurnScript : MonoBehaviour
 {
-  
-  public float antGrowthRate;
-  public float tileResourceRate;
-  public float eventRate;
-  public float weatherRate;
-
-  private GameManagerUI gameManager;
+  private GameManager gameManager;
 
   private void Awake()
   {
-    gameManager = GameObject.Find("Game Manager").GetComponent<GameManagerUI>();
+    gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
   }
 
   /// <summary>
@@ -22,21 +16,30 @@ public class NextTurnScript : MonoBehaviour
   /// </summary>
   public void NextTurn() 
   {
-    AntTurn();
-    MapTurn();
-    WeatherTurn();
-    EventTurn();
-    SeasonTurn();
-    MessageTurn();
+    if(gameManager.currentTurnCount < gameManager.MaxTurnCount) 
+    {
+      Debug.Log("Turn: " + gameManager.currentTurnCount);
+      AntTurn();
+      MapTurn();
+      WeatherTurn();
+      EventTurn();
+      SeasonTurn();
+      MessageTurn();
+      gameManager.currentTurnCount++;
+    }
+    else 
+    {
+      Debug.Log("Hit Max Turn Count, turn denied");
+    }
   }
 
   void AntTurn() 
   {
     //Insert Ant Turn
-    TileScript[,] gameMap = MapScript.mapInstance.GameMap;//game_resources.map_instance.GameMap;
-    for (int i = 0; i < MapScript.mapInstance.rows; i++)
+    TileScript[,] gameMap = gameManager.mapInstance.GameMap;//game_resources.map_instance.GameMap;
+    for (int i = 0; i < gameManager.mapInstance.rows; i++)
     {
-      for (int j = 0; j < MapScript.mapInstance.columns; j++)
+      for (int j = 0; j < gameManager.mapInstance.columns; j++)
       {
         //gameMap[i, j].CalculateNewResourceAmountFlat(50);
         if(gameMap[i, j].OwnedByPlayer) 
@@ -54,20 +57,17 @@ public class NextTurnScript : MonoBehaviour
   {
     //Insert Map Turn
     //change the tile object
-    TileScript[,] gameMap = MapScript.mapInstance.GameMap;//game_resources.map_instance.GameMap;
+    TileScript[,] gameMap = gameManager.mapInstance.GameMap;//game_resources.map_instance.GameMap;
 
-    for (int i = 0; i < MapScript.mapInstance.rows; i++)
+    for (int i = 0; i < gameManager.mapInstance.rows; i++)
     {
-      for (int j = 0; j < MapScript.mapInstance.columns; j++)
+      for (int j = 0; j < gameManager.mapInstance.columns; j++)
       {
         //constant growth +
-        //gameMap[i, j].CalculateNewResourceAmount(tileResourceRate);
-        gameMap[i, j].CalculateNewResourceAmountFlat(20);
+        gameMap[i, j].CalculateNewResourceAmountFlat(500);
 
         //check if the growth if we reached a threshhold to update the tile mesh
-        MapScript.mapInstance.TileErrosionCheck(gameMap[i, j]);
-
-        Debug.Log(name + ": [" + i + "," + j + "]" + gameMap[i, j].ResourceAmount);
+        gameManager.mapInstance.TileErosionCheck(gameMap[i, j]);
       }
     }
   }
