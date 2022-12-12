@@ -1,16 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
 public class MapScript : MonoBehaviour
 {
-
-  /// <summary>
-  /// Singleton Game Map
-  /// </summary>
-  public static MapScript mapInstance;
-
   /// <summary>
   /// rows map
   /// </summary>
@@ -31,7 +26,6 @@ public class MapScript : MonoBehaviour
   /// </summary>
   public List<Transform> tilePrefabs = new List<Transform>();
 
-
   /// <summary>
   /// threshhold to update to grass
   /// </summary>
@@ -45,12 +39,11 @@ public class MapScript : MonoBehaviour
   private void Awake()
   {
     mapMatrix = new TileScript[rows, columns];
-
-    //Keep the instance alive
-    mapInstance = this;
-    DontDestroyOnLoad(transform.gameObject);
   }
 
+  /// <summary>
+  /// Random Map creation with no seed
+  /// </summary>
   public void SpawnRandomMap()
   {
     for (int i = 0; i < rows; i++)
@@ -70,8 +63,50 @@ public class MapScript : MonoBehaviour
       }
     }
     GameObject.Find("AssignAnts").SetActive(false);
+    GameObject.Find("Anthill").SetActive(false);
+
   }
 
+  /// <summary>
+  /// Map creation with added terrains
+  /// </summary>
+  public void SpawnTerrainMap()
+  {
+    int[,] adder = new int[,] {{-1, 0}, {0, -1}, {0, 1}, {1, 0}};
+    for (int i = 0; i < rows; i++)
+    {
+      for (int j = 0; j < columns; j++)
+      {
+        
+        int sameFound = 0;
+        for (int k = 0; k < adder.Length/2; k++)
+        {
+          if (i + adder[k, 0] < rows && i + adder[k, 0] >= 0 && j + adder[k, 1] < columns && j + adder[k, 1] >= 0)
+            if (mapMatrix[i, j].TileType == mapMatrix[i + adder[k, 0], j + adder[k, 1]].TileType)
+            {
+              sameFound = 1;
+            }
+        }
+        if(sameFound == 0 && i != 0 && j != 0) 
+        { 
+          if(j + 1 > columns - 1) 
+          {
+            exchangeTilePrefab(mapMatrix[i, j], mapMatrix[i, j - 1].TileType);
+          }
+          else 
+          {
+            exchangeTilePrefab(mapMatrix[i, j], mapMatrix[i, j + 1].TileType);
+          }
+        }
+      }
+    }
+  }
+
+  /// <summary>
+  /// Creates the anthill tile
+  /// </summary>
+  /// <param name="i"></param>
+  /// <param name="j"></param>
   void CreateAnthillTile(int i, int j) 
   {
     int tileType = 4;
@@ -90,16 +125,28 @@ public class MapScript : MonoBehaviour
     newTile.AssignedAnts = 0;
 
     //Assign button canvas
-    newTile.CanvasAssign = GameObject.Find("AssignAnts");
+    newTile.CanvasAssign = GameObject.Find("Anthill");
 
     //save the script in the matrix
     mapMatrix[i, j] = newTile;
   }
 
+  /// <summary>
+  /// Creates a Random Resource Tile
+  /// </summary>
+  /// <param name="i"></param>
+  /// <param name="j"></param>
+  /// <param name="distance_anthill">Eucledian Distance</param>
   void RandomResourceTile(int i, int j, int distance_anthill) 
   {
 
-    int tileType = Random.Range(0, 4);
+    //weights
+    int tileType = Random.Range(0, 3);
+    if(Random.Range(0,11) > 7) 
+    {
+      tileType = 3;
+    }
+
     var tileEntry = Instantiate(tilePrefabs[tileType], this.transform) as Transform;
     TileScript newTile = tileEntry.GetComponent<TileScript>();
     newTile.TileType = tileType;
@@ -123,11 +170,16 @@ public class MapScript : MonoBehaviour
 
     //Assign button canvas
     newTile.CanvasAssign = GameObject.Find("AssignAnts");
-
+    
     //save the script in the matrix
     mapMatrix[i, j] = newTile;
   }
 
+  /// <summary>
+  /// Returns tile name string from prefab type
+  /// </summary>
+  /// <param name="type"> [0]stone, [1]grass, [2]soil, [3]water, [4] anthill</param>
+  /// <returns></returns>
   string TileName(int type) 
   {
     string type_name;
@@ -169,78 +221,66 @@ public class MapScript : MonoBehaviour
   }
 
   /// <summary>
-  /// Game Map, map_matrix getter
+  /// Tile Erosion 
   /// </summary>
-  public MapScript MapInstance
+  /// <param name="tile"></param>
+  public void TileErosionCheck(TileScript tile)
   {
-    get
-    {
-      return mapInstance;
-    }
-  }
-
-  public void TileErrosionCheck(TileScript tile)
-  {
-    //exchange the whole prefab not just the material
-
-    Debug.Log("Type" + tile.TileType);
-
     if (tile.TileType == 1) 
     {
-      Debug.Log("Soil: Test if nullptr" + tile.ResourceAmount);
       if (tile.ResourceAmount < soilThreshold) 
       {
         //update to soil
-        //tile.MeshRendererTile.material = tile_material[2];
-        //tile.TileType = 2;
         int newType = 2;
-        var tileEntry = Instantiate(tilePrefabs[newType], GameObject.Find("MapTiles").transform) as Transform;
-        TileScript newTile = tileEntry.GetComponent<TileScript>();
-        tileEntry.name = (TileName(newType) + ": [" + tile.XPos + "," + tile.ZPos + "]");
-        tileEntry.position = tile.transform.position;
-
-        newTile.TileType = newType;
-        newTile.TileDistance = tile.TileDistance;
-        newTile.XPos = tile.XPos;
-        newTile.ZPos = tile.ZPos;
-        newTile.ResourceAmount = tile.ResourceAmount;
-        newTile.MaxResourceAmount = tile.MaxResourceAmount;
-
-        mapMatrix[tile.XPos, tile.ZPos] = tileEntry.GetComponent<TileScript>();
-        Destroy(tile.gameObject);
-        Debug.Log("To Soil: Test if nullptr" + MapScript.mapInstance.GameMap[tile.XPos, tile.ZPos].TileType);
-        //return;
+        exchangeTilePrefab(tile, newType);
       }
     }
     else if (tile.TileType == 2)
     {
-      Debug.Log("Grass: Test if nullptr" + tile.ResourceAmount);
       if (tile.ResourceAmount >= grassThreshhold)
       {
         //update to gras
         int newType = 1;
-        var tileEntry = Instantiate(tilePrefabs[newType], GameObject.Find("MapTiles").transform) as Transform;
-        tileEntry.name = (TileName(newType) + ": [" + tile.XPos + "," + tile.ZPos + "]");
-        tileEntry.position = tile.transform.position;
-
-        TileScript newTile = tileEntry.GetComponent<TileScript>();
-        newTile.ResourceAmount = tile.ResourceAmount;
-        newTile.TileType = newType;
-        newTile.TileDistance = tile.TileDistance;
-        newTile.XPos = tile.XPos;
-        newTile.ZPos = tile.ZPos;
-        newTile.MaxResourceAmount = tile.MaxResourceAmount;
-        newTile.FreeAnts = tile.FreeAnts;
-        newTile.AssignedAnts = tile.AssignedAnts;
-
-        //Debug.Log("Test if nullptr" + newTile.TileType);
-        mapMatrix[tile.XPos, tile.ZPos] = tileEntry.GetComponent<TileScript>();
-        Destroy(tile.gameObject);
-        Debug.Log("To Grass: Test if nullptr" + MapScript.mapInstance.GameMap[tile.XPos, tile.ZPos].TileType);
-        //Destroy(tile.gameObject);
-        //return;
+        exchangeTilePrefab(tile, newType);
       }
     }
   }
 
+  /// <summary>
+  /// Exchanges a tiles prefab to the set type
+  /// </summary>
+  /// <param name="tile"></param>
+  /// <param name="newTileType"></param>
+  public void exchangeTilePrefab(TileScript tile, int newTileType) 
+  {
+    var tileEntry = Instantiate(tilePrefabs[newTileType], GameObject.Find("MapTiles").transform) as Transform;
+    tileEntry.name = (TileName(newTileType) + ": [" + tile.XPos + "," + tile.ZPos + "]");
+    tileEntry.position = tile.transform.position;
+
+    TileScript newTile = tileEntry.GetComponent<TileScript>();
+    newTile.TileType = newTileType;
+    newTile.TileDistance = tile.TileDistance;
+    newTile.XPos = tile.XPos;
+    newTile.ZPos = tile.ZPos;
+
+    newTile.ResourceAmount = tile.ResourceAmount;
+    
+    newTile.FreeAnts = tile.FreeAnts;
+    newTile.AssignedAnts = tile.AssignedAnts;
+    newTile.canvas = tile.canvas;
+
+    //Resources on the Tile only soil and grass can have resources
+    if(newTileType == 1 || newTileType == 2) 
+    {
+      newTile.MaxResourceAmount = 650;
+    }
+    else 
+    {
+      newTile.MaxResourceAmount = 0;
+      newTile.ResourceAmount = 0;
+    }
+    
+    mapMatrix[tile.XPos, tile.ZPos] = tileEntry.GetComponent<TileScript>();
+    Destroy(tile.gameObject);
+  }
 }

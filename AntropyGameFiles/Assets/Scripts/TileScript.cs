@@ -36,12 +36,12 @@ public class TileScript : MonoBehaviour
   /// <summary>
   /// Resources on the tile
   /// </summary>
-  double resourceAmount;
+  public double resourceAmount;
 
   /// <summary>
   /// Maximum of resources a tile can hold
   /// </summary>
-  int resource_max_amount;
+  public int resource_max_amount;
 
   /// <summary>
   /// Owned by player
@@ -55,26 +55,33 @@ public class TileScript : MonoBehaviour
 
   private void Awake()
   {
-    //type = 0;
-    //resourceAmount = 0;
     //resource_max_amount = 0;
-    //distanceAnthill = 0;
     assignedAnts = 0;
     freeAnts = 0;
   }
 
   /// <summary>
-  /// Assignment Over
+  /// Tile UI Activation
   /// </summary>
   private void OnMouseDown()
   {
     Debug.Log("in click mode");
     canvas.SetActive(true);
 
-    AntCounter antCounter = canvas.GetComponent<AntCounter>();
-    antCounter.tile = this;
-    antCounter.UpdateAntText();
+    if(xPos == 0 && zPos == 0) 
+    {
+      AntHillUI antHill = canvas.GetComponent<AntHillUI>();
+      antHill.tile = this;
+      antHill.UpdateAntText();
 
+    }
+    else 
+    {
+      
+      AntCounter antCounter = canvas.GetComponent<AntCounter>();
+      antCounter.tile = this;
+      antCounter.UpdateAntText();
+    }
     Debug.Log("element clicked" + UnityEngine.Random.Range(0, 40) + " pos: " + XPos + "|" + ZPos);
   }
 
@@ -115,7 +122,6 @@ public class TileScript : MonoBehaviour
       ResourceAmount = MaxResourceAmount;
     }
   }
-
 
   /// <summary>
   ///  Ants on Tile, getter and setter
