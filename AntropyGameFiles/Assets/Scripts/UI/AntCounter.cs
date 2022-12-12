@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-
+using System.Linq;
+using System;
+using Unity.VisualScripting;
 
 public class AntCounter : MonoBehaviour
 {
@@ -12,11 +14,13 @@ public class AntCounter : MonoBehaviour
     private int assignedAnts;
     private int maxAssignedAnts;
     private bool isAntHill;
+    private GameObject antCollection;
     public Button plusButton;
     public Button minusButton;
     public Button confirmButton;
     public TextMeshProUGUI freeAnts;
-    public TextMeshProUGUI assignedAntsText; 
+    public TextMeshProUGUI assignedAntsText;
+    public GameObject antPrefab;
     private GameManager gameManager;
 
   private void Awake()
@@ -30,6 +34,7 @@ public class AntCounter : MonoBehaviour
         plusButton.onClick.AddListener(IncreaseAnts);
         minusButton.onClick.AddListener(DecreaseAnts);
         confirmButton.onClick.AddListener(Confirm);
+        antCollection = new GameObject();
        // UpdateAntText();
     }
 
@@ -48,6 +53,8 @@ public class AntCounter : MonoBehaviour
             gameManager.freeAnts -= 1;
             SetAssignedAnts_remote();
             UpdateAntText();
+
+            if (!isAntHill) { SpawnAnt(); }
         }
     } 
 
@@ -59,8 +66,9 @@ public class AntCounter : MonoBehaviour
             gameManager.freeAnts += 1;
             SetAssignedAnts_remote();
             UpdateAntText();
-            
 
+
+            if (!isAntHill) { RemoveAnt(); }
         }
     }
 
@@ -102,5 +110,23 @@ public class AntCounter : MonoBehaviour
         {
             assignedAntsText.text = "assign " + assignedAnts + " ants";
         }
+    }
+
+    void SpawnAnt() 
+    {
+        GameObject ant = Instantiate<GameObject>(antPrefab, new Vector3(posX + 0.5f, 0.2f, posZ + 0.5f), Quaternion.identity, antCollection.transform) ;
+    }
+
+    void RemoveAnt() 
+    {
+        GameObject[] allAnts = GameObject.FindGameObjectsWithTag("Ant");
+
+        Vector3 where = new Vector3(posX + 0.5f, 0.2f, posZ + 0.5f);
+        if (allAnts.Length > 0)
+        {
+            GameObject squashThis = Array.Find(allAnts, element => element.GetComponent<AntPathing>().spawnpoint == where);
+            Destroy(squashThis);
+        }
+
     }
 }
