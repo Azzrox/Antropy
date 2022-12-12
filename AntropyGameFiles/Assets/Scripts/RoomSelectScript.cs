@@ -20,17 +20,14 @@ public class RoomSelectScript : MonoBehaviour
    /// </summary>
    int freeAnts;
 
-   /// <summary>
-   /// Canvas for menu buttons
-   /// </summary>
-   public GameObject canvas;
+   public int roomId = 0;
 
    private void Awake()
    {
       type = 0;
       assignedAnts = 0;
       freeAnts = 0;
-      canvas.SetActive(false);
+      
    }
 
    /// <summary>
@@ -39,10 +36,12 @@ public class RoomSelectScript : MonoBehaviour
    private void OnMouseDown()
    {
       Debug.Log("in click mode");
-      canvas.SetActive(true);
-      Debug.Log(canvas.name);
-      AntCounterAnthill antCounter = canvas.GetComponent<AntCounterAnthill>();
-      antCounter.room = this;
+      GameObject uiAssignAnts = GameObject.Find("AssignAnts");
+      uiAssignAnts.GetComponent<Canvas>().enabled = true;
+
+      AntCounter antCounter = uiAssignAnts.GetComponent<AntCounter>();
+      antCounter.SetAssignedAnts(roomId, 0, assignedAnts, 10, true);
+      
       antCounter.UpdateAntText();
    }
 
@@ -59,21 +58,6 @@ public class RoomSelectScript : MonoBehaviour
       set
       {
          assignedAnts = value;
-      }
-   }
-
-   /// <summary>
-   ///  Canvas for menu buttons, getter and setter
-   /// </summary>
-   public GameObject CanvasAssign
-   {
-      get
-      {
-         return canvas;
-      }
-      set
-      {
-         canvas = value;
       }
    }
 

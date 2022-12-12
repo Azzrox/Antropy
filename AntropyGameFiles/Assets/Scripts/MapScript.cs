@@ -69,7 +69,6 @@ public class MapScript : MonoBehaviour
         }
       }
     }
-    GameObject.Find("AssignAnts").SetActive(false);
   }
 
   void CreateAnthillTile(int i, int j) 
@@ -88,9 +87,6 @@ public class MapScript : MonoBehaviour
 
     //Assign ants on tile
     newTile.AssignedAnts = 0;
-
-    //Assign button canvas
-    newTile.CanvasAssign = GameObject.Find("AssignAnts");
 
     //save the script in the matrix
     mapMatrix[i, j] = newTile;
@@ -120,9 +116,6 @@ public class MapScript : MonoBehaviour
 
     //Assign ants on tile
     newTile.AssignedAnts = 0;
-
-    //Assign button canvas
-    newTile.CanvasAssign = GameObject.Find("AssignAnts");
 
     //save the script in the matrix
     mapMatrix[i, j] = newTile;
