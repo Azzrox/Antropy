@@ -304,17 +304,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc6d573013e9b844f8ce1ab78c15bd8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  totalAnts: 100
-  freeAnts: 100
-  resources: 0
-  currentSeason: 0
-  currentWeather: 0
-  hatcheryLevel: 0
-  storageLevel: 0
-  hatcheryMaxLevel: 3
-  storageMaxLevel: 0
-  hatcheryCost: 
-  storageCost: 00000000000000000000000000000000
   redTile: {fileID: 1250285422474318266, guid: 43fd3e39333f21447a7fe67914b55ada, type: 3}
   blackTile: {fileID: 5186685139827934826, guid: 0e2ba77605cb8d340a8898bd46f54da8, type: 3}
   mapInstance: {fileID: 0}
@@ -861,7 +850,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 262ccfb392af6094e9c0c1798abb7bc6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxTurnCount: 1000
 --- !u!114 &1024580172
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1237,6 +1225,10 @@ MonoBehaviour:
   - {fileID: 6490856156205094238, guid: 842d29e1b7c6be14686dd23e86dabd96, type: 3}
   - {fileID: 6490856156205094238, guid: 3d9d65be36a93904b9d6c8770220b812, type: 3}
   - {fileID: 3506134794464494661, guid: b7787d4f6e62a7b4baf8b70d55be5730, type: 3}
+  - {fileID: 6490856156205094238, guid: bc1a80e0751405f4d949c37ae37df846, type: 3}
+  - {fileID: 6490856156205094238, guid: c33dff1adb8a55446a7bddc5447dd0d2, type: 3}
+  - {fileID: 6490856156205094238, guid: e9e9f56f5605f6343b6c3ec328d630c0, type: 3}
+  - {fileID: 6490856156205094238, guid: f991ade05d3b3cc44a160aca5190c19e, type: 3}
   grassThreshhold: 400
   soilThreshold: 100
 --- !u!4 &1241786169

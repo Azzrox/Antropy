@@ -25,6 +25,7 @@ public class NextTurnScript : MonoBehaviour
       EventTurn();
       SeasonTurn();
       MessageTurn();
+      ExploreTurn();
       gameManager.currentTurnCount++;
     }
     else 
@@ -66,6 +67,32 @@ public class NextTurnScript : MonoBehaviour
         //constant growth +
         gameMap[i, j].CalculateNewResourceAmountFlat(500);
 
+        //check if the growth if we reached a threshhold to update the tile mesh
+        gameManager.mapInstance.TileErosionCheck(gameMap[i, j]);
+      }
+    }
+  }
+
+  void ExploreTurn()
+  {
+    TileScript[,] gameMap = gameManager.mapInstance.GameMap;
+    int[,] adder = new int[,] { { -1, 0 }, { -1, -1 }, { -1, 1 }, { 1, 0 }, { 1, -1 }, { 1, 1 }, { 0, -1 }, { 0, 1 } };
+    for (int i = 0; i < gameManager.mapInstance.rows; i++)
+    {
+      for (int j = 0; j < gameManager.mapInstance.columns; j++)
+      {
+        //constant growth +
+        if(gameMap[i, j].AssignedAnts > 0)
+        {
+          for (int k = 0; k < adder.Length / 2; k++)
+          {
+            if (i + adder[k, 0] < gameManager.mapInstance.rows && i + adder[k, 0] >= 0 && j + adder[k, 1] < gameManager.mapInstance.columns && j + adder[k, 1] >= 0)
+              if (gameMap[i + adder[k, 0], j + adder[k, 1]].Explored == false)
+              {
+                gameManager.mapInstance.SetExplored(gameMap[i + adder[k, 0], j + adder[k, 1]], true);
+              }
+          }
+        }
         //check if the growth if we reached a threshhold to update the tile mesh
         gameManager.mapInstance.TileErosionCheck(gameMap[i, j]);
       }

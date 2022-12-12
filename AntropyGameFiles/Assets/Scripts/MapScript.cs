@@ -110,11 +110,34 @@ public class MapScript : MonoBehaviour
         if (i < 3 && j < 3 && (j != 0 || i != 0))
         {
           ExchangeTilePrefab(mapMatrix[i, j], 1);
+          SetExplored(mapMatrix[i, j], true);
+          SetVisible(mapMatrix[i, j], true);
         }
       }
     }
   }
 
+  public void SetExplored(TileScript tile, bool explored)
+  {
+    tile.Explored = explored;
+    if (tile.Explored == true)
+    {
+      if(tile.TileType >= 5)
+      {
+        ExchangeTilePrefab(mapMatrix[tile.XPos, tile.ZPos], tile.TileType - 5);
+      }
+      else
+      {
+        ExchangeTilePrefab(mapMatrix[tile.XPos, tile.ZPos], tile.TileType);
+      }
+    }
+    //tile.GetComponentInChildren<MeshRenderer>().enabled = false;
+
+  }
+  public void SetVisible(TileScript tile, bool visible)
+  {
+    tile.Visible = visible;
+  }
   /// <summary>
   /// Creates the anthill tile
   /// </summary>
@@ -191,10 +214,12 @@ public class MapScript : MonoBehaviour
 
     //weights
     int basemax = 500;
-    int tileType = Random.Range(0, 4);
+    int tileType = Random.Range(5, 9); //For normal map : int tileType = Random.Range(0, 4);
+    //int tileType = Random.Range(0, 4);
     if (Random.Range(0, maxdist) > i+j + (maxdist) * GameManager.Instance.grassWeight)
     {
-      tileType = 1;
+      tileType = 6;
+      //tileType = 1; //Also needs to be in for normal map
     }
 
     var tileEntry = Instantiate(tilePrefabs[tileType], this.transform) as Transform;
@@ -209,7 +234,7 @@ public class MapScript : MonoBehaviour
     newTile.Visible = false;
 
     //Random Amount of resources on the tile
-    if (newTile.TileType == 1 || newTile.TileType == 2)
+    if (newTile.TileType == 6 || newTile.TileType == 7)
     {
       newTile.MaxResourceAmount = 500;
       for (int k = 0; k < i+j; k++)
@@ -217,7 +242,7 @@ public class MapScript : MonoBehaviour
         newTile.MaxResourceAmount = (int)(newTile.MaxResourceAmount + (newTile.MaxResourceAmount * GameManager.Instance.resourceWeight));
       }
       newTile.ResourceAmount = Random.Range(250, newTile.MaxResourceAmount);
-      if (newTile.TileType == 2)
+      if (newTile.TileType == 7)
       {
         newTile.ResourceAmount = (int)(GameManager.Instance.soilWeight * newTile.ResourceAmount);
       }
@@ -260,6 +285,18 @@ public class MapScript : MonoBehaviour
       case 4:
         type_name = "Anthill";
           break;
+      case 5:
+        type_name = "StoneBlack";
+        break;
+      case 6:
+        type_name = "GrassBlack";
+        break;
+      case 7:
+        type_name = "SoilBlack";
+        break;
+      case 8:
+        type_name = "WaterBlack";
+        break;
       default:
         type_name = "notSet";
         break;
@@ -311,6 +348,8 @@ public class MapScript : MonoBehaviour
   /// <param name="newTileType"></param>
   public void ExchangeTilePrefab(TileScript tile, int newTileType) 
   {
+    Debug.Log(newTileType);
+    Debug.Log(tilePrefabs[newTileType]);
     var tileEntry = Instantiate(tilePrefabs[newTileType], GameObject.Find("MapTiles").transform) as Transform;
     tileEntry.name = (TileName(newTileType) + ": [" + tile.XPos + "," + tile.ZPos + "]");
     tileEntry.position = tile.transform.position;
@@ -320,8 +359,8 @@ public class MapScript : MonoBehaviour
     newTile.TileDistance = tile.TileDistance;
     newTile.XPos = tile.XPos;
     newTile.ZPos = tile.ZPos;
-    newTile.Explored = false;
-    newTile.Visible = false;
+    newTile.Explored = tile.Explored;
+    newTile.Visible = tile.Visible;
 
     newTile.ResourceAmount = tile.ResourceAmount;
     
