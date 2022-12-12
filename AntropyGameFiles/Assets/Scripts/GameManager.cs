@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using System.Linq;
+using Unity.VisualScripting;
 
 public class GameManager : MonoBehaviour
 {
@@ -10,7 +11,7 @@ public class GameManager : MonoBehaviour
     //general player properties
     public string playerName;
     public int totalAnts = 100;
-    public int freeAnts;
+    public int freeAnts = 100;
     //map specific properties
     public int rows;
     public int columns;
@@ -24,8 +25,40 @@ public class GameManager : MonoBehaviour
     public int[] assignedHillAnts;
 
 
-    // Creates an instance that is present in all other classes
-    public static GameManager Instance;
+    public int resources;
+    public int currentSeason;
+    public int currentWeather;
+
+    public int hatcheryLevel;
+    public int storageLevel;
+    public int hatcheryMaxLevel;
+    public int storageMaxLevel;
+
+    public int[] hatcheryCost;
+    public int[] storageCost;
+    
+    public int maxAntsResourceTile;
+    public int maxAntsAnthillTile;
+
+    /// <summary>
+    /// Current Turn Number
+    /// </summary>
+    public int MaxTurnCount;
+
+    /// <summary>
+    /// Max allowed turn number
+    /// </summary>
+    public int currentTurnCount;
+
+
+    public MapScript mapInstance;
+    public MapCameraScript cameraInstance;
+
+
+
+
+  // Creates an instance that is present in all other classes
+  public static GameManager Instance;
     //takes care that there is only one instance of GameManager
     private void Awake()
     {
@@ -41,9 +74,12 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
         // optional: load last gameplay (if saved)
         //LoadLastGame();
-    }
 
-    [System.Serializable]
+        mapInstance = GameObject.Find("MapTiles").GetComponent<MapScript>();
+        cameraInstance = GameObject.Find("MapControls").GetComponent<MapCameraScript>();
+  }
+
+  [System.Serializable]
     class SaveData
     {
         // data to be saved (copy from above)
@@ -62,6 +98,8 @@ public class GameManager : MonoBehaviour
         public int[] assignedHillAnts;
 
     }
+
+    
 
     // optional: add filename from textInput
     public void SaveGame()
@@ -92,8 +130,18 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
-    }
+      //Anthill values
+      hatcheryLevel = 0;
+      storageLevel = 0;
+      hatcheryMaxLevel = 3;
+      storageMaxLevel = 3;
+      hatcheryCost = new int[] { 200, 400, 600, 800 };
+      storageCost = new int[] { 100, 200, 400, 600 };
+
+      //TODO DELETE THIS, after we have an actual game
+      //Current Default in case someone forgets
+      MaxTurnCount = 1000;
+  }
 
     // Update is called once per frame
     void Update()

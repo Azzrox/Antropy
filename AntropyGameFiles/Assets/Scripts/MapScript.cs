@@ -36,9 +36,18 @@ public class MapScript : MonoBehaviour
   /// </summary>
   public int soilThreshold;
 
+  /// <summary>
+  /// Game Manager Scene Instance
+  /// </summary>
+  GameManager gameManagerInstance;
+  
+
   private void Awake()
   {
-    mapMatrix = new TileScript[rows, columns];
+    gameManagerInstance = GameObject.Find("Game Manager").GetComponent<GameManager>();
+    rows = gameManagerInstance.rows;
+    columns = gameManagerInstance.columns;
+    mapMatrix = new TileScript[gameManagerInstance.rows, gameManagerInstance.columns];
   }
 
   /// <summary>
@@ -62,7 +71,8 @@ public class MapScript : MonoBehaviour
         }
       }
     }
-    GameObject.Find("AssignAnts").SetActive(false);
+    GameObject.Find("AssignAnts").GetComponent<Canvas>().enabled = false;
+    GameObject.Find("Anthill").GetComponent<Canvas>().enabled = false;
   }
 
   /// <summary>
@@ -89,11 +99,11 @@ public class MapScript : MonoBehaviour
         { 
           if(j + 1 > columns - 1) 
           {
-            exchangeTilePrefab(mapMatrix[i, j], mapMatrix[i, j - 1].TileType);
+            ExchangeTilePrefab(mapMatrix[i, j], mapMatrix[i, j - 1].TileType);
           }
           else 
           {
-            exchangeTilePrefab(mapMatrix[i, j], mapMatrix[i, j + 1].TileType);
+            ExchangeTilePrefab(mapMatrix[i, j], mapMatrix[i, j + 1].TileType);
           }
         }
       }
@@ -115,15 +125,13 @@ public class MapScript : MonoBehaviour
     newTile.XPos = i;
     newTile.ZPos = j;
     newTile.name = (TileName(tileType) + ": [" + i + "," + j + "]");
+    newTile.IsAntHill = true;
 
     //position of the spawn
     newTile.transform.position = new Vector3(i, 0, j);
 
     //Assign ants on tile
     newTile.AssignedAnts = 0;
-
-    //Assign button canvas
-    newTile.CanvasAssign = GameObject.Find("Anthill");
 
     //save the script in the matrix
     mapMatrix[i, j] = newTile;
@@ -152,6 +160,7 @@ public class MapScript : MonoBehaviour
     newTile.name = (TileName(tileType) + ": [" + i + "," + j + "]");
     newTile.XPos = i;
     newTile.ZPos = j;
+    newTile.IsAntHill = false;
 
     //Random Amount of resources on the tile
     if (newTile.TileType == 1 || newTile.TileType == 2)
@@ -166,9 +175,6 @@ public class MapScript : MonoBehaviour
     //Assign ants on tile
     newTile.AssignedAnts = 0;
 
-    //Assign button canvas
-    newTile.CanvasAssign = GameObject.Find("AssignAnts");
-    
     //save the script in the matrix
     mapMatrix[i, j] = newTile;
   }
@@ -230,7 +236,7 @@ public class MapScript : MonoBehaviour
       {
         //update to soil
         int newType = 2;
-        exchangeTilePrefab(tile, newType);
+        ExchangeTilePrefab(tile, newType);
       }
     }
     else if (tile.TileType == 2)
@@ -239,7 +245,7 @@ public class MapScript : MonoBehaviour
       {
         //update to gras
         int newType = 1;
-        exchangeTilePrefab(tile, newType);
+        ExchangeTilePrefab(tile, newType);
       }
     }
   }
@@ -249,7 +255,7 @@ public class MapScript : MonoBehaviour
   /// </summary>
   /// <param name="tile"></param>
   /// <param name="newTileType"></param>
-  public void exchangeTilePrefab(TileScript tile, int newTileType) 
+  public void ExchangeTilePrefab(TileScript tile, int newTileType) 
   {
     var tileEntry = Instantiate(tilePrefabs[newTileType], GameObject.Find("MapTiles").transform) as Transform;
     tileEntry.name = (TileName(newTileType) + ": [" + tile.XPos + "," + tile.ZPos + "]");
@@ -265,7 +271,9 @@ public class MapScript : MonoBehaviour
     
     newTile.FreeAnts = tile.FreeAnts;
     newTile.AssignedAnts = tile.AssignedAnts;
-    newTile.canvas = tile.canvas;
+    
+    //old
+    //newTile.canvas = tile.canvas;
 
     //Resources on the Tile only soil and grass can have resources
     if(newTileType == 1 || newTileType == 2) 

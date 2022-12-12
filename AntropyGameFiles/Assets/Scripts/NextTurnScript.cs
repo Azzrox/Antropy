@@ -4,25 +4,11 @@ using UnityEngine;
 
 public class NextTurnScript : MonoBehaviour
 {
-  /// <summary>
-  /// Current Turn Number
-  /// </summary>
-  int currentTurnCount;
-
-  /// <summary>
-  /// Max allowed turn number
-  /// </summary>
-  public int MaxTurnCount;
-
-  private GameManagerUI gameManager;
+  private GameManager gameManager;
 
   private void Awake()
   {
-    gameManager = GameObject.Find("Game Manager").GetComponent<GameManagerUI>();
-
-    //TODO DELETE THIS, after we have an actual game
-    //Current Default in case someone forgets
-    MaxTurnCount = 1000;
+    gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
   }
 
   /// <summary>
@@ -30,16 +16,16 @@ public class NextTurnScript : MonoBehaviour
   /// </summary>
   public void NextTurn() 
   {
-    if(currentTurnCount < MaxTurnCount) 
+    if(gameManager.currentTurnCount < gameManager.MaxTurnCount) 
     {
-      Debug.Log("Turn: " + currentTurnCount);
+      Debug.Log("Turn: " + gameManager.currentTurnCount);
       AntTurn();
       MapTurn();
       WeatherTurn();
       EventTurn();
       SeasonTurn();
       MessageTurn();
-      currentTurnCount++;
+      gameManager.currentTurnCount++;
     }
     else 
     {

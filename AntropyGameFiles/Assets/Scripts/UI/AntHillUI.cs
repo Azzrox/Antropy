@@ -7,6 +7,11 @@ using TMPro;
 public class AntHillUI : MonoBehaviour
 {
 
+  private int posX;
+  private int posZ;
+  private int assignedAnts;
+  private int maxAssignedAnts;
+
   public Button storageUpgradeplusButton;
   public Button hatcheryUpgradeplusButton;
   public Button assignAntsToHatcherplusButton;
@@ -22,12 +27,12 @@ public class AntHillUI : MonoBehaviour
   public TextMeshProUGUI popPerTurnText;
 
   public TileScript tile;
-  private GameManagerUI gameManager;
+  private GameManager gameManager;
 
 
   private void Awake()
   {
-    gameManager = GameObject.Find("Game Manager").GetComponent<GameManagerUI>();
+    gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
   }
   private void Start()
   {
@@ -41,10 +46,12 @@ public class AntHillUI : MonoBehaviour
   void IncreaseAnts()
   {
     int freeAnts = gameManager.freeAnts;
-    if (freeAnts > 0)
+
+    if (freeAnts > 0 && tile.AssignedAnts < tile.MaxAssignedAnts)
     {
-      tile.AssignedAnts += 1;
+      assignedAnts += 1;
       gameManager.freeAnts -= 1;
+      SetAssignedAnts_remote();
       UpdateAntText();
       PopulationPerTurnTextUpdate();
     }
@@ -52,21 +59,46 @@ public class AntHillUI : MonoBehaviour
 
   void DecreaseAnts()
   {
-    if (tile.AssignedAnts > 0)
+    if (assignedAnts > 0)
     {
-      tile.AssignedAnts -= 1;
+      assignedAnts -= 1;
       gameManager.freeAnts += 1;
+      SetAssignedAnts_remote();
       UpdateAntText();
       PopulationPerTurnTextUpdate();
-
     }
   }
 
   void Confirm()
   {
-    gameObject.SetActive(false);
+    gameObject.GetComponent<Canvas>().enabled = false;
   }
 
+  public void SetAssignedAnts_remote()
+  {
+    if (tile.IsAntHill)
+    {
+      gameManager.mapInstance.GameMap[tile.XPos, tile.ZPos].AssignedAnts = assignedAnts;
+    }
+    else
+    {
+      gameManager.mapInstance.GameMap[tile.XPos, tile.ZPos].AssignedAnts = assignedAnts;
+    }
+
+  }
+
+  public void SetAssignedAnts(int ix, int iz, int asAnts, int maxAnts, bool isHill)
+  {
+    // could be replaced by ix, iy to get values from matrix
+    posX = ix;
+    posZ = iz;
+    assignedAnts = asAnts;
+    maxAssignedAnts = maxAnts;
+  }
+
+  /// <summary>
+  /// Update Anthill UI Text with current Data
+  /// </summary>
   public void UpdateAntText()
   {
 
@@ -87,6 +119,9 @@ public class AntHillUI : MonoBehaviour
     PopulationPerTurnTextUpdate();
   }
 
+  /// <summary>
+  /// Update the population count per turn
+  /// </summary>
   void PopulationPerTurnTextUpdate() 
   {
     int basicGrowth = 1;
@@ -94,6 +129,9 @@ public class AntHillUI : MonoBehaviour
     popPerTurnText.text = "Pop per Turn: " + newGrowth;
   }
 
+  /// <summary>
+  /// Increase the level of the hatchery
+  /// </summary>
   void IncreaseLevelHatchery() 
   {
     if(gameManager.hatcheryLevel < gameManager.hatcheryMaxLevel) 
@@ -112,6 +150,9 @@ public class AntHillUI : MonoBehaviour
     }
   }
 
+  /// <summary>
+  /// Increase the Level of the Storage
+  /// </summary>
   void IncreaseLevelStorage()
   {
     if (gameManager.storageLevel < gameManager.storageMaxLevel)

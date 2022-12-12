@@ -14,12 +14,12 @@ public class AntCounterAnthill : MonoBehaviour
    public Button confirmButton;
    public TextMeshProUGUI freeAnts;
    public TextMeshProUGUI assignedAntsText;
-  //private GameManagerAnthillScript gameManager;
-  GameManagerUI gameManager;
+   //private GameManagerAnthillScript gameManager;
+   GameManager gameManager;
 
    private void Awake()
    {
-      gameManager = GameObject.Find("Game Manager").GetComponent<GameManagerUI>();
+      gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
    }
 
    // Start is called before the first frame update

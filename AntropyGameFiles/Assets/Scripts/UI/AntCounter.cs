@@ -17,11 +17,11 @@ public class AntCounter : MonoBehaviour
     public Button confirmButton;
     public TextMeshProUGUI freeAnts;
     public TextMeshProUGUI assignedAntsText; 
-    private GameManagerUI gameManager;
+    private GameManager gameManager;
 
   private void Awake()
   {
-    gameManager = GameObject.Find("Game Manager").GetComponent<GameManagerUI>();
+    gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
   }
 
   // Start is called before the first frame update
@@ -81,9 +81,9 @@ public class AntCounter : MonoBehaviour
     public void SetAssignedAnts_remote(){
         if (isAntHill)
         {
-            MapScript.mapInstance.GameMap[posX,posZ].AssignedAnts = assignedAnts;
+            gameManager.mapInstance.GameMap[posX,posZ].AssignedAnts = assignedAnts;
         } else{
-            MapScript.mapInstance.GameMap[posX,posZ].AssignedAnts = assignedAnts;
+            gameManager.mapInstance.GameMap[posX,posZ].AssignedAnts = assignedAnts;
         }
         
     }

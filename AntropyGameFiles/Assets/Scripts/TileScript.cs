@@ -27,6 +27,10 @@ public class TileScript : MonoBehaviour
   /// </summary>
   int assignedAnts;
 
+  /// <summary>
+  /// Max Counter of assigned ants on tile
+  /// </summary>
+  int maxAssignedAnts;
 
   /// <summary>
   /// Free Ants Global
@@ -48,9 +52,25 @@ public class TileScript : MonoBehaviour
   /// </summary>
   bool ownedByPlayer = false;
 
+  bool isAnthill = false;
+
+  GameManager gameManagerInstance;
+
   private void Awake()
   {
-    //resource_max_amount = 0;
+    gameManagerInstance = GameObject.Find("Game Manager").GetComponent<GameManager>();
+  }
+  private void Start()
+  {
+    if (isAnthill) 
+    {
+      maxAssignedAnts = gameManagerInstance.maxAntsAnthillTile;
+    }
+    else 
+    {
+      maxAssignedAnts = gameManagerInstance.maxAntsResourceTile;
+    }
+    
     assignedAnts = 0;
     freeAnts = 0;
   }
@@ -61,27 +81,26 @@ public class TileScript : MonoBehaviour
   private void OnMouseDown()
   {
     Debug.Log("in click mode");
-    GameObject uiAssignAnts = GameObject.Find("AssignAnts");
-    uiAssignAnts.GetComponent<Canvas>().enabled = true;
-
-    AntCounter antCounter = uiAssignAnts.GetComponent<AntCounter>();
-    antCounter.SetAssignedAnts(XPos, ZPos, assignedAnts, 10, false);
-    antCounter.UpdateAntText();
-
     if(xPos == 0 && zPos == 0) 
     {
-      AntHillUI antHill = canvas.GetComponent<AntHillUI>();
+      GameObject anthillUI = GameObject.Find("Anthill");
+      anthillUI.GetComponent<Canvas>().enabled = true;
+      AntHillUI antHill = anthillUI.GetComponent<AntHillUI>();
+      antHill.SetAssignedAnts(XPos, ZPos, assignedAnts, maxAssignedAnts, false);
       antHill.tile = this;
       antHill.UpdateAntText();
 
     }
     else 
     {
-      
-      AntCounter antCounter = canvas.GetComponent<AntCounter>();
-      antCounter.tile = this;
+      GameObject uiAssignAnts = GameObject.Find("AssignAnts");
+      uiAssignAnts.GetComponent<Canvas>().enabled = true;
+
+      AntCounter antCounter = uiAssignAnts.GetComponent<AntCounter>();
+      antCounter.SetAssignedAnts(XPos, ZPos, assignedAnts, maxAssignedAnts, false);
       antCounter.UpdateAntText();
     }
+   
     Debug.Log("element clicked" + UnityEngine.Random.Range(0, 40) + " pos: " + XPos + "|" + ZPos);
   }
 
@@ -124,7 +143,7 @@ public class TileScript : MonoBehaviour
   }
 
   /// <summary>
-  ///  Ants on Tile, getter and setter
+  ///  Ants on tile, getter and setter
   /// </summary>
   public int AssignedAnts
   {
@@ -135,6 +154,21 @@ public class TileScript : MonoBehaviour
     set
     {
       assignedAnts = value;
+    }
+  }
+
+  /// <summary>
+  ///  Max ants on tile, getter and setter
+  /// </summary>
+  public int MaxAssignedAnts
+  {
+    get
+    {
+      return maxAssignedAnts;
+    }
+    set
+    {
+      maxAssignedAnts = value;
     }
   }
 
@@ -241,6 +275,21 @@ public class TileScript : MonoBehaviour
     set
     {
       resource_max_amount = value;
+    }
+  }
+
+  /// <summary>
+  /// Anthill?, getter/setter
+  /// </summary>
+  public bool IsAntHill
+  {
+    get
+    {
+      return isAnthill;
+    }
+    set
+    {
+      isAnthill = value;
     }
   }
 

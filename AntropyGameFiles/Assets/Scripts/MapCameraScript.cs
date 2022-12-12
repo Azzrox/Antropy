@@ -20,32 +20,32 @@ public class MapCameraScript : MonoBehaviour
   /// <summary>
   /// xMin camera clamp
   /// </summary>
-  float xMin;
+  public float xMin;
 
   /// <summary>
   /// xMax camera clamp
   /// </summary>
-  float xMax;
+  public float xMax;
 
   /// <summary>
   /// yMin camera clamp
   /// </summary>
-  float yMin;
+  public float yMin;
 
   /// <summary>
   /// yMax camera clamp
   /// </summary>
-  float yMax;
+  public float yMax;
 
   /// <summary>
   /// zMin camera clamp
   /// </summary>
-  float zMin;
+  public float zMin;
 
   /// <summary>
   /// zMax camera clamp
   /// </summary>
-  float zMax;
+  public float zMax;
 
   private void Start()
   {
