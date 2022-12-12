@@ -52,6 +52,16 @@ public class TileScript : MonoBehaviour
   /// </summary>
   bool ownedByPlayer = false;
 
+  /// <summary>
+  /// Fog of war Unexplored/Explored
+  /// </summary>
+  public bool explored = false;
+
+  /// <summary>
+  /// Fog of war Visible
+  /// </summary>
+  public bool visible = false;
+
   bool isAnthill = false;
 
   GameManager gameManagerInstance;
@@ -305,6 +315,35 @@ public class TileScript : MonoBehaviour
     set
     {
       ownedByPlayer = value;
+    }
+  }
+
+  /// <summary>
+  /// Owner Status, getter/setter
+  /// </summary>
+  public bool Explored
+  {
+    get
+    {
+      return explored;
+    }
+    set
+    {
+      explored = value;
+    }
+  }
+  /// <summary>
+  /// Owner Status, getter/setter
+  /// </summary>
+  public bool Visible
+  {
+    get
+    {
+      return visible;
+    }
+    set
+    {
+      visible = value;
     }
   }
 }
