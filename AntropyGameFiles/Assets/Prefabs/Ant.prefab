@@ -1097,11 +1097,11 @@ GameObject:
   - component: {fileID: 7276248057907921532}
   - component: {fileID: 3610270456659548166}
   - component: {fileID: 5677028977794422565}
-  - component: {fileID: -7610569596847484009}
   - component: {fileID: 8357834629153702320}
+  - component: {fileID: 4612326160622740907}
   m_Layer: 0
   m_Name: Ant
-  m_TagString: Untagged
+  m_TagString: Ant
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1155,21 +1155,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b37ae95b219d5f4bafe32f647f30383, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  turnspeed: 8
---- !u!136 &-7610569596847484009
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8048422513367718086}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.03
-  m_Height: 0.15
-  m_Direction: 2
-  m_Center: {x: 0, y: 0, z: 0}
+  turnspeed: 5
 --- !u!54 &8357834629153702320
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1181,11 +1167,25 @@ Rigidbody:
   m_Mass: 1
   m_Drag: 0
   m_AngularDrag: 0
-  m_UseGravity: 0
+  m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!136 &4612326160622740907
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8048422513367718086}
+  m_Material: {fileID: 13400000, guid: 696699a1d8edb8343ab56e76aa913faf, type: 2}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.02
+  m_Height: 0.1
+  m_Direction: 2
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &8153952395054802260
 GameObject:
   m_ObjectHideFlags: 0

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6490856156205094236}
   - component: {fileID: 6490856156205094237}
   - component: {fileID: -3956775150319598741}
-  - component: {fileID: 2572189119349851987}
+  - component: {fileID: 1192528541070249678}
   m_Layer: 0
   m_Name: Soil Tile
   m_TagString: Untagged
@@ -144,9 +144,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbdfbb3bc840aa24da5a72bc88657f29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  canvas: {fileID: 0}
---- !u!65 &2572189119349851987
-BoxCollider:
+  resourceAmount: 0
+  resource_max_amount: 0
+--- !u!64 &1192528541070249678
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -155,6 +156,7 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 0.5, z: 1}
-  m_Center: {x: 0.5, y: -0.1, z: 0.5}
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}

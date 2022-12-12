@@ -5,6 +5,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter))]
 [RequireComponent(typeof(MeshRenderer))]
+[RequireComponent(typeof(MeshCollider))]
 
 public class MapTileGeneration : MonoBehaviour
 {
@@ -42,7 +43,13 @@ public class MapTileGeneration : MonoBehaviour
 
         CreateShape();
         UpdateMesh();
+        UpdateCollider();
 
+    }
+
+    void UpdateCollider()
+    {
+        GetComponent<MeshCollider>().sharedMesh = mesh;
     }
 
     //void Update()
