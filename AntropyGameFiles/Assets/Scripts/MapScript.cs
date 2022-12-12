@@ -110,11 +110,23 @@ public class MapScript : MonoBehaviour
         if (i < 3 && j < 3 && (j != 0 || i != 0))
         {
           ExchangeTilePrefab(mapMatrix[i, j], 1);
+          SetExplored(mapMatrix[i, j], true);
+          SetVisible(mapMatrix[i, j], true);
         }
       }
     }
   }
 
+  public void SetExplored(TileScript tile, bool explored)
+  {
+    tile.Explored = explored;
+    //tile.GetComponentInChildren<MeshRenderer>().enabled = false;
+
+  }
+  public void SetVisible(TileScript tile, bool visible)
+  {
+    tile.Visible = visible;
+  }
   /// <summary>
   /// Creates the anthill tile
   /// </summary>

@@ -115,12 +115,14 @@ public class MapTileGeneration : MonoBehaviour
                         else if (tyleType == TyleType.stones)
                         { decorationRotation = UnityEngine.Random.rotation; }
 
-
-                        foliage = Instantiate(decorationPrefab, new Vector3((float)(x + UnityEngine.Random.value * 0.2f) / resolution + originX, y, (float)(z + UnityEngine.Random.value * 0.2f) / resolution + originZ), decorationRotation, gameObject.transform);
-                        foliage.transform.localScale = new Vector3((1f + UnityEngine.Random.value * 0.2f) * size, (1f + UnityEngine.Random.value * 0.2f) * size, (1f + UnityEngine.Random.value * 0.2f) * size);
-
+                        if(decorationPrefab != null)
+                        {
+                          foliage = Instantiate(decorationPrefab, new Vector3((float)(x + UnityEngine.Random.value * 0.2f) / resolution + originX, y, (float)(z + UnityEngine.Random.value * 0.2f) / resolution + originZ), decorationRotation, gameObject.transform);
+                          foliage.transform.localScale = new Vector3((1f + UnityEngine.Random.value * 0.2f) * size, (1f + UnityEngine.Random.value * 0.2f) * size, (1f + UnityEngine.Random.value * 0.2f) * size);
+                        }   
                     }
                 }
+
                 if (minTerrainHeight > y) { minTerrainHeight = y; }
                 if (maxTerrainHeight < y) { maxTerrainHeight = y; }
 
