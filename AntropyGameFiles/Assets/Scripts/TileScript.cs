@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
+using System;
 
 public class TileScript : MonoBehaviour
 {
@@ -47,17 +48,12 @@ public class TileScript : MonoBehaviour
   /// </summary>
   bool ownedByPlayer = false;
 
-  /// <summary>
-  /// Canvas for menu buttons
-  /// </summary>
-  public GameObject canvas;
-
   private void Awake()
   {
-    type = 0;
-    resourceAmount = 0;
-    resource_max_amount = 0;
-    distanceAnthill = 0;
+    //type = 0;
+    //resourceAmount = 0;
+    //resource_max_amount = 0;
+    //distanceAnthill = 0;
     assignedAnts = 0;
     freeAnts = 0;
   }
@@ -68,13 +64,14 @@ public class TileScript : MonoBehaviour
   private void OnMouseDown()
   {
     Debug.Log("in click mode");
-    canvas.SetActive(true);
+    GameObject uiAssignAnts = GameObject.Find("AssignAnts");
+    uiAssignAnts.GetComponent<Canvas>().enabled = true;
 
-    AntCounter antCounter = canvas.GetComponent<AntCounter>();
-    antCounter.tile = this;
+    AntCounter antCounter = uiAssignAnts.GetComponent<AntCounter>();
+    antCounter.SetAssignedAnts(XPos, ZPos, assignedAnts, 10, false);
     antCounter.UpdateAntText();
 
-    Debug.Log("element clicked" + Random.Range(0, 40) + " pos: " + XPos + "|" + ZPos);
+    Debug.Log("element clicked" + UnityEngine.Random.Range(0, 40) + " pos: " + XPos + "|" + ZPos);
   }
 
   /// <summary>
@@ -83,7 +80,7 @@ public class TileScript : MonoBehaviour
   /// <param name="percentage_of_change"> multiplicator </param>
   public void CalculateNewResourceAmount(double percentage_of_change)
   {
-    ResourceAmount += (ResourceAmount / 100) * percentage_of_change;
+    ResourceAmount += Math.Round(((ResourceAmount / 100) * percentage_of_change), 2);
 
     if (ResourceAmount < 0)
     {
@@ -131,20 +128,6 @@ public class TileScript : MonoBehaviour
     }
   }
 
-  /// <summary>
-  ///  Canvas for menu buttons, getter and setter
-  /// </summary>
-  public GameObject CanvasAssign
-  {
-    get
-    {
-      return canvas;
-    }
-    set
-    {
-      canvas = value;
-    }
-  }
 
   /// <summary>
   /// Tile type, getter and setter

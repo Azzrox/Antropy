@@ -39,8 +39,8 @@ Material:
     - _RippleDensity: 6
     - _RippleSlimness: 3
     - _RippleSpeed: 1
-    - _WaveHeight: 0.1
-    - _WaveSize: 5
+    - _WaveHeight: 0.05
+    - _WaveSize: 10
     - _WaveSpeed: 0.1
     m_Colors:
     - _BaseColor: {r: 0.12967241, g: 0.19481407, b: 0.8773585, a: 0}
