@@ -45,12 +45,12 @@ public class TileScript : MonoBehaviour
   /// <summary>
   /// Maximum of resources a tile can hold
   /// </summary>
-  public int resourceMaxAmount;
+  public int resource_max_amount;
 
   /// <summary>
   /// Owned by player
   /// </summary>
-  public bool ownedByPlayer = false;
+  bool ownedByPlayer = false;
 
   /// <summary>
   /// Fog of war Unexplored/Explored
@@ -100,9 +100,6 @@ public class TileScript : MonoBehaviour
       antHill.tile = this;
       antHill.UpdateAntText();
 
-      GameObject uiMiniBarInfo = GameObject.Find("MiniBarInfo");
-      uiMiniBarInfo.GetComponent<MiniBarInfoUI>().MiniBarInfoUpdate();
-
     }
     else 
     {
@@ -112,9 +109,6 @@ public class TileScript : MonoBehaviour
       AntCounter antCounter = uiAssignAnts.GetComponent<AntCounter>();
       antCounter.SetAssignedAnts(XPos, ZPos, assignedAnts, maxAssignedAnts, false);
       antCounter.UpdateAntText();
-
-      GameObject uiMiniBarInfo = GameObject.Find("MiniBarInfo");
-      uiMiniBarInfo.GetComponent<MiniBarInfoUI>().MiniBarInfoUpdate();
     }
    
     Debug.Log("element clicked" + UnityEngine.Random.Range(0, 40) + " pos: " + XPos + "|" + ZPos);
@@ -151,7 +145,8 @@ public class TileScript : MonoBehaviour
     {
       ResourceAmount = 0;
     }
-    else if (ResourceAmount > MaxResourceAmount)
+
+    if (ResourceAmount > MaxResourceAmount)
     {
       ResourceAmount = MaxResourceAmount;
     }
@@ -285,11 +280,11 @@ public class TileScript : MonoBehaviour
   {
     get
     {
-      return resourceMaxAmount;
+      return resource_max_amount;
     }
     set
     {
-      resourceMaxAmount = value;
+      resource_max_amount = value;
     }
   }
 

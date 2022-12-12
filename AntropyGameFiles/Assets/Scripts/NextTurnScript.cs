@@ -21,7 +21,7 @@ public class NextTurnScript : MonoBehaviour
       Debug.Log("Turn: " + gameManager.currentTurnCount);
       AntTurn();
       MapTurn();
-      //WeatherTurn();
+      WeatherTurn();
       EventTurn();
       SeasonTurn();
       MessageTurn();
@@ -42,20 +42,13 @@ public class NextTurnScript : MonoBehaviour
     {
       for (int j = 0; j < gameManager.mapInstance.columns; j++)
       {
-        
-        //Resource Gathering Calculation
+        //gameMap[i, j].CalculateNewResourceAmountFlat(50);
         if(gameMap[i, j].OwnedByPlayer) 
         {
-          float gatheringBase = gameMap[i, j].AssignedAnts * gameManager.resourceGatherRate;
-
-          for (int k = 0; k < gameMap[i, j].TileDistance; k++)
-          {
-            gatheringBase = Mathf.Ceil(gatheringBase * gameManager.distanceGatheringReductionRate);
-          }
-           
-          gameManager.resources += (int) gatheringBase;
-          Debug.Log("NewResources: " + gameManager.resources);
-          gameMap[i, j].CalculateNewResourceAmountFlat((int)-gatheringBase);
+          //calculate gathering rate (basic idea)
+          int gathering_rate = 20;
+          gameManager.resources += gathering_rate;
+          gameMap[i, j].CalculateNewResourceAmount(-gathering_rate);
         }
       }
     }
@@ -65,15 +58,17 @@ public class NextTurnScript : MonoBehaviour
   {
     //Insert Map Turn
     //change the tile object
+    TileScript[,] gameMap = gameManager.mapInstance.GameMap;//game_resources.map_instance.GameMap;
+
     for (int i = 0; i < gameManager.mapInstance.rows; i++)
     {
       for (int j = 0; j < gameManager.mapInstance.columns; j++)
       {
         //constant growth +
-        gameManager.mapInstance.GameMap[i, j].CalculateNewResourceAmountFlat(gameManager.tileRegrowAmount);
+        gameMap[i, j].CalculateNewResourceAmountFlat(500);
 
         //check if the growth if we reached a threshhold to update the tile mesh
-        gameManager.mapInstance.TileErosionCheck(gameManager.mapInstance.GameMap[i, j]);
+        gameManager.mapInstance.TileErosionCheck(gameMap[i, j]);
       }
     }
   }
@@ -107,7 +102,6 @@ public class NextTurnScript : MonoBehaviour
   void WeatherTurn()
   {
     //Insert Weather Turn
-    gameManager.weatherInstance.UpdateWeather(gameManager.currentSeason);
   }
 
   void EventTurn() 
