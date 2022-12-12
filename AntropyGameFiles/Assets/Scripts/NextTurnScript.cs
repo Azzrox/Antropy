@@ -45,10 +45,16 @@ public class NextTurnScript : MonoBehaviour
         //gameMap[i, j].CalculateNewResourceAmountFlat(50);
         if(gameMap[i, j].OwnedByPlayer) 
         {
-          //calculate gathering rate (basic idea)
-          int gathering_rate = 20;
-          gameManager.resources += gathering_rate;
-          gameMap[i, j].CalculateNewResourceAmount(-gathering_rate);
+          float gatheringBase = gameMap[i, j].AssignedAnts * gameManager.resourceGatherRate;
+
+          for (int k = 0; k < gameMap[i, j].TileDistance; k++)
+          {
+            gatheringBase = Mathf.Ceil(gatheringBase * gameManager.distanceGatheringReductionRate);
+          }
+
+          gameManager.resources += (int)gatheringBase;
+          Debug.Log("NewResources: " + gameManager.resources);
+          gameMap[i, j].CalculateNewResourceAmountFlat((int)-gatheringBase);
         }
       }
     }
