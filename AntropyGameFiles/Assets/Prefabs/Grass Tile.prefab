@@ -14,7 +14,8 @@ GameObject:
   - component: {fileID: 6490856156205094237}
   - component: {fileID: 8319956492405307339}
   - component: {fileID: -8377243377111452828}
-  m_Layer: 0
+  - component: {fileID: -8746236953246023400}
+  m_Layer: 6
   m_Name: Grass Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -145,7 +146,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   resourceAmount: 0
-  resource_max_amount: 0
+  resourceMaxAmount: 0
+  ownedByPlayer: 0
+  explored: 0
+  visible: 0
 --- !u!64 &-8377243377111452828
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -160,3 +164,15 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
+--- !u!114 &-8746236953246023400
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6490856156205094234}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5c6d6ebd32068d49b9ad677fee3ca7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

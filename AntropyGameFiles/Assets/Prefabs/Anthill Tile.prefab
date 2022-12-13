@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3506134794464494659}
   - component: {fileID: 3506134794464494656}
   - component: {fileID: 2659524651663317172}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Anthill Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -110,4 +110,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbdfbb3bc840aa24da5a72bc88657f29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  canvas: {fileID: 0}
+  resourceAmount: 0
+  resourceMaxAmount: 0
+  ownedByPlayer: 0
+  explored: 0
+  visible: 0

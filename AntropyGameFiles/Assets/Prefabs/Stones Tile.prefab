@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 6490856156205094237}
   - component: {fileID: 1955278565170114836}
   - component: {fileID: -2773115448326233151}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Stones Tile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -145,7 +145,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   resourceAmount: 0
-  resource_max_amount: 0
+  resourceMaxAmount: 0
+  ownedByPlayer: 0
+  explored: 0
+  visible: 0
 --- !u!64 &-2773115448326233151
 MeshCollider:
   m_ObjectHideFlags: 0

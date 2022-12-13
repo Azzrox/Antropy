@@ -45,12 +45,12 @@ public class TileScript : MonoBehaviour
   /// <summary>
   /// Maximum of resources a tile can hold
   /// </summary>
-  public int resource_max_amount;
+  public int resourceMaxAmount;
 
   /// <summary>
   /// Owned by player
   /// </summary>
-  bool ownedByPlayer = false;
+  public bool ownedByPlayer = false;
 
   /// <summary>
   /// Fog of war Unexplored/Explored
@@ -65,6 +65,7 @@ public class TileScript : MonoBehaviour
   bool isAnthill = false;
 
   GameManager gameManagerInstance;
+  private MouseListenerUI uiListener;
 
   private void Awake()
   {
@@ -83,6 +84,7 @@ public class TileScript : MonoBehaviour
     
     assignedAnts = 0;
     freeAnts = 0;
+    uiListener = GameObject.Find("NextTurnCanvas").GetComponent<MouseListenerUI>();
   }
 
   /// <summary>
@@ -90,28 +92,44 @@ public class TileScript : MonoBehaviour
   /// </summary>
   private void OnMouseDown()
   {
-    Debug.Log("in click mode");
-    if(xPos == 0 && zPos == 0) 
-    {
-      GameObject anthillUI = GameObject.Find("Anthill");
-      anthillUI.GetComponent<Canvas>().enabled = true;
-      AntHillUI antHill = anthillUI.GetComponent<AntHillUI>();
-      antHill.SetAssignedAnts(XPos, ZPos, assignedAnts, maxAssignedAnts, false);
-      antHill.tile = this;
-      antHill.UpdateAntText();
 
-    }
-    else 
+    if (uiListener.isUIOverride)
     {
-      GameObject uiAssignAnts = GameObject.Find("AssignAnts");
-      uiAssignAnts.GetComponent<Canvas>().enabled = true;
-
-      AntCounter antCounter = uiAssignAnts.GetComponent<AntCounter>();
-      antCounter.SetAssignedAnts(XPos, ZPos, assignedAnts, maxAssignedAnts, false);
-      antCounter.UpdateAntText();
+      Debug.Log("Cancelled OnMouseDown! A UI element has override this object!");
     }
-   
-    Debug.Log("element clicked" + UnityEngine.Random.Range(0, 40) + " pos: " + XPos + "|" + ZPos);
+    else
+    {
+      Debug.Log("in click mode");
+      if (xPos == 0 && zPos == 0)
+      {
+        GameObject anthillUI = GameObject.Find("Anthill");
+        anthillUI.GetComponent<Canvas>().enabled = true;
+        AntHillUI antHill = anthillUI.GetComponent<AntHillUI>();
+        antHill.SetAssignedAnts(XPos, ZPos, assignedAnts, maxAssignedAnts, false);
+        antHill.tile = this;
+        antHill.UpdateAntText();
+
+        GameObject uiMiniBarInfo = GameObject.Find("MiniBarInfo");
+        uiMiniBarInfo.GetComponent<MiniBarInfoUI>().MiniBarInfoUpdate();
+
+      }
+      else
+      {
+        GameObject uiAssignAnts = GameObject.Find("AssignAnts");
+        uiAssignAnts.GetComponent<Canvas>().enabled = true;
+
+        AntCounter antCounter = uiAssignAnts.GetComponent<AntCounter>();
+        antCounter.SetAssignedAnts(XPos, ZPos, assignedAnts, maxAssignedAnts, false);
+        antCounter.UpdateAntText();
+
+        GameObject uiMiniBarInfo = GameObject.Find("MiniBarInfo");
+        uiMiniBarInfo.GetComponent<MiniBarInfoUI>().MiniBarInfoUpdate();
+      }
+
+      Debug.Log("element clicked" + UnityEngine.Random.Range(0, 40) + " pos: " + XPos + "|" + ZPos);
+    }
+
+    
   }
 
   /// <summary>
@@ -145,8 +163,7 @@ public class TileScript : MonoBehaviour
     {
       ResourceAmount = 0;
     }
-
-    if (ResourceAmount > MaxResourceAmount)
+    else if (ResourceAmount > MaxResourceAmount)
     {
       ResourceAmount = MaxResourceAmount;
     }
@@ -280,11 +297,11 @@ public class TileScript : MonoBehaviour
   {
     get
     {
-      return resource_max_amount;
+      return resourceMaxAmount;
     }
     set
     {
-      resource_max_amount = value;
+      resourceMaxAmount = value;
     }
   }
 

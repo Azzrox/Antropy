@@ -85,6 +85,8 @@ public class AntHillUI : MonoBehaviour
       gameManager.mapInstance.GameMap[tile.XPos, tile.ZPos].AssignedAnts = assignedAnts;
     }
 
+    //Calculate Growth
+    gameManager.antGrowth = assignedAnts * gameManager.growthPerAnt;
   }
 
   public void SetAssignedAnts(int ix, int iz, int asAnts, int maxAnts, bool isHill)
@@ -113,7 +115,7 @@ public class AntHillUI : MonoBehaviour
     }
 
     hatcheryLevelText.text = "Hatchery Level: " + gameManager.hatcheryLevel;
-    costHatcheryText.text = "Cost: " + gameManager.storageCost[gameManager.hatcheryLevel];
+    costHatcheryText.text = "Cost: " + gameManager.hatcheryCost[gameManager.hatcheryLevel];
     storageLevelText.text = "Storage Level: " + gameManager.storageLevel;
     costStorageText.text = "Cost: " + gameManager.storageCost[gameManager.storageLevel];
     PopulationPerTurnTextUpdate();
@@ -136,16 +138,26 @@ public class AntHillUI : MonoBehaviour
   {
     if(gameManager.hatcheryLevel < gameManager.hatcheryMaxLevel) 
     {
-      hatcheryLevelText.text = "Hatchery Level: " + (gameManager.hatcheryLevel + 1);
-      gameManager.hatcheryLevel += 1;
-     
-      if (gameManager.hatcheryLevel >= gameManager.hatcheryMaxLevel)
+
+      //check resources
+      if(gameManager.resources >= gameManager.hatcheryCost[gameManager.hatcheryLevel])
       {
-        costHatcheryText.text = "Cost: " + "Max";
+        hatcheryLevelText.text = "Hatchery Level: " + (gameManager.hatcheryLevel + 1);
+        gameManager.hatcheryLevel += 1;
+        gameManager.totalAnts = gameManager.populationCapacityAmount[gameManager.hatcheryLevel];
+
+        if (gameManager.hatcheryLevel >= gameManager.hatcheryMaxLevel)
+        {
+          costHatcheryText.text = "Cost: " + "Max";
+        }
+        else
+        {
+          costHatcheryText.text = "Cost: " + gameManager.hatcheryCost[gameManager.hatcheryLevel];
+        }
       }
-      else
+      else 
       {
-        costHatcheryText.text = "Cost: " + gameManager.storageCost[gameManager.hatcheryLevel];
+        Debug.Log("Not Enough Resources to upgrade Hatchery");
       }
     }
   }
@@ -157,17 +169,26 @@ public class AntHillUI : MonoBehaviour
   {
     if (gameManager.storageLevel < gameManager.storageMaxLevel)
     {
-      storageLevelText.text = "Storage Level: " + (gameManager.storageLevel + 1);
-      gameManager.storageLevel += 1;
+      //check cost
+      if(gameManager.resources >= gameManager.storageCost[gameManager.storageLevel])
+      {
+        storageLevelText.text = "Storage Level: " + (gameManager.storageLevel + 1);
+        gameManager.storageLevel += 1;
+        gameManager.storageLevel = gameManager.populationCapacityAmount[gameManager.storageLevel];
 
-      if(gameManager.storageLevel >= gameManager.storageMaxLevel) 
-      {
-        costStorageText.text = "Cost: " + "Max";
+        if (gameManager.storageLevel >= gameManager.storageMaxLevel)
+        {
+          costStorageText.text = "Cost: " + "Max";
+        }
+        else
+        {
+          costStorageText.text = "Cost: " + gameManager.storageCost[gameManager.storageLevel];
+        }
       }
-      else 
+      else
       {
-        costStorageText.text = "Cost: " + gameManager.storageCost[gameManager.storageLevel];
-      } 
+        Debug.Log("Not Enough Resources to upgrade Storage");
+      }
     }
   }
 }
