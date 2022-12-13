@@ -232,8 +232,7 @@ public class MapScript : MonoBehaviour
     newTile.IsAntHill = false;
     newTile.Explored = false;
     newTile.Visible = false;
-    newTile.ownedByPlayer = false;
-    newTile.AssignedAnts = 0;
+    newTile.OwnedByPlayer = false;
 
     //Random Amount of resources on the tile
     if (newTile.TileType == 6 || newTile.TileType == 7)
@@ -254,6 +253,7 @@ public class MapScript : MonoBehaviour
     newTile.transform.position = new Vector3(i, 0, j);
 
     //Assign ants on tile
+    newTile.AssignedAnts = 0;
 
     //save the script in the matrix
     mapMatrix[i, j] = newTile;
@@ -363,7 +363,8 @@ public class MapScript : MonoBehaviour
     newTile.Explored = tile.Explored;
     newTile.FreeAnts = tile.FreeAnts;
     newTile.TileDistance = tile.TileDistance;
-    newTile.AssignedAnts = tile.AssignedAnts;
+    newTile.assignedAnts = tile.AssignedAnts;
+    Debug.Log("Assigned Ants" + newTile.assignedAnts);
     newTile.OwnedByPlayer = tile.OwnedByPlayer;
     newTile.ResourceAmount = tile.ResourceAmount;
     newTile.MaxAssignedAnts = tile.MaxAssignedAnts;
@@ -391,7 +392,15 @@ public class MapScript : MonoBehaviour
       newTile.ResourceAmount = 0;
     }
     
-    mapMatrix[tile.XPos, tile.ZPos] = tileEntry.GetComponent<TileScript>();
+    mapMatrix[tile.XPos, tile.ZPos] = newTile;
+
+    //GameObject uiAssignAnts = GameObject.Find("AssignAnts");
+    //uiAssignAnts.GetComponent<Canvas>().enabled = true;
+
+    //AntCounter antCounter = uiAssignAnts.GetComponent<AntCounter>();
+    //antCounter.SetAssignedAnts(newTile.XPos, newTile.ZPos,newTile.AssignedAnts, newTile.MaxAssignedAnts, false);
+
+    Debug.Log("Assigned Ants" + mapMatrix[tile.XPos, tile.ZPos].assignedAnts);
     Destroy(tile.gameObject);
   }
 }
