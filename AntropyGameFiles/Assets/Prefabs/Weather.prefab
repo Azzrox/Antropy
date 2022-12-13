@@ -10,13 +10,14 @@ GameObject:
   m_Component:
   - component: {fileID: 5429265761194497969}
   - component: {fileID: 5429265761194497968}
+  - component: {fileID: 117267748}
   m_Layer: 0
   m_Name: Weather
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &5429265761194497969
 Transform:
   m_ObjectHideFlags: 0
@@ -42,5 +43,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7bcbb5ef2fed2c741aed2803f6697000, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &117267748
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5429265761194497983}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf70df99e84c75247984b30aef7d6021, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

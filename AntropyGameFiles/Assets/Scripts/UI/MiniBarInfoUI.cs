@@ -17,16 +17,14 @@ public class MiniBarInfoUI : MonoBehaviour
     gameManagerInstance = GameObject.Find("Game Manager").GetComponent<GameManager>();
   }
 
-  // YOU NEED TO ADD A INCOME FROM THE TILE TO CURRENTLY GATHERING, INCOME DEPENDS ON IT
-
   public void MiniBarInfoUpdate()
   {
-    resources.text = "Resources:      " + gameManagerInstance.resources;
-    population.text = "Population:      X/X" + gameManagerInstance.freeAnts + "/" + gameManagerInstance.totalAnts;
-    income.text = "Income:           " + gameManagerInstance.currentlyGathering;
+    resources.text = "Resources:      " + gameManagerInstance.resources + "/" + gameManagerInstance.maxResourceStorage;
+    population.text = "Population:      " + gameManagerInstance.freeAnts + "/" + gameManagerInstance.totalAnts;
+    income.text = "Income:           " + gameManagerInstance.income;
 
     //Currently Hardgecoded for Prototype
-    season.text = "Spring";
+    season.text = "Spring / " + gameManagerInstance.weatherInstance.WeatherName(gameManagerInstance.currentWeather);
   }
 
 

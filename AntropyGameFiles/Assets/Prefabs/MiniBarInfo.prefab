@@ -116,7 +116,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 52.4, y: 11.124}
+  m_AnchoredPosition: {x: 42.4, y: 11.124}
   m_SizeDelta: {x: -84.408, y: -22.2476}
   m_Pivot: {x: 0.49999997, y: 0.5}
 --- !u!222 &4874741452431765818
@@ -147,7 +147,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Season
+  m_text: 'Season/Weather
 
 '
   m_isRightToLeft: 0
@@ -176,8 +176,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 15
-  m_fontSizeBase: 15
+  m_fontSize: 10
+  m_fontSizeBase: 10
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -212,7 +212,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -0.13142012, y: 0.5802269, z: -0.33047104, w: -0.037471764}
+  m_margin: {x: -0.13142012, y: 0.5802269, z: -61.616142, w: -0.037471764}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -230,13 +230,15 @@ GameObject:
   - component: {fileID: 4874741452438488259}
   - component: {fileID: 4874741452438488256}
   - component: {fileID: 4874741452438488257}
+  - component: {fileID: 1594421754}
+  - component: {fileID: 1594421759}
   m_Layer: 5
   m_Name: MiniBarInfo
   m_TagString: Untagged
   m_Icon: {fileID: 7250588514170254948, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &4874741452438488258
 RectTransform:
   m_ObjectHideFlags: 0
@@ -319,6 +321,34 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &1594421754
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4874741452438488286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 719495cc415fe8f46a672cb1146dadd3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  resources: {fileID: 4874741454369908879}
+  population: {fileID: 4874741454168782039}
+  season: {fileID: 4874741454040216528}
+  income: {fileID: 4874741453453683609}
+--- !u!114 &1594421759
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4874741452438488286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf70df99e84c75247984b30aef7d6021, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4874741453453683607
 GameObject:
   m_ObjectHideFlags: 0
@@ -489,7 +519,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 52.4, y: -1.6000061}
+  m_AnchoredPosition: {x: 43.4, y: 2.2}
   m_SizeDelta: {x: -84.408, y: -22.2476}
   m_Pivot: {x: 0.49999997, y: 0.5}
 --- !u!222 &4874741454040216531
@@ -549,8 +579,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 15
-  m_fontSizeBase: 15
+  m_fontSize: 12
+  m_fontSizeBase: 12
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -691,7 +721,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 1
-  m_HorizontalAlignment: 2
+  m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -761,7 +791,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -32.1, y: 0.000015258789}
+  m_AnchoredPosition: {x: -29.700005, y: 0.000015258789}
   m_SizeDelta: {x: -12.9383, y: -19.5974}
   m_Pivot: {x: 0.49999997, y: 0.5}
 --- !u!222 &4874741454369908878
@@ -792,7 +822,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Resources:      X'
+  m_text: 'Resources:      X/X'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
@@ -826,7 +856,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 1
-  m_HorizontalAlignment: 2
+  m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0

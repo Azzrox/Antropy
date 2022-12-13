@@ -1,14 +1,27 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class NextTurnScript : MonoBehaviour
 {
   private GameManager gameManager;
+  public TextMeshProUGUI TurnText;
+
 
   private void Awake()
   {
     gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
+  }
+
+  private void Start()
+  {
+    //Calculate new upkeep
+    gameManager.currentUpkeep = (int)Mathf.Ceil(gameManager.totalAnts * gameManager.foodPerAnt);
+    //Income
+    gameManager.income -= gameManager.currentUpkeep;
+
+    TurnInfoUpdate();
   }
 
   /// <summary>
@@ -16,7 +29,7 @@ public class NextTurnScript : MonoBehaviour
   /// </summary>
   public void NextTurn() 
   {
-    if(gameManager.currentTurnCount < gameManager.MaxTurnCount) 
+    if(gameManager.currentTurnCount < gameManager.maxTurnCount) 
     {
       Debug.Log("Turn: " + gameManager.currentTurnCount);
       AntTurn();
@@ -27,6 +40,10 @@ public class NextTurnScript : MonoBehaviour
       MessageTurn();
       ExploreTurn();
       gameManager.currentTurnCount++;
+      TurnInfoUpdate();
+
+      //Update the infobar
+      gameManager.miniBarInfoInstance.MiniBarInfoUpdate();
     }
     else 
     {
@@ -42,22 +59,42 @@ public class NextTurnScript : MonoBehaviour
     {
       for (int j = 0; j < gameManager.mapInstance.columns; j++)
       {
-        //gameMap[i, j].CalculateNewResourceAmountFlat(50);
         if(gameMap[i, j].OwnedByPlayer) 
         {
-          float gatheringBase = gameMap[i, j].AssignedAnts * gameManager.resourceGatherRate;
-
+          //Tile Distance Degridation + Current Weather influence
+          float gatheringBase = gameMap[i, j].AssignedAnts * (gameManager.resourceGatherRate * gameManager.weatherAcessMultiplier);
           for (int k = 0; k < gameMap[i, j].TileDistance; k++)
           {
             gatheringBase = Mathf.Ceil(gatheringBase * gameManager.distanceGatheringReductionRate);
           }
 
-          gameManager.resources += (int)gatheringBase;
+          //Storage Room Check
+          if(gameManager.maxResourceStorage <= (gameManager.resources + (int)gatheringBase)) 
+          {
+            gameManager.resources = gameManager.maxResourceStorage;
+            gameManager.income = (int)gatheringBase;
+          }
+          else 
+          {
+            gameManager.resources += (int)gatheringBase;
+            gameManager.income = (int)gatheringBase;
+          }
+          
           Debug.Log("NewResources: " + gameManager.resources);
           gameMap[i, j].CalculateNewResourceAmountFlat((int)-gatheringBase);
+          
         }
       }
     }
+
+    //Population growth
+    gameManager.totalAnts += (int) Mathf.Ceil(gameManager.totalAnts * gameManager.antGrowth);
+
+    //Calculate new upkeep
+    gameManager.currentUpkeep = (int) Mathf.Ceil(gameManager.totalAnts * gameManager.foodPerAnt);
+
+    //Income
+    gameManager.income -= gameManager.currentUpkeep;
   }
 
   void MapTurn() 
@@ -70,8 +107,9 @@ public class NextTurnScript : MonoBehaviour
     {
       for (int j = 0; j < gameManager.mapInstance.columns; j++)
       {
-        //constant growth +
-        gameMap[i, j].CalculateNewResourceAmountFlat(500);
+        //constant growth + current weather influence
+        int regrowAmount = (int)Mathf.Ceil(gameManager.tileRegrowAmount * gameManager.weatherRegrowMultiplier);
+        gameMap[i, j].CalculateNewResourceAmountFlat(regrowAmount);
 
         //check if the growth if we reached a threshhold to update the tile mesh
         gameManager.mapInstance.TileErosionCheck(gameMap[i, j]);
@@ -108,6 +146,8 @@ public class NextTurnScript : MonoBehaviour
   void WeatherTurn()
   {
     //Insert Weather Turn
+    gameManager.weatherInstance.UpdateWeather(gameManager.currentSeason);
+    gameManager.weatherInstance.WeatherMultiplierUpdate(gameManager.currentWeather);
   }
 
   void EventTurn() 
@@ -124,4 +164,11 @@ public class NextTurnScript : MonoBehaviour
   {
     //Insert Season Turn
   }
+
+  public void TurnInfoUpdate()
+  {
+    TurnText.text = gameManager.currentTurnCount + "/" + gameManager.maxTurnCount;
+  }
+
+
 }

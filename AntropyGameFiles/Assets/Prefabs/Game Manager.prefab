@@ -1,0 +1,95 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3140723726020942720
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3140723726020942722}
+  - component: {fileID: 3140723726020942723}
+  m_Layer: 0
+  m_Name: Game Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3140723726020942722
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3140723726020942720}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 207.9276, y: 251.41861, z: 3.4495747}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3140723726020942723
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3140723726020942720}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3caf56688798ca4e8c7723f6ff157c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerName: 
+  totalAnts: 100
+  freeAnts: 100
+  rows: 50
+  columns: 50
+  assignedHillAnts: 
+  distanceGatheringReductionRate: 0
+  resourceGatherRate: 0.95
+  tileRegrowAmount: 20
+  weatherAcessMultiplier: 0
+  weatherRegrowMultiplier: 0
+  income: 0
+  currentSeason: 0
+  currentWeather: 1
+  resources: 0
+  maxResourceStorage: 150
+  currentUpkeep: 0
+  foodPerAnt: 0.5
+  growthPerAnt: 1
+  antGrowth: 0
+  hatcheryLevel: 0
+  storageLevel: 0
+  hatcheryMaxLevel: 0
+  storageMaxLevel: 0
+  hatcheryCost: 
+  storageCost: 
+  storageCapacityAmount: 
+  populationCapacityAmount: 
+  maxAntsResourceTile: 10
+  maxAntsAnthillTile: 20
+  sunAccess: 0
+  sunRegrow: 0
+  rainAccess: 0
+  rainRegrow: 0
+  overcastAccess: 0
+  overcastRegrow: 0
+  fogAccess: 0
+  fogRegrow: 0
+  snowAccess: 0
+  snowRegrow: 0
+  maxTurnCount: 100
+  currentTurnCount: 0
+  grassWeight: 0.5
+  resourceWeight: 0.05
+  soilWeight: 0.3
+  mapInstance: {fileID: 0}
+  cameraInstance: {fileID: 0}
+  weatherInstance: {fileID: 0}
+  miniBarInfoInstance: {fileID: 0}

@@ -65,6 +65,7 @@ public class TileScript : MonoBehaviour
   bool isAnthill = false;
 
   GameManager gameManagerInstance;
+  private MouseListenerUI uiListener;
 
   private void Awake()
   {
@@ -83,6 +84,7 @@ public class TileScript : MonoBehaviour
     
     assignedAnts = 0;
     freeAnts = 0;
+    uiListener = GameObject.Find("NextTurnCanvas").GetComponent<MouseListenerUI>();
   }
 
   /// <summary>
@@ -90,34 +92,44 @@ public class TileScript : MonoBehaviour
   /// </summary>
   private void OnMouseDown()
   {
-    Debug.Log("in click mode");
-    if(xPos == 0 && zPos == 0) 
+
+    if (uiListener.isUIOverride)
     {
-      GameObject anthillUI = GameObject.Find("Anthill");
-      anthillUI.GetComponent<Canvas>().enabled = true;
-      AntHillUI antHill = anthillUI.GetComponent<AntHillUI>();
-      antHill.SetAssignedAnts(XPos, ZPos, assignedAnts, maxAssignedAnts, false);
-      antHill.tile = this;
-      antHill.UpdateAntText();
-
-      //GameObject uiMiniBarInfo = GameObject.Find("MiniBarInfo");
-      //uiMiniBarInfo.GetComponent<MiniBarInfoUI>().MiniBarInfoUpdate();
-
+      Debug.Log("Cancelled OnMouseDown! A UI element has override this object!");
     }
-    else 
+    else
     {
-      GameObject uiAssignAnts = GameObject.Find("AssignAnts");
-      uiAssignAnts.GetComponent<Canvas>().enabled = true;
+      Debug.Log("in click mode");
+      if (xPos == 0 && zPos == 0)
+      {
+        GameObject anthillUI = GameObject.Find("Anthill");
+        anthillUI.GetComponent<Canvas>().enabled = true;
+        AntHillUI antHill = anthillUI.GetComponent<AntHillUI>();
+        antHill.SetAssignedAnts(XPos, ZPos, assignedAnts, maxAssignedAnts, false);
+        antHill.tile = this;
+        antHill.UpdateAntText();
 
-      AntCounter antCounter = uiAssignAnts.GetComponent<AntCounter>();
-      antCounter.SetAssignedAnts(XPos, ZPos, assignedAnts, maxAssignedAnts, false);
-      antCounter.UpdateAntText();
+        GameObject uiMiniBarInfo = GameObject.Find("MiniBarInfo");
+        uiMiniBarInfo.GetComponent<MiniBarInfoUI>().MiniBarInfoUpdate();
 
-      //GameObject uiMiniBarInfo = GameObject.Find("MiniBarInfo");
-      //uiMiniBarInfo.GetComponent<MiniBarInfoUI>().MiniBarInfoUpdate();
+      }
+      else
+      {
+        GameObject uiAssignAnts = GameObject.Find("AssignAnts");
+        uiAssignAnts.GetComponent<Canvas>().enabled = true;
+
+        AntCounter antCounter = uiAssignAnts.GetComponent<AntCounter>();
+        antCounter.SetAssignedAnts(XPos, ZPos, assignedAnts, maxAssignedAnts, false);
+        antCounter.UpdateAntText();
+
+        GameObject uiMiniBarInfo = GameObject.Find("MiniBarInfo");
+        uiMiniBarInfo.GetComponent<MiniBarInfoUI>().MiniBarInfoUpdate();
+      }
+
+      Debug.Log("element clicked" + UnityEngine.Random.Range(0, 40) + " pos: " + XPos + "|" + ZPos);
     }
-   
-    Debug.Log("element clicked" + UnityEngine.Random.Range(0, 40) + " pos: " + XPos + "|" + ZPos);
+
+    
   }
 
   /// <summary>
