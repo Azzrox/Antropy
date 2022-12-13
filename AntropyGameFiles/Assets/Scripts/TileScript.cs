@@ -25,12 +25,12 @@ public class TileScript : MonoBehaviour
   /// <summary>
   /// Ants on tile
   /// </summary>
-  int assignedAnts;
+  public int assignedAnts;
 
   /// <summary>
   /// Max Counter of assigned ants on tile
   /// </summary>
-  int maxAssignedAnts;
+  public int maxAssignedAnts;
 
   /// <summary>
   /// Free Ants Global
@@ -117,8 +117,9 @@ public class TileScript : MonoBehaviour
       {
         GameObject uiAssignAnts = GameObject.Find("AssignAnts");
         uiAssignAnts.GetComponent<Canvas>().enabled = true;
-
+      
         AntCounter antCounter = uiAssignAnts.GetComponent<AntCounter>();
+        Debug.Log(assignedAnts);
         antCounter.SetAssignedAnts(XPos, ZPos, assignedAnts, maxAssignedAnts, false);
         antCounter.UpdateAntText();
 

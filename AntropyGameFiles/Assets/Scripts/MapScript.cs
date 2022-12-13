@@ -232,6 +232,8 @@ public class MapScript : MonoBehaviour
     newTile.IsAntHill = false;
     newTile.Explored = false;
     newTile.Visible = false;
+    newTile.ownedByPlayer = false;
+    newTile.AssignedAnts = 0;
 
     //Random Amount of resources on the tile
     if (newTile.TileType == 6 || newTile.TileType == 7)
@@ -252,7 +254,6 @@ public class MapScript : MonoBehaviour
     newTile.transform.position = new Vector3(i, 0, j);
 
     //Assign ants on tile
-    newTile.AssignedAnts = 0;
 
     //save the script in the matrix
     mapMatrix[i, j] = newTile;
@@ -355,23 +356,23 @@ public class MapScript : MonoBehaviour
     tileEntry.position = tile.transform.position;
 
     TileScript newTile = tileEntry.GetComponent<TileScript>();
-    newTile.TileType = newTileType;
-    newTile.TileDistance = tile.TileDistance;
     newTile.XPos = tile.XPos;
     newTile.ZPos = tile.ZPos;
-    newTile.Explored = tile.Explored;
     newTile.Visible = tile.Visible;
-
-    newTile.ResourceAmount = tile.ResourceAmount;
-    
+    newTile.TileType = newTileType;
+    newTile.Explored = tile.Explored;
     newTile.FreeAnts = tile.FreeAnts;
+    newTile.TileDistance = tile.TileDistance;
     newTile.AssignedAnts = tile.AssignedAnts;
-    
+    newTile.OwnedByPlayer = tile.OwnedByPlayer;
+    newTile.ResourceAmount = tile.ResourceAmount;
+    newTile.MaxAssignedAnts = tile.MaxAssignedAnts;
+
     //old
     //newTile.canvas = tile.canvas;
 
     //Resources on the Tile only soil and grass can have resources
-    if(newTileType == 1 || newTileType == 2) 
+    if (newTileType == 1 || newTileType == 2) 
     {
       newTile.MaxResourceAmount = 500;
       for (int k = 0; k < newTile.XPos + newTile.ZPos; k++)

@@ -46,6 +46,7 @@ public class AntCounter : MonoBehaviour
 
     void IncreaseAnts()
     {
+    //UpdateAntText();
         int freeAnts = gameManager.freeAnts;
         if (freeAnts > 0 && assignedAnts < maxAssignedAnts)
         {
@@ -70,6 +71,7 @@ public class AntCounter : MonoBehaviour
 
             if (!isAntHill) { RemoveAnt(); }
         }
+    //UpdateAntText();
     }
 
     void Confirm()
@@ -86,12 +88,21 @@ public class AntCounter : MonoBehaviour
         maxAssignedAnts = maxAnts;
         isAntHill = isHill;
     }
-    public void SetAssignedAnts_remote(){
+    public void SetAssignedAnts_remote()
+  {
         if (isAntHill)
         {
             gameManager.mapInstance.GameMap[posX,posZ].AssignedAnts = assignedAnts;
         } else{
             gameManager.mapInstance.GameMap[posX,posZ].AssignedAnts = assignedAnts;
+            if(gameManager.mapInstance.GameMap[posX, posZ].AssignedAnts > 0) 
+            {
+              gameManager.mapInstance.GameMap[posX, posZ].OwnedByPlayer = true;
+              gameManager.mapInstance.GameMap[posX, posZ].AssignedAnts = assignedAnts;
+            }
+      else { gameManager.mapInstance.GameMap[posX, posZ].OwnedByPlayer = false;
+              gameManager.mapInstance.GameMap[posX, posZ].AssignedAnts = assignedAnts;
+      }
         }
         
     }
