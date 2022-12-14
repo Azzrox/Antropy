@@ -19,7 +19,7 @@ public class NextTurnScript : MonoBehaviour
     //Calculate new upkeep
     gameManager.currentUpkeep = (int)Mathf.Ceil(gameManager.totalAnts * gameManager.foodPerAnt);
     //Income
-    gameManager.income -= gameManager.currentUpkeep;
+    //gameManager.income -= gameManager.currentUpkeep;
 
     TurnInfoUpdate();
   }
@@ -68,28 +68,25 @@ public class NextTurnScript : MonoBehaviour
             //gatheringBase = Mathf.Ceil(gatheringBase * gameManager.distanceGatheringReductionRate);
           }
           gameManager.resources += (int)gatheringBase;
-          gameManager.income += (int)gatheringBase;
-          //Storage Room Check
-          if (gameManager.maxResourceStorage <= gameManager.resources) // needs fixing not good
-          {
-            gameManager.resources = gameManager.maxResourceStorage;
-          }
-          
+          //gameManager.income += (int)gatheringBase;
+ 
           Debug.Log("NewResources: " + gameManager.resources);
           gameManager.mapInstance.GameMap[i, j].CalculateNewResourceAmountFlat((int)-gatheringBase);
           
         }
       }
     }
+    //Calculate new upkeep
+    gameManager.currentUpkeep = (int)Mathf.Ceil(gameManager.totalAnts * gameManager.foodPerAnt);
+    //Storage Room Check
+    gameManager.resources -= gameManager.currentUpkeep;
 
+    if (gameManager.maxResourceStorage <= gameManager.resources) // needs fixing not good
+    {
+      gameManager.resources = gameManager.maxResourceStorage;
+    }
     //Population growth
     gameManager.freeAnts += (int)Mathf.Ceil((float)gameManager.freeAnts * gameManager.antGrowth);
-
-    //Calculate new upkeep
-    gameManager.currentUpkeep = (int) Mathf.Ceil(gameManager.totalAnts * gameManager.foodPerAnt);
-
-    //Income
-    gameManager.income -= gameManager.currentUpkeep;
   }
 
   void MapTurn() 

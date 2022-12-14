@@ -54,7 +54,10 @@ public class AntCounter : MonoBehaviour
             SetAssignedAnts_remote();
             UpdateAntText();
 
-            if (!isAntHill) { SpawnAnt(); }
+            gameManager.income += (int)gameManager.resourceGatherRate;
+            gameManager.miniBarInfoInstance.MiniBarInfoUpdate();
+
+      if (!isAntHill) { SpawnAnt(); }
         }
     } 
 
@@ -66,9 +69,9 @@ public class AntCounter : MonoBehaviour
             gameManager.freeAnts += 1;
             SetAssignedAnts_remote();
             UpdateAntText();
-
-
-            if (!isAntHill) { RemoveAnt(); }
+      gameManager.income -= (int)gameManager.resourceGatherRate;
+      gameManager.miniBarInfoInstance.MiniBarInfoUpdate();
+      if (!isAntHill) { RemoveAnt(); }
         }
     }
 

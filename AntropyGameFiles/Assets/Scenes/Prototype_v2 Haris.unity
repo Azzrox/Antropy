@@ -2461,6 +2461,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3140723726020942723, guid: 5cb61ceeaa3554e48af3db1ca036a482, type: 3}
+      propertyPath: foodPerAnt
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3140723726020942723, guid: 5cb61ceeaa3554e48af3db1ca036a482, type: 3}
       propertyPath: currentWeather
       value: 0
       objectReference: {fileID: 0}
