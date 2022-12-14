@@ -34,7 +34,7 @@ public class AntCounter : MonoBehaviour
         plusButton.onClick.AddListener(IncreaseAnts);
         minusButton.onClick.AddListener(DecreaseAnts);
         confirmButton.onClick.AddListener(Confirm);
-        antCollection = new GameObject();
+        antCollection = new GameObject("Ant Colonie");
        // UpdateAntText();
     }
 
