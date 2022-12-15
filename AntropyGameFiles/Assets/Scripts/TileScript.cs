@@ -23,6 +23,11 @@ public class TileScript : MonoBehaviour
   int type;
 
   /// <summary>
+  /// Amount of resources reserved to take from tile
+  /// </summary>
+  public int reservedResources;
+
+  /// <summary>
   /// Ants on tile
   /// </summary>
   public int assignedAnts;
@@ -362,6 +367,20 @@ public class TileScript : MonoBehaviour
     set
     {
       visible = value;
+    }
+  }
+  /// <summary>
+  /// Reserved resources per turn for tile, getter/setter
+  /// </summary>
+  public int ReservedResources
+  {
+    get
+    {
+      return reservedResources;
+    }
+    set
+    {
+      reservedResources = value;
     }
   }
 }

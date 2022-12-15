@@ -53,7 +53,7 @@ public class AntHillUI : MonoBehaviour
       gameManager.freeAnts -= 1;
       SetAssignedAnts_remote();
       UpdateAntText();
-      PopulationPerTurnTextUpdate();
+      //PopulationPerTurnTextUpdate();
     }
   }
 
@@ -65,7 +65,7 @@ public class AntHillUI : MonoBehaviour
       gameManager.freeAnts += 1;
       SetAssignedAnts_remote();
       UpdateAntText();
-      PopulationPerTurnTextUpdate();
+      //PopulationPerTurnTextUpdate();
     }
   }
 
@@ -84,9 +84,6 @@ public class AntHillUI : MonoBehaviour
     {
       gameManager.mapInstance.GameMap[tile.XPos, tile.ZPos].AssignedAnts = assignedAnts;
     }
-
-    //Calculate Growth
-    //1gameManager.antGrowth = 0.01f;
   }
 
   public void SetAssignedAnts(int ix, int iz, int asAnts, int maxAnts, bool isHill)
@@ -143,6 +140,8 @@ public class AntHillUI : MonoBehaviour
       if(gameManager.resources >= gameManager.hatcheryCost[gameManager.hatcheryLevel])
       {
         hatcheryLevelText.text = "Hatchery Level: " + (gameManager.hatcheryLevel + 1);
+
+        gameManager.resources -= gameManager.hatcheryCost[gameManager.hatcheryLevel];
         gameManager.hatcheryLevel += 1;
         gameManager.totalAnts = gameManager.populationCapacityAmount[gameManager.hatcheryLevel];
 
@@ -154,6 +153,7 @@ public class AntHillUI : MonoBehaviour
         {
           costHatcheryText.text = "Cost: " + gameManager.hatcheryCost[gameManager.hatcheryLevel];
         }
+        gameManager.miniBarInfoInstance.MiniBarInfoUpdate();
       }
       else 
       {
@@ -173,8 +173,9 @@ public class AntHillUI : MonoBehaviour
       if(gameManager.resources >= gameManager.storageCost[gameManager.storageLevel])
       {
         storageLevelText.text = "Storage Level: " + (gameManager.storageLevel + 1);
+        gameManager.resources -= gameManager.storageCost[gameManager.storageLevel];
         gameManager.storageLevel += 1;
-        gameManager.storageLevel = gameManager.populationCapacityAmount[gameManager.storageLevel];
+        gameManager.maxResourceStorage = gameManager.storageCapacityAmount[gameManager.storageLevel];
 
         if (gameManager.storageLevel >= gameManager.storageMaxLevel)
         {
@@ -184,11 +185,13 @@ public class AntHillUI : MonoBehaviour
         {
           costStorageText.text = "Cost: " + gameManager.storageCost[gameManager.storageLevel];
         }
+        gameManager.miniBarInfoInstance.MiniBarInfoUpdate();
       }
       else
       {
         Debug.Log("Not Enough Resources to upgrade Storage");
       }
+
     }
   }
 }

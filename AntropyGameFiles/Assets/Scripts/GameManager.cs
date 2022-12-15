@@ -25,6 +25,16 @@ public class GameManager : MonoBehaviour
     public int[] assignedHillAnts;
     
     /// <summary>
+    /// Death of Ants per turn, due to overpopulation
+    /// </summary>
+    public int antOverPopulationDeathAmount;
+
+    /// <summary>
+    /// Death of ants per turn due to lack of resources;
+    /// </summary>
+    public int antDeathLackofResourcesAmount;
+    
+    /// <summary>
     /// Gathering distance deduction
     /// </summary>
     public float distanceGatheringReductionRate;
@@ -308,6 +318,8 @@ public class GameManager : MonoBehaviour
       storageLevel = 0;
       hatcheryMaxLevel = 3;
       storageMaxLevel = 3;
+      currentUpkeep = (int)Mathf.Ceil(totalAnts * foodPerAnt);
+      income -= currentUpkeep;
       hatcheryCost = new int[] {200, 400, 600, 800 };
       storageCost = new int[] {100, 200, 400, 600 };
       storageCapacityAmount = new int[] { 350, 500, 1000, 1500};

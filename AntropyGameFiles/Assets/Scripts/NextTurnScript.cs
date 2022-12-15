@@ -39,6 +39,12 @@ public class NextTurnScript : MonoBehaviour
       SeasonTurn();
       MessageTurn();
       ExploreTurn();
+
+      GameObject uiAssignAnts = GameObject.Find("AssignAnts");
+
+      AntCounter antCounter = uiAssignAnts.GetComponent<AntCounter>();
+      antCounter.UpdateAntText();
+
       gameManager.currentTurnCount++;
       TurnInfoUpdate();
 
@@ -78,15 +84,39 @@ public class NextTurnScript : MonoBehaviour
     }
     //Calculate new upkeep
     gameManager.currentUpkeep = (int)Mathf.Ceil(gameManager.totalAnts * gameManager.foodPerAnt);
+    
     //Storage Room Check
-    gameManager.resources -= gameManager.currentUpkeep;
-
+    if((gameManager.resources - gameManager.currentUpkeep) >= 0) 
+    {
+      gameManager.resources -= gameManager.currentUpkeep;
+    }
+    else 
+    {
+      gameManager.resources = 0;
+    }
+   
     if (gameManager.maxResourceStorage <= gameManager.resources) // needs fixing not good
     {
       gameManager.resources = gameManager.maxResourceStorage;
     }
     //Population growth
     gameManager.freeAnts += (int)Mathf.Ceil((float)gameManager.freeAnts * gameManager.antGrowth);
+
+    //Population no resources death checks
+    if(gameManager.resources == 0 && gameManager.income < 0) 
+    {
+      gameManager.freeAnts -= gameManager.antDeathLackofResourcesAmount;
+    }
+
+    //Over Population penalty/death checks
+    if (gameManager.totalAnts < gameManager.freeAnts)
+    {
+      gameManager.freeAnts -= gameManager.antOverPopulationDeathAmount;
+    }
+
+
+
+
   }
 
   void MapTurn() 
@@ -94,14 +124,24 @@ public class NextTurnScript : MonoBehaviour
     //Insert Map Turn
     //change the tile object
     TileScript[,] gameMap = gameManager.mapInstance.GameMap;//game_resources.map_instance.GameMap;
-
+    gameManager.income = 0 - gameManager.currentUpkeep;
     for (int i = 0; i < gameManager.mapInstance.rows; i++)
     {
       for (int j = 0; j < gameManager.mapInstance.columns; j++)
       {
         //constant growth + current weather influence
-        int regrowAmount = (int)Mathf.Ceil(gameManager.tileRegrowAmount * gameManager.weatherRegrowMultiplier);
+        //int regrowAmount = (int)Mathf.Ceil(gameManager.tileRegrowAmount * gameManager.weatherRegrowMultiplier);
+        int regrowAmount = (int)Mathf.Ceil(gameManager.tileRegrowAmount);
         gameMap[i, j].CalculateNewResourceAmountFlat(regrowAmount);
+        if(gameMap[i, j].AssignedAnts * (int)gameManager.resourceGatherRate > (int)gameMap[i,j].ResourceAmount)
+        {
+          gameMap[i, j].ReservedResources = (int) gameMap[i, j].ResourceAmount;
+        }
+        else
+        {
+          gameMap[i, j].ReservedResources = gameMap[i, j].AssignedAnts * (int)gameManager.resourceGatherRate;
+        }
+        gameManager.income += gameMap[i, j].ReservedResources;
 
         //check if the growth if we reached a threshhold to update the tile mesh
         gameManager.mapInstance.TileErosionCheck(gameMap[i, j]);

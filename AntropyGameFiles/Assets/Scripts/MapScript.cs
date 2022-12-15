@@ -264,7 +264,7 @@ public class MapScript : MonoBehaviour
   /// </summary>
   /// <param name="type"> [0]stone, [1]grass, [2]soil, [3]water, [4] anthill</param>
   /// <returns></returns>
-  string TileName(int type) 
+  public string TileName(int type) 
   {
     string type_name;
 

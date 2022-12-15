@@ -20,6 +20,9 @@ public class AntCounter : MonoBehaviour
     public Button confirmButton;
     public TextMeshProUGUI freeAnts;
     public TextMeshProUGUI assignedAntsText;
+    public TextMeshProUGUI resources;
+    public TextMeshProUGUI tileName;
+
     public GameObject antPrefab;
     private GameManager gameManager;
 
@@ -54,7 +57,15 @@ public class AntCounter : MonoBehaviour
             SetAssignedAnts_remote();
             UpdateAntText();
 
+      if (gameManager.mapInstance.GameMap[posX, posZ].TileType != 0 && 
+          gameManager.mapInstance.GameMap[posX, posZ].TileType != 3 &&
+          gameManager.mapInstance.GameMap[posX, posZ].ResourceAmount > gameManager.resourceGatherRate &&
+          gameManager.mapInstance.GameMap[posX, posZ].ResourceAmount - gameManager.mapInstance.GameMap[posX, posZ].ReservedResources >= gameManager.resourceGatherRate) 
+          {
             gameManager.income += (int)gameManager.resourceGatherRate;
+            gameManager.mapInstance.GameMap[posX, posZ].ReservedResources += (int)gameManager.resourceGatherRate;
+          }
+        
             gameManager.miniBarInfoInstance.MiniBarInfoUpdate();
 
       if (!isAntHill) { SpawnAnt(); }
@@ -69,7 +80,14 @@ public class AntCounter : MonoBehaviour
             gameManager.freeAnts += 1;
             SetAssignedAnts_remote();
             UpdateAntText();
-      gameManager.income -= (int)gameManager.resourceGatherRate;
+      if (gameManager.mapInstance.GameMap[posX, posZ].TileType != 0 &&
+          gameManager.mapInstance.GameMap[posX, posZ].TileType != 3 &&
+          gameManager.mapInstance.GameMap[posX, posZ].ReservedResources > 0)
+        {
+          gameManager.income -= (int)gameManager.resourceGatherRate;
+          gameManager.mapInstance.GameMap[posX, posZ].ReservedResources -= (int)gameManager.resourceGatherRate;
+        }
+
       gameManager.miniBarInfoInstance.MiniBarInfoUpdate();
       if (!isAntHill) { RemoveAnt(); }
         }
@@ -118,10 +136,14 @@ public class AntCounter : MonoBehaviour
         if (assignedAnts == 1)
         {
             assignedAntsText.text = "assign " + assignedAnts + " ant";
+            resources.text = "Resources: " + gameManager.mapInstance.GameMap[posX, posZ].resourceAmount;
+            tileName.text = gameManager.mapInstance.TileName(gameManager.mapInstance.GameMap[posX, posZ].TileType) + "[" + posX + posZ + "]"; 
         } else
         {
             assignedAntsText.text = "assign " + assignedAnts + " ants";
-        }
+            resources.text = "Resources: " + gameManager.mapInstance.GameMap[posX, posZ].resourceAmount;
+            tileName.text = gameManager.mapInstance.TileName(gameManager.mapInstance.GameMap[posX, posZ].TileType) + "[" + posX + "," + posZ + "]";
+    }
     }
 
     void SpawnAnt() 
@@ -141,4 +163,5 @@ public class AntCounter : MonoBehaviour
         }
 
     }
+
 }
