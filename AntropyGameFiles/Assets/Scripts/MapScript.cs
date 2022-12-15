@@ -232,6 +232,7 @@ public class MapScript : MonoBehaviour
     newTile.IsAntHill = false;
     newTile.Explored = false;
     newTile.Visible = false;
+    newTile.OwnedByPlayer = false;
 
     //Random Amount of resources on the tile
     if (newTile.TileType == 6 || newTile.TileType == 7)
@@ -355,23 +356,24 @@ public class MapScript : MonoBehaviour
     tileEntry.position = tile.transform.position;
 
     TileScript newTile = tileEntry.GetComponent<TileScript>();
-    newTile.TileType = newTileType;
-    newTile.TileDistance = tile.TileDistance;
     newTile.XPos = tile.XPos;
     newTile.ZPos = tile.ZPos;
-    newTile.Explored = tile.Explored;
     newTile.Visible = tile.Visible;
-
-    newTile.ResourceAmount = tile.ResourceAmount;
-    
+    newTile.TileType = newTileType;
+    newTile.Explored = tile.Explored;
     newTile.FreeAnts = tile.FreeAnts;
-    newTile.AssignedAnts = tile.AssignedAnts;
-    
+    newTile.TileDistance = tile.TileDistance;
+    newTile.assignedAnts = tile.AssignedAnts;
+    Debug.Log("Assigned Ants" + newTile.assignedAnts);
+    newTile.OwnedByPlayer = tile.OwnedByPlayer;
+    newTile.ResourceAmount = tile.ResourceAmount;
+    newTile.MaxAssignedAnts = tile.MaxAssignedAnts;
+
     //old
     //newTile.canvas = tile.canvas;
 
     //Resources on the Tile only soil and grass can have resources
-    if(newTileType == 1 || newTileType == 2) 
+    if (newTileType == 1 || newTileType == 2) 
     {
       newTile.MaxResourceAmount = 500;
       for (int k = 0; k < newTile.XPos + newTile.ZPos; k++)
@@ -390,7 +392,15 @@ public class MapScript : MonoBehaviour
       newTile.ResourceAmount = 0;
     }
     
-    mapMatrix[tile.XPos, tile.ZPos] = tileEntry.GetComponent<TileScript>();
+    mapMatrix[tile.XPos, tile.ZPos] = newTile;
+
+    //GameObject uiAssignAnts = GameObject.Find("AssignAnts");
+    //uiAssignAnts.GetComponent<Canvas>().enabled = true;
+
+    //AntCounter antCounter = uiAssignAnts.GetComponent<AntCounter>();
+    //antCounter.SetAssignedAnts(newTile.XPos, newTile.ZPos,newTile.AssignedAnts, newTile.MaxAssignedAnts, false);
+
+    Debug.Log("Assigned Ants" + mapMatrix[tile.XPos, tile.ZPos].assignedAnts);
     Destroy(tile.gameObject);
   }
 }

@@ -54,7 +54,10 @@ public class AntCounter : MonoBehaviour
             SetAssignedAnts_remote();
             UpdateAntText();
 
-            if (!isAntHill) { SpawnAnt(); }
+            gameManager.income += (int)gameManager.resourceGatherRate;
+            gameManager.miniBarInfoInstance.MiniBarInfoUpdate();
+
+      if (!isAntHill) { SpawnAnt(); }
         }
     } 
 
@@ -66,9 +69,9 @@ public class AntCounter : MonoBehaviour
             gameManager.freeAnts += 1;
             SetAssignedAnts_remote();
             UpdateAntText();
-
-
-            if (!isAntHill) { RemoveAnt(); }
+      gameManager.income -= (int)gameManager.resourceGatherRate;
+      gameManager.miniBarInfoInstance.MiniBarInfoUpdate();
+      if (!isAntHill) { RemoveAnt(); }
         }
     }
 
@@ -85,6 +88,7 @@ public class AntCounter : MonoBehaviour
         assignedAnts = asAnts;
         maxAssignedAnts = maxAnts;
         isAntHill = isHill;
+        SetAssignedAnts_remote();
     }
     public void SetAssignedAnts_remote(){
         if (isAntHill)
@@ -92,7 +96,15 @@ public class AntCounter : MonoBehaviour
             gameManager.mapInstance.GameMap[posX,posZ].AssignedAnts = assignedAnts;
         } else{
             gameManager.mapInstance.GameMap[posX,posZ].AssignedAnts = assignedAnts;
-        }
+      if(assignedAnts > 0)
+      {
+        gameManager.mapInstance.GameMap[posX, posZ].OwnedByPlayer = true;
+      }
+      else
+      {
+        gameManager.mapInstance.GameMap[posX, posZ].OwnedByPlayer = false;
+      }
+    }
         
     }
 

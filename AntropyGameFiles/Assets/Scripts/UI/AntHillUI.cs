@@ -46,7 +46,7 @@ public class AntHillUI : MonoBehaviour
   void IncreaseAnts()
   {
     int freeAnts = gameManager.freeAnts;
-
+    
     if (freeAnts > 0 && tile.AssignedAnts < tile.MaxAssignedAnts)
     {
       assignedAnts += 1;
@@ -86,7 +86,7 @@ public class AntHillUI : MonoBehaviour
     }
 
     //Calculate Growth
-    gameManager.antGrowth = assignedAnts * gameManager.growthPerAnt;
+    //1gameManager.antGrowth = 0.01f;
   }
 
   public void SetAssignedAnts(int ix, int iz, int asAnts, int maxAnts, bool isHill)
