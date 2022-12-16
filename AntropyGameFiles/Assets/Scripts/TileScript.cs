@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
 using System;
+using Unity.VisualScripting;
 
 public class TileScript : MonoBehaviour
 {
@@ -67,7 +68,20 @@ public class TileScript : MonoBehaviour
   /// </summary>
   public bool visible = false;
 
+  /// <summary>
+  /// Anthill or not
+  /// </summary>
   bool isAnthill = false;
+
+  /// <summary>
+  /// Flag currently displayed on the tile
+  /// </summary>
+  GameObject flag;
+
+  /// <summary>
+  /// Flag Prefab for Owned Tiles
+  /// </summary>
+  public GameObject redFlagPrefab;
 
   GameManager gameManagerInstance;
   private MouseListenerUI uiListener;
@@ -78,17 +92,7 @@ public class TileScript : MonoBehaviour
   }
   private void Start()
   {
-    if (isAnthill) 
-    {
-      maxAssignedAnts = gameManagerInstance.maxAntsAnthillTile;
-    }
-    else 
-    {
-      maxAssignedAnts = gameManagerInstance.maxAntsResourceTile;
-    }
-    
-    //assignedAnts = 0;
-    //freeAnts = 0;
+    maxAssignedAnts = gameManagerInstance.maxAntsResourceTile;
     uiListener = GameObject.Find("NextTurnCanvas").GetComponent<MouseListenerUI>();
   }
 
@@ -97,7 +101,6 @@ public class TileScript : MonoBehaviour
   /// </summary>
   private void OnMouseDown()
   {
-
     if (uiListener.isUIOverride)
     {
       Debug.Log("Cancelled OnMouseDown! A UI element has override this object!");
@@ -110,13 +113,11 @@ public class TileScript : MonoBehaviour
         GameObject anthillUI = GameObject.Find("Anthill");
         anthillUI.GetComponent<Canvas>().enabled = true;
         AntHillUI antHill = anthillUI.GetComponent<AntHillUI>();
-        antHill.SetAssignedAnts(XPos, ZPos, assignedAnts, maxAssignedAnts, false);
         antHill.tile = this;
         antHill.UpdateAntText();
 
         GameObject uiMiniBarInfo = GameObject.Find("MiniBarInfo");
         uiMiniBarInfo.GetComponent<MiniBarInfoUI>().MiniBarInfoUpdate();
-
       }
       else
       {
@@ -134,8 +135,6 @@ public class TileScript : MonoBehaviour
 
       Debug.Log("element clicked" + UnityEngine.Random.Range(0, 40) + " pos: " + XPos + "|" + ZPos);
     }
-
-    
   }
 
   /// <summary>
@@ -176,6 +175,25 @@ public class TileScript : MonoBehaviour
   }
 
   /// <summary>
+  /// Spawns the owned flag prefab on the tile
+  /// </summary>
+  public void spawnOwnedFlagOnTile()
+  {
+    flag = Instantiate<GameObject>(redFlagPrefab, new Vector3(xPos + 0.5f, 0.2f, zPos + 0.5f), Quaternion.identity, transform);
+  }
+
+  /// <summary>
+  /// Destroys any flag object on the tile
+  /// </summary>
+  public void deleteFlagOnTile() 
+  {
+    if(flag != null) 
+    {
+      Destroy(flag);
+    }
+  }
+
+  /// <summary>
   ///  Ants on tile, getter and setter
   /// </summary>
   public int AssignedAnts
@@ -204,7 +222,6 @@ public class TileScript : MonoBehaviour
       maxAssignedAnts = value;
     }
   }
-
 
   /// <summary>
   /// Tile type, getter and setter

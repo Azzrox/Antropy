@@ -40,7 +40,6 @@ public class MapScript : MonoBehaviour
   /// Game Manager Scene Instance
   /// </summary>
   GameManager gameManagerInstance;
-  
 
   private void Awake()
   {
@@ -403,4 +402,6 @@ public class MapScript : MonoBehaviour
     Debug.Log("Assigned Ants" + mapMatrix[tile.XPos, tile.ZPos].assignedAnts);
     Destroy(tile.gameObject);
   }
+
+
 }

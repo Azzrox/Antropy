@@ -1676,13 +1676,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerName: 
-  totalAnts: 100
-  freeAnts: 100
+  totalAnts: 50
+  freeAnts: 50
   rows: 50
   columns: 50
   assignedHillAnts: 
-  antOverPopulationDeathAmount: 10
-  antDeathLackofResourcesAmount: 20
+  currentMaximumPopulationCapacity: 70
+  antOverPopulationDeathAmount: 1
+  antDeathLackofResourcesAmount: 2
   distanceGatheringReductionRate: 0
   resourceGatherRate: 5
   tileRegrowAmount: 20
@@ -1690,13 +1691,12 @@ MonoBehaviour:
   weatherRegrowMultiplier: 0
   income: 0
   currentSeason: 0
-  currentWeather: 1
+  currentWeather: 0
   resources: 0
   maxResourceStorage: 150
   currentUpkeep: 0
   foodPerAnt: 0.5
-  growthPerAnt: 0.01
-  antGrowth: 0.01
+  antPopGrowthPerTurn: 0.01
   hatcheryLevel: 0
   storageLevel: 0
   hatcheryMaxLevel: 0
@@ -2676,17 +2676,9 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 1558192648}
-    - target: {fileID: 3075075617391170097, guid: f1c633493d7de13428e8237db353197e, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 3075075617391170101, guid: f1c633493d7de13428e8237db353197e, type: 3}
       propertyPath: m_Name
       value: Anthill
-      objectReference: {fileID: 0}
-    - target: {fileID: 3075075617391170101, guid: f1c633493d7de13428e8237db353197e, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3075075617391170110, guid: f1c633493d7de13428e8237db353197e, type: 3}
       propertyPath: m_Pivot.x
@@ -2770,10 +2762,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3075075617391170110, guid: f1c633493d7de13428e8237db353197e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3075075617430424335, guid: f1c633493d7de13428e8237db353197e, type: 3}
-      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -2876,6 +2864,30 @@ PrefabInstance:
     - target: {fileID: 4874741452438488286, guid: 930aa972a31ee0f42b40935ed5e9cdc6, type: 3}
       propertyPath: m_Name
       value: MiniBarInfo
+      objectReference: {fileID: 0}
+    - target: {fileID: 4874741453453683609, guid: 930aa972a31ee0f42b40935ed5e9cdc6, type: 3}
+      propertyPath: m_fontSize
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4874741453453683609, guid: 930aa972a31ee0f42b40935ed5e9cdc6, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4874741454168782039, guid: 930aa972a31ee0f42b40935ed5e9cdc6, type: 3}
+      propertyPath: m_fontSize
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4874741454168782039, guid: 930aa972a31ee0f42b40935ed5e9cdc6, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4874741454369908879, guid: 930aa972a31ee0f42b40935ed5e9cdc6, type: 3}
+      propertyPath: m_fontSize
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4874741454369908879, guid: 930aa972a31ee0f42b40935ed5e9cdc6, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 930aa972a31ee0f42b40935ed5e9cdc6, type: 3}
