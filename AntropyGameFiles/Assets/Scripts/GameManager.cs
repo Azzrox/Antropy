@@ -33,12 +33,12 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Death of Ants per turn, due to overpopulation
     /// </summary>
-    public int antOverPopulationDeathAmount;
+    public float antOverPopulationDeathRate;
 
     /// <summary>
     /// Death of ants per turn due to lack of resources;
     /// </summary>
-    public int antDeathLackofResourcesAmount;
+    public float antDeathLackofResourcesRate;
     
     /// <summary>
     /// Gathering distance deduction
@@ -237,10 +237,11 @@ public class GameManager : MonoBehaviour
     private int totalResources;
     private int totaldeaths;
 
-  public MapScript mapInstance;
+    public MapScript mapInstance;
     public MapCameraScript cameraInstance;
     public WeatherScript weatherInstance;
     public MiniBarInfoUI miniBarInfoInstance;
+    public NextTurnScript nextTurnInstance;
 
     // Creates an instance that is present in all other classes
     public static GameManager Instance;
@@ -265,6 +266,7 @@ public class GameManager : MonoBehaviour
         cameraInstance = GameObject.Find("MapControls").GetComponent<MapCameraScript>();
         weatherInstance = GameObject.Find("Weather").GetComponent<WeatherScript>();
         miniBarInfoInstance = GameObject.Find("MiniBarInfo").GetComponent<MiniBarInfoUI>();
+        nextTurnInstance = GameObject.Find("NextTurnCanvas").GetComponent<NextTurnScript>();
   }
 
   [System.Serializable]
@@ -286,8 +288,6 @@ public class GameManager : MonoBehaviour
         public int[] assignedHillAnts;
 
     }
-
-    
 
     // optional: add filename from textInput
     public void SaveGame()
@@ -361,11 +361,19 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void prototypeGoalCheck() 
     { 
-      if(currentGoalProgress >= goal) 
+      if(currentGoalProgress >= goal || currentTurnCount >= maxTurnCount) 
       {
         SceneManager.LoadScene("PrototypeEndScreen", LoadSceneMode.Additive);
       }
+      
     }
+  public void prototypeLooseCheck() 
+  {
+    if (resources <= 0 && income < 0)
+    {
+      SceneManager.LoadScene("PrototypeEndScreen", LoadSceneMode.Additive);
+    }
+  }
 
     /// <summary>
     /// Endscore resource counter

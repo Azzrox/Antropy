@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 public class ScoreScreenUI : MonoBehaviour
 {
+  public TextMeshProUGUI goal;
   public TextMeshProUGUI turns;
   public TextMeshProUGUI totalResources;
   public TextMeshProUGUI totalAnts;
@@ -30,10 +31,11 @@ public class ScoreScreenUI : MonoBehaviour
 
   void showScore() 
   {
+    goal.text = "Goal: " + gameManager.currentGoalProgress  + "/" +  gameManager.goal;
     turns.text = "Turns: " + gameManager.currentTurnCount;
     totalResources.text = "Total Resources: " + gameManager.TotalResources;
     totalAnts.text = "Total Population: " + gameManager.totalAnts;
-    deaths.text = "Deaths: " + gameManager.TotalDeaths;
+    //deaths.text = "Deaths: " + gameManager.TotalDeaths;
     score.text = (gameManager.currentTurnCount + gameManager.TotalResources + gameManager.totalAnts - gameManager.TotalDeaths).ToString();
   }
 

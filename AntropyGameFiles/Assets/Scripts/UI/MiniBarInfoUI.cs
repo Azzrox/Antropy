@@ -27,5 +27,43 @@ public class MiniBarInfoUI : MonoBehaviour
 
     //Currently Hardgecoded for Prototype
     season.text = "Spring / " + gameManagerInstance.weatherInstance.WeatherName(gameManagerInstance.currentWeather);
+
+    OverCapacityColourChange();
+  }
+
+  /// <summary>
+  /// Changes the text color of the ui for the player to see
+  /// </summary>
+  void OverCapacityColourChange() 
+  {
+    if(gameManagerInstance.totalAnts > gameManagerInstance.currentMaximumPopulationCapacity) 
+    {
+      population.color = Color.red;
+
+    }
+    else 
+    {
+      population.color = Color.black;
+    }
+
+    if (gameManagerInstance.resources >= gameManagerInstance.maxResourceStorage)
+    {
+      resources.color = Color.red;
+
+    }
+    else
+    {
+      resources.color = Color.black;
+    }
+
+    if (gameManagerInstance.income < 0)
+    {
+      income.color = Color.red;
+
+    }
+    else
+    {
+      income.color = Color.black;
+    }
   }
 }

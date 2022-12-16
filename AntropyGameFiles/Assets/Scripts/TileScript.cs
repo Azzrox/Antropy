@@ -4,6 +4,7 @@ using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
 using System;
 using Unity.VisualScripting;
+using UnityEditor;
 
 public class TileScript : MonoBehaviour
 {
@@ -132,7 +133,6 @@ public class TileScript : MonoBehaviour
         GameObject uiMiniBarInfo = GameObject.Find("MiniBarInfo");
         uiMiniBarInfo.GetComponent<MiniBarInfoUI>().MiniBarInfoUpdate();
       }
-
       Debug.Log("element clicked" + UnityEngine.Random.Range(0, 40) + " pos: " + XPos + "|" + ZPos);
     }
   }
@@ -398,6 +398,18 @@ public class TileScript : MonoBehaviour
     set
     {
       reservedResources = value;
+    }
+  }
+
+  public GameObject getFlag
+  {
+    get
+    {
+      return flag;
+    }
+    set
+    {
+      flag = value;
     }
   }
 }

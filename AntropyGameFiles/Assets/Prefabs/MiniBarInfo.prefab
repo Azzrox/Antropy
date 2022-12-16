@@ -299,7 +299,7 @@ MonoBehaviour:
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 0.5
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -338,6 +338,7 @@ MonoBehaviour:
   population: {fileID: 4874741454168782039}
   season: {fileID: 4874741454040216528}
   income: {fileID: 4874741453453683609}
+  goal: {fileID: 1583300761325533505}
 --- !u!114 &1594421759
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -443,8 +444,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 15
-  m_fontSizeBase: 15
+  m_fontSize: 10
+  m_fontSizeBase: 10
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -715,8 +716,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 15
-  m_fontSizeBase: 15
+  m_fontSize: 10
+  m_fontSizeBase: 10
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -850,8 +851,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 15
-  m_fontSizeBase: 15
+  m_fontSize: 10
+  m_fontSizeBase: 10
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -981,11 +982,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4905633532376771339, guid: 65f0dcaa4f6932048970c9205fe48d70, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -110.74994
+      value: -112.8
       objectReference: {fileID: 0}
     - target: {fileID: 4905633532376771339, guid: 65f0dcaa4f6932048970c9205fe48d70, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -83.6662
+      value: -78.8
       objectReference: {fileID: 0}
     - target: {fileID: 4905633532376771339, guid: 65f0dcaa4f6932048970c9205fe48d70, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1006,3 +1007,14 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 4905633532376771339, guid: 65f0dcaa4f6932048970c9205fe48d70, type: 3}
   m_PrefabInstance: {fileID: 5903458335192208061}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1583300761325533505 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4905633531513449468, guid: 65f0dcaa4f6932048970c9205fe48d70, type: 3}
+  m_PrefabInstance: {fileID: 5903458335192208061}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

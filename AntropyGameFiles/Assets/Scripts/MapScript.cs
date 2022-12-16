@@ -194,8 +194,8 @@ public class MapScript : MonoBehaviour
     //Random Amount of resources on the tile
     if (newTile.TileType == 1 || newTile.TileType == 2)
     {
-      newTile.ResourceAmount = Random.Range(250, 500);
-      newTile.MaxResourceAmount = 650;
+      newTile.ResourceAmount = Random.Range(50, 300);
+      newTile.MaxResourceAmount = 300;
     }
 
     //position of the spawn
@@ -236,12 +236,12 @@ public class MapScript : MonoBehaviour
     //Random Amount of resources on the tile
     if (newTile.TileType == 6 || newTile.TileType == 7)
     {
-      newTile.MaxResourceAmount = 500;
+      newTile.MaxResourceAmount = 300;
       for (int k = 0; k < i+j; k++)
       {
         newTile.MaxResourceAmount = (int)(newTile.MaxResourceAmount + (newTile.MaxResourceAmount * GameManager.Instance.resourceWeight));
       }
-      newTile.ResourceAmount = Random.Range(250, newTile.MaxResourceAmount);
+      newTile.ResourceAmount = Random.Range(25, newTile.MaxResourceAmount);
       if (newTile.TileType == 7)
       {
         newTile.ResourceAmount = (int)(GameManager.Instance.soilWeight * newTile.ResourceAmount);
@@ -367,19 +367,23 @@ public class MapScript : MonoBehaviour
     newTile.OwnedByPlayer = tile.OwnedByPlayer;
     newTile.ResourceAmount = tile.ResourceAmount;
     newTile.MaxAssignedAnts = tile.MaxAssignedAnts;
+    
 
-    //old
-    //newTile.canvas = tile.canvas;
+    if(tile.assignedAnts == 10 && tile.getFlag != null) 
+    {
+      newTile.spawnOwnedFlagOnTile();
+    }
+    
 
     //Resources on the Tile only soil and grass can have resources
     if (newTileType == 1 || newTileType == 2) 
     {
-      newTile.MaxResourceAmount = 500;
+      newTile.MaxResourceAmount = 250;
       for (int k = 0; k < newTile.XPos + newTile.ZPos; k++)
       {
         newTile.MaxResourceAmount = (int)(newTile.MaxResourceAmount + (newTile.MaxResourceAmount * GameManager.Instance.resourceWeight));
       }
-      newTile.ResourceAmount = Random.Range(250, newTile.MaxResourceAmount);
+      newTile.ResourceAmount = Random.Range(100, newTile.MaxResourceAmount);
       if (newTile.TileType == 2)
       {
         newTile.ResourceAmount = (int)(GameManager.Instance.soilWeight * newTile.ResourceAmount);
@@ -392,16 +396,7 @@ public class MapScript : MonoBehaviour
     }
     
     mapMatrix[tile.XPos, tile.ZPos] = newTile;
-
-    //GameObject uiAssignAnts = GameObject.Find("AssignAnts");
-    //uiAssignAnts.GetComponent<Canvas>().enabled = true;
-
-    //AntCounter antCounter = uiAssignAnts.GetComponent<AntCounter>();
-    //antCounter.SetAssignedAnts(newTile.XPos, newTile.ZPos,newTile.AssignedAnts, newTile.MaxAssignedAnts, false);
-
     Debug.Log("Assigned Ants" + mapMatrix[tile.XPos, tile.ZPos].assignedAnts);
     Destroy(tile.gameObject);
   }
-
-
 }

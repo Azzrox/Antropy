@@ -11,6 +11,7 @@ public class NextTurnScript : MonoBehaviour
   //UI Update
   GameObject uiAssignAnts; //= GameObject.Find("AssignAnts");
   AntCounter antCounter;
+  bool checker = false;
 
   private void Awake()
   {
@@ -44,6 +45,7 @@ public class NextTurnScript : MonoBehaviour
       ExploreTurn();
       gameManager.currentTurnCount++;
       TurnInfoUpdate();
+      checker = false;
 
       //Update the infobars
       gameManager.miniBarInfoInstance.MiniBarInfoUpdate();
@@ -53,8 +55,6 @@ public class NextTurnScript : MonoBehaviour
     {
       Debug.Log("Hit Max Turn Count, turn denied");
     }
-
-    //Check if we reached the prototype goal
     gameManager.prototypeGoalCheck();
   }
 
@@ -63,7 +63,6 @@ public class NextTurnScript : MonoBehaviour
 
     //Reset GoalCheck
     gameManager.currentGoalProgress = 0;
-
 
     //Insert Ant Turn
     TileScript[,] gameMap = gameManager.mapInstance.GameMap;//game_resources.map_instance.gameManager.mapInstance.GameMap;
@@ -79,36 +78,43 @@ public class NextTurnScript : MonoBehaviour
           {
             //gatheringBase = Mathf.Ceil(gatheringBase * gameManager.distanceGatheringReductionRate);
           }
-          gameManager.resources += (int)gatheringBase;
-          //gameManager.income += (int)gatheringBase;
- 
-          Debug.Log("NewResources: " + gameManager.resources);
 
-          //End Score
-          gameManager.TotalResources += (int)gatheringBase;
+          if(gameMap[i, j].TileType == 1 || gameMap[i, j].TileType == 2) 
+          {
+            gameManager.resources += gameMap[i, j].ReservedResources;
+            Debug.Log("NewResources: " + gameManager.resources);
 
-          gameMap[i, j].CalculateNewResourceAmountFlat((int)-gatheringBase);
-
-          //add the flag because it's owned
+            //End Score
+            gameManager.TotalResources += gameMap[i, j].ReservedResources;
+            gameMap[i, j].CalculateNewResourceAmountFlat((int)-gameMap[i, j].ReservedResources);
+          
+          }
+          
+          //add the flag because it's owned (Prototype) only if 10 are on a tile you get a flag
           if(gameMap[i, j].assignedAnts == 10) 
           {
             gameMap[i, j].spawnOwnedFlagOnTile();
             gameManager.currentGoalProgress += 1;
           }
-          
+          else 
+          {
+            gameMap[i, j].deleteFlagOnTile();
+            gameManager.currentGoalProgress -= 1;
+          }    
         }
-        else 
+        else if (gameMap[i, j].assignedAnts != 10) 
         {
           //if tile not owned by player remove flag
           gameMap[i, j].deleteFlagOnTile();
         }
       }
     }
-    //Calculate new upkeep
+
+    //Current Upkeep Calculation
     gameManager.currentUpkeep = (int)Mathf.Ceil(gameManager.totalAnts * gameManager.foodPerAnt);
-    
+
     //Storage Room Check
-    if((gameManager.resources - gameManager.currentUpkeep) >= 0) 
+    if ((gameManager.resources - gameManager.currentUpkeep) > 0) 
     {
       gameManager.resources -= gameManager.currentUpkeep;
     }
@@ -117,46 +123,22 @@ public class NextTurnScript : MonoBehaviour
       gameManager.resources = 0;
     }
    
-    if (gameManager.maxResourceStorage <= gameManager.resources) // needs fixing not good
+    if (gameManager.resources > gameManager.maxResourceStorage)
     {
       gameManager.resources = gameManager.maxResourceStorage;
     }
 
+    //Check if we reached the prototype goal
+    gameManager.prototypeLooseCheck();
+
     //Population growth
     int new_pop = (int)Mathf.Ceil((float)gameManager.totalAnts * gameManager.antPopGrowthPerTurn);
     gameManager.freeAnts += new_pop;
-    gameManager.totalAnts += new_pop;//(int)Mathf.Ceil((float)gameManager.totalAnts * gameManager.antPopGrowthPerTurn);
-
-    //Population no resources death checks
-    if (gameManager.resources == 0 && gameManager.income < 0) 
-    {
-      gameManager.freeAnts -= gameManager.antDeathLackofResourcesAmount;
-
-      //Score
-      gameManager.TotalDeaths += gameManager.antDeathLackofResourcesAmount;
-
-      //TODO Later
-      //Remove them from a random tile if there are no free ants
-      //gameManager.totalAnts -= gameManager.antDeathLackofResourcesAmount;
-    }
-
-    //Over Population penalty/death checks
-    if (gameManager.currentMaximumPopulationCapacity < gameManager.totalAnts)
-    {
-      gameManager.freeAnts -= gameManager.antDeathLackofResourcesAmount;
-
-      //Score
-      gameManager.TotalDeaths += gameManager.antDeathLackofResourcesAmount;
-
-      //TODO Later
-      //Remove them from a random tile if there are no free ants
-      //gameManager.totalAnts -= gameManager.antOverPopulationDeathAmount;
-    }
-
+    gameManager.totalAnts += new_pop;
+    
     //Calculate new upkeep for the next turn
     gameManager.currentUpkeep = (int)Mathf.Ceil(gameManager.totalAnts * gameManager.foodPerAnt);
   }
-
   void MapTurn() 
   {
     //Insert Map Turn
@@ -167,10 +149,9 @@ public class NextTurnScript : MonoBehaviour
     {
       for (int j = 0; j < gameManager.mapInstance.columns; j++)
       {
-        //constant growth + current weather influence (currently disabled)
-        //int regrowAmount = (int)Mathf.Ceil(gameManager.tileRegrowAmount * gameManager.weatherRegrowMultiplier);
         int regrowAmount = (int)Mathf.Ceil(gameManager.tileRegrowAmount);
         gameMap[i, j].CalculateNewResourceAmountFlat(regrowAmount);
+        
         if(gameMap[i, j].AssignedAnts * (int)gameManager.resourceGatherRate > (int)gameMap[i,j].ResourceAmount)
         {
           gameMap[i, j].ReservedResources = (int) gameMap[i, j].ResourceAmount;
@@ -180,6 +161,7 @@ public class NextTurnScript : MonoBehaviour
           gameMap[i, j].ReservedResources = gameMap[i, j].AssignedAnts * (int)gameManager.resourceGatherRate;
         }
         gameManager.income += gameMap[i, j].ReservedResources;
+        
 
         //check if the growth if we reached a threshhold to update the tile mesh
         gameManager.mapInstance.TileErosionCheck(gameMap[i, j]);
@@ -238,6 +220,4 @@ public class NextTurnScript : MonoBehaviour
   {
     TurnText.text = gameManager.currentTurnCount + "/" + gameManager.maxTurnCount;
   }
-
-
 }

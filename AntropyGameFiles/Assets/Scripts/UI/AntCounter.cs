@@ -9,24 +9,25 @@ using Unity.VisualScripting;
 
 public class AntCounter : MonoBehaviour
 {
-    private int posX;
-    private int posZ;
-    private int assignedAnts;
-    private int maxAssignedAnts;
-    private bool isAntHill;
-    private GameObject antCollection;
-    public Button plusButton;
-    public Button plusPlusButton;
-    public Button minusButton;
-    public Button confirmButton;
-    public TextMeshProUGUI freeAnts;
-    public TextMeshProUGUI assignedAntsText;
-    public TextMeshProUGUI resources;
-    public TextMeshProUGUI tileName;
-  
+  private int posX;
+  private int posZ;
+  private int assignedAnts;
+  private int maxAssignedAnts;
+  private bool isAntHill;
+  private GameObject antCollection;
+  public Button plusButton;
+  public Button plusPlusButton;
+  public Button minusButton;
+  public Button confirmButton;
+  public Button minusMinusButton;
 
-    public GameObject antPrefab;
-    private GameManager gameManager;
+  public TextMeshProUGUI freeAnts;
+  public TextMeshProUGUI assignedAntsText;
+  public TextMeshProUGUI resources;
+  public TextMeshProUGUI tileName;
+  
+  public GameObject antPrefab;
+  private GameManager gameManager;
 
   private void Awake()
   {
@@ -39,10 +40,10 @@ public class AntCounter : MonoBehaviour
     plusButton.onClick.AddListener(IncreaseAnts);
     minusButton.onClick.AddListener(DecreaseAnts);
     confirmButton.onClick.AddListener(Confirm);
-    plusPlusButton.onClick.AddListener(AllAnts);
+    plusPlusButton.onClick.AddListener(AddAllAnts);
+    minusMinusButton.onClick.AddListener(RemoveAllAnts);
     antCollection = new GameObject();
     antCollection.name = "MovingAnts";
-     //UpdateAntText();
   }
 
     void IncreaseAnts()
@@ -67,9 +68,10 @@ public class AntCounter : MonoBehaviour
                 gameManager.income += (int)gameManager.resourceGatherRate;
                 gameManager.mapInstance.GameMap[posX, posZ].ReservedResources += (int)gameManager.resourceGatherRate;
               }
-                gameManager.miniBarInfoInstance.MiniBarInfoUpdate();
+                
         }
-    } 
+    gameManager.miniBarInfoInstance.MiniBarInfoUpdate();
+  } 
 
     void DecreaseAnts()
     {
@@ -110,7 +112,7 @@ public class AntCounter : MonoBehaviour
         SetAssignedAnts_remote();
     }
 
-    void AllAnts() 
+    void AddAllAnts() 
     {
       //This is a very ugly fix for the prototype, rework this
       for (int i = 0; i < gameManager.maxAntsResourceTile; i++)
@@ -119,8 +121,16 @@ public class AntCounter : MonoBehaviour
       }
     }
 
+    void RemoveAllAnts()
+    {
+      //This is a very ugly fix for the prototype, rework this
+      for (int i = 0; i < gameManager.maxAntsResourceTile; i++)
+      {
+        DecreaseAnts();
+      }
+    }
 
-    public void SetAssignedAnts_remote()
+  public void SetAssignedAnts_remote()
     {
       if (isAntHill)
       {
@@ -144,8 +154,7 @@ public class AntCounter : MonoBehaviour
     {
     freeAnts.text = "Free Ants: " + gameManager.freeAnts;
     if (assignedAnts == 1)
-      {
-          
+      { 
           assignedAntsText.text = assignedAnts + "/"  + gameManager.mapInstance.GameMap[posX, posZ].MaxAssignedAnts + " ants";
           resources.text = "Resources: " + gameManager.mapInstance.GameMap[posX, posZ].resourceAmount;
           tileName.text = gameManager.mapInstance.TileName(gameManager.mapInstance.GameMap[posX, posZ].TileType) + "[" + posX + "," + posZ + "]"; 
