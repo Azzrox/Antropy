@@ -8,20 +8,24 @@ public class NextTurnScript : MonoBehaviour
   private GameManager gameManager;
   public TextMeshProUGUI TurnText;
 
+  //UI Update
+  GameObject uiAssignAnts; //= GameObject.Find("AssignAnts");
+  AntCounter antCounter;
+  bool checker = false;
 
   private void Awake()
   {
     gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
+    uiAssignAnts = GameObject.Find("AssignAnts");
+    antCounter = uiAssignAnts.GetComponent<AntCounter>();
   }
 
   private void Start()
   {
-    //Calculate new upkeep
+    //Calculate the first upkeep
     gameManager.currentUpkeep = (int)Mathf.Ceil(gameManager.totalAnts * gameManager.foodPerAnt);
-    //Income
-    //gameManager.income -= gameManager.currentUpkeep;
-
     TurnInfoUpdate();
+    antCounter.UpdateAntText();
   }
 
   /// <summary>
@@ -34,74 +38,130 @@ public class NextTurnScript : MonoBehaviour
       Debug.Log("Turn: " + gameManager.currentTurnCount);
       AntTurn();
       MapTurn();
-      WeatherTurn();
+      //WeatherTurn();
       EventTurn();
       SeasonTurn();
       MessageTurn();
       ExploreTurn();
       gameManager.currentTurnCount++;
       TurnInfoUpdate();
+      checker = false;
 
-      //Update the infobar
+      //Update the infobars
       gameManager.miniBarInfoInstance.MiniBarInfoUpdate();
+      antCounter.UpdateAntText();
     }
     else 
     {
       Debug.Log("Hit Max Turn Count, turn denied");
     }
+    gameManager.prototypeGoalCheck();
   }
 
   void AntTurn() 
   {
+
+    //Reset GoalCheck
+    gameManager.currentGoalProgress = 0;
+
     //Insert Ant Turn
     TileScript[,] gameMap = gameManager.mapInstance.GameMap;//game_resources.map_instance.gameManager.mapInstance.GameMap;
     for (int i = 0; i < gameManager.mapInstance.rows; i++)
     {
       for (int j = 0; j < gameManager.mapInstance.columns; j++)
       {
-        if(gameManager.mapInstance.GameMap[i, j].OwnedByPlayer) 
+        if(gameMap[i, j].OwnedByPlayer) 
         {
           //Tile Distance Degridation + Current Weather influence
-          float gatheringBase = gameManager.mapInstance.GameMap[i, j].AssignedAnts * gameManager.resourceGatherRate;// * gameManager.weatherAcessMultiplier);
-          for (int k = 0; k < gameManager.mapInstance.GameMap[i, j].TileDistance; k++)
+          float gatheringBase = gameMap[i, j].AssignedAnts * gameManager.resourceGatherRate;// * gameManager.weatherAcessMultiplier);
+          for (int k = 0; k < gameMap[i, j].TileDistance; k++)
           {
             //gatheringBase = Mathf.Ceil(gatheringBase * gameManager.distanceGatheringReductionRate);
           }
-          gameManager.resources += (int)gatheringBase;
-          //gameManager.income += (int)gatheringBase;
- 
-          Debug.Log("NewResources: " + gameManager.resources);
-          gameManager.mapInstance.GameMap[i, j].CalculateNewResourceAmountFlat((int)-gatheringBase);
+
+          if(gameMap[i, j].TileType == 1 || gameMap[i, j].TileType == 2) 
+          {
+            gameManager.resources += gameMap[i, j].ReservedResources;
+            Debug.Log("NewResources: " + gameManager.resources);
+
+            //End Score
+            gameManager.TotalResources += gameMap[i, j].ReservedResources;
+            gameMap[i, j].CalculateNewResourceAmountFlat((int)-gameMap[i, j].ReservedResources);
           
+          }
+          
+          //add the flag because it's owned (Prototype) only if 10 are on a tile you get a flag
+          if(gameMap[i, j].assignedAnts == 10) 
+          {
+            gameMap[i, j].spawnOwnedFlagOnTile();
+            gameManager.currentGoalProgress += 1;
+          }
+          else 
+          {
+            gameMap[i, j].deleteFlagOnTile();
+            gameManager.currentGoalProgress -= 1;
+          }    
+        }
+        else if (gameMap[i, j].assignedAnts != 10) 
+        {
+          //if tile not owned by player remove flag
+          gameMap[i, j].deleteFlagOnTile();
         }
       }
     }
-    //Calculate new upkeep
-    gameManager.currentUpkeep = (int)Mathf.Ceil(gameManager.totalAnts * gameManager.foodPerAnt);
-    //Storage Room Check
-    gameManager.resources -= gameManager.currentUpkeep;
 
-    if (gameManager.maxResourceStorage <= gameManager.resources) // needs fixing not good
+    //Current Upkeep Calculation
+    gameManager.currentUpkeep = (int)Mathf.Ceil(gameManager.totalAnts * gameManager.foodPerAnt);
+
+    //Storage Room Check
+    if ((gameManager.resources - gameManager.currentUpkeep) > 0) 
+    {
+      gameManager.resources -= gameManager.currentUpkeep;
+    }
+    else 
+    {
+      gameManager.resources = 0;
+    }
+   
+    if (gameManager.resources > gameManager.maxResourceStorage)
     {
       gameManager.resources = gameManager.maxResourceStorage;
     }
-    //Population growth
-    gameManager.freeAnts += (int)Mathf.Ceil((float)gameManager.freeAnts * gameManager.antGrowth);
-  }
 
+    //Check if we reached the prototype goal
+    gameManager.prototypeLooseCheck();
+
+    //Population growth
+    int new_pop = (int)Mathf.Ceil((float)gameManager.totalAnts * gameManager.antPopGrowthPerTurn);
+    gameManager.freeAnts += new_pop;
+    gameManager.totalAnts += new_pop;
+    
+    //Calculate new upkeep for the next turn
+    gameManager.currentUpkeep = (int)Mathf.Ceil(gameManager.totalAnts * gameManager.foodPerAnt);
+  }
   void MapTurn() 
   {
     //Insert Map Turn
     //change the tile object
     TileScript[,] gameMap = gameManager.mapInstance.GameMap;//game_resources.map_instance.GameMap;
-
+    gameManager.income = 0 - gameManager.currentUpkeep;
     for (int i = 0; i < gameManager.mapInstance.rows; i++)
     {
       for (int j = 0; j < gameManager.mapInstance.columns; j++)
       {
-        //constant growth + current weather influence
-        int regrowAmount = (int)Mathf.Ceil(gameManager.tileRegrowAmount * gameManager.weatherRegrowMultiplier);
+        int regrowAmount = (int)Mathf.Ceil(gameManager.tileRegrowAmount);
         gameMap[i, j].CalculateNewResourceAmountFlat(regrowAmount);
+        
+        if(gameMap[i, j].AssignedAnts * (int)gameManager.resourceGatherRate > (int)gameMap[i,j].ResourceAmount)
+        {
+          gameMap[i, j].ReservedResources = (int) gameMap[i, j].ResourceAmount;
+        }
+        else
+        {
+          gameMap[i, j].ReservedResources = gameMap[i, j].AssignedAnts * (int)gameManager.resourceGatherRate;
+        }
+        gameManager.income += gameMap[i, j].ReservedResources;
+        
 
         //check if the growth if we reached a threshhold to update the tile mesh
         gameManager.mapInstance.TileErosionCheck(gameMap[i, j]);
@@ -117,7 +177,6 @@ public class NextTurnScript : MonoBehaviour
     {
       for (int j = 0; j < gameManager.mapInstance.columns; j++)
       {
-        //constant growth +
         if(gameMap[i, j].AssignedAnts > 0)
         {
           for (int k = 0; k < adder.Length / 2; k++)
@@ -161,6 +220,4 @@ public class NextTurnScript : MonoBehaviour
   {
     TurnText.text = gameManager.currentTurnCount + "/" + gameManager.maxTurnCount;
   }
-
-
 }
