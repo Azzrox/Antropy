@@ -24,9 +24,9 @@ public class WeatherScript : MonoBehaviour
         case 0:
           //higher probability of rain and sun
           //Basic Implementation for the Prototype
-          int weather = Random.Range(0, 2);
-          gameManagerInstance.currentWeather = weather;
-          WeatherMultiplierUpdate(weather);
+          //int weather = Random.Range(0, 2);
+          gameManagerInstance.currentWeather = 0;
+          //WeatherMultiplierUpdate(weather);
           break;
 
         case 1:

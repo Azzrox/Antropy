@@ -6,16 +6,8 @@ using TMPro;
 
 public class AntHillUI : MonoBehaviour
 {
-
-  private int posX;
-  private int posZ;
-  private int assignedAnts;
-  private int maxAssignedAnts;
-
   public Button storageUpgradeplusButton;
   public Button hatcheryUpgradeplusButton;
-  public Button assignAntsToHatcherplusButton;
-  public Button assignAntsToHatcherminusButton;
   public Button confirmButton;
 
   public TextMeshProUGUI freeAnts;
@@ -36,37 +28,9 @@ public class AntHillUI : MonoBehaviour
   }
   private void Start()
   {
-    assignAntsToHatcherplusButton.onClick.AddListener(IncreaseAnts);
-    assignAntsToHatcherminusButton.onClick.AddListener(DecreaseAnts);
     storageUpgradeplusButton.onClick.AddListener(IncreaseLevelStorage);
     hatcheryUpgradeplusButton.onClick.AddListener(IncreaseLevelHatchery);
     confirmButton.onClick.AddListener(Confirm);
-  }
-
-  void IncreaseAnts()
-  {
-    int freeAnts = gameManager.freeAnts;
-    
-    if (freeAnts > 0 && tile.AssignedAnts < tile.MaxAssignedAnts)
-    {
-      assignedAnts += 1;
-      gameManager.freeAnts -= 1;
-      SetAssignedAnts_remote();
-      UpdateAntText();
-      PopulationPerTurnTextUpdate();
-    }
-  }
-
-  void DecreaseAnts()
-  {
-    if (assignedAnts > 0)
-    {
-      assignedAnts -= 1;
-      gameManager.freeAnts += 1;
-      SetAssignedAnts_remote();
-      UpdateAntText();
-      PopulationPerTurnTextUpdate();
-    }
   }
 
   void Confirm()
@@ -74,61 +38,34 @@ public class AntHillUI : MonoBehaviour
     gameObject.GetComponent<Canvas>().enabled = false;
   }
 
-  public void SetAssignedAnts_remote()
-  {
-    if (tile.IsAntHill)
-    {
-      gameManager.mapInstance.GameMap[tile.XPos, tile.ZPos].AssignedAnts = assignedAnts;
-    }
-    else
-    {
-      gameManager.mapInstance.GameMap[tile.XPos, tile.ZPos].AssignedAnts = assignedAnts;
-    }
-
-    //Calculate Growth
-    //1gameManager.antGrowth = 0.01f;
-  }
-
-  public void SetAssignedAnts(int ix, int iz, int asAnts, int maxAnts, bool isHill)
-  {
-    // could be replaced by ix, iy to get values from matrix
-    posX = ix;
-    posZ = iz;
-    assignedAnts = asAnts;
-    maxAssignedAnts = maxAnts;
-  }
-
   /// <summary>
   /// Update Anthill UI Text with current Data
   /// </summary>
   public void UpdateAntText()
   {
+    hatcheryLevelText.text = "Hatchery Level: " + gameManager.hatcheryLevel;
+    
+    storageLevelText.text = "Storage Level: " + gameManager.storageLevel;
 
-    freeAnts.text = "Free ants: " + gameManager.freeAnts + "/" + gameManager.totalAnts;
-    if (tile.AssignedAnts == 1)
+
+    if (gameManager.hatcheryLevel >= gameManager.hatcheryMaxLevel)
     {
-      assignedAntsText.text = "Nursery: " + tile.AssignedAnts + " ant";
+      costHatcheryText.text = "Cost: " + "Max";
     }
     else
     {
-      assignedAntsText.text = "Nursery: " + tile.AssignedAnts + " ants";
+      costHatcheryText.text = "Cost: " + gameManager.hatcheryCost[gameManager.hatcheryLevel];
     }
 
-    hatcheryLevelText.text = "Hatchery Level: " + gameManager.hatcheryLevel;
-    costHatcheryText.text = "Cost: " + gameManager.hatcheryCost[gameManager.hatcheryLevel];
-    storageLevelText.text = "Storage Level: " + gameManager.storageLevel;
-    costStorageText.text = "Cost: " + gameManager.storageCost[gameManager.storageLevel];
-    PopulationPerTurnTextUpdate();
-  }
 
-  /// <summary>
-  /// Update the population count per turn
-  /// </summary>
-  void PopulationPerTurnTextUpdate() 
-  {
-    int basicGrowth = 1;
-    int newGrowth = basicGrowth * tile.AssignedAnts;
-    popPerTurnText.text = "Pop per Turn: " + newGrowth;
+    if (gameManager.storageLevel >= gameManager.storageMaxLevel)
+    {
+      costStorageText.text = "Cost: " + "Max";
+    }
+    else
+    {
+      costStorageText.text = "Cost: " + gameManager.storageCost[gameManager.storageLevel];
+    }
   }
 
   /// <summary>
@@ -143,8 +80,11 @@ public class AntHillUI : MonoBehaviour
       if(gameManager.resources >= gameManager.hatcheryCost[gameManager.hatcheryLevel])
       {
         hatcheryLevelText.text = "Hatchery Level: " + (gameManager.hatcheryLevel + 1);
+
+        //take resources from the player update the maxSupportedAnts and add +1 to the level and (correct the upkeep "needs to be implemented);
+        gameManager.resources -= gameManager.hatcheryCost[gameManager.hatcheryLevel];
         gameManager.hatcheryLevel += 1;
-        gameManager.totalAnts = gameManager.populationCapacityAmount[gameManager.hatcheryLevel];
+        gameManager.currentMaximumPopulationCapacity = gameManager.populationCapacityAmount[gameManager.hatcheryLevel];
 
         if (gameManager.hatcheryLevel >= gameManager.hatcheryMaxLevel)
         {
@@ -153,7 +93,10 @@ public class AntHillUI : MonoBehaviour
         else
         {
           costHatcheryText.text = "Cost: " + gameManager.hatcheryCost[gameManager.hatcheryLevel];
+          
         }
+       
+        gameManager.miniBarInfoInstance.MiniBarInfoUpdate();
       }
       else 
       {
@@ -172,9 +115,11 @@ public class AntHillUI : MonoBehaviour
       //check cost
       if(gameManager.resources >= gameManager.storageCost[gameManager.storageLevel])
       {
+        //(correct the upkeep "needs to be implemented)
         storageLevelText.text = "Storage Level: " + (gameManager.storageLevel + 1);
+        gameManager.resources -= gameManager.storageCost[gameManager.storageLevel];
         gameManager.storageLevel += 1;
-        gameManager.storageLevel = gameManager.populationCapacityAmount[gameManager.storageLevel];
+        gameManager.maxResourceStorage = gameManager.storageCapacityAmount[gameManager.storageLevel];
 
         if (gameManager.storageLevel >= gameManager.storageMaxLevel)
         {
@@ -184,6 +129,7 @@ public class AntHillUI : MonoBehaviour
         {
           costStorageText.text = "Cost: " + gameManager.storageCost[gameManager.storageLevel];
         }
+        gameManager.miniBarInfoInstance.MiniBarInfoUpdate();
       }
       else
       {
