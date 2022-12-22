@@ -4,49 +4,28 @@ using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
+// Sets the script to be executed later than all default scripts
+// This is helpful for the map / a UI, since other things may need to be initialized before setting the map / UI
+// e.g. GameManager for initilizing rows and columns when directly tested in the map scene
+[DefaultExecutionOrder(1000)]
 public class MapScript : MonoBehaviour
 {
-  /// <summary>
-  /// rows map
-  /// </summary>
-  public int rows;
-
-  /// <summary>
-  /// columns map
-  /// </summary>
-  public int columns;
 
   /// <summary>
   /// Matrix of the Map
   /// </summary>
-  TileScript[,] mapMatrix;
+  public TileScript[,] mapMatrix;
 
   /// <summary>
   /// TilePrefabs: [0]stone, [1]grass, [2]soil, [3]water, [4]anthill
   /// </summary>
   public List<Transform> tilePrefabs = new List<Transform>();
 
-  /// <summary>
-  /// threshhold to update to grass
-  /// </summary>
-  public int grassThreshhold;
-
-  /// <summary>
-  /// threshhold to update to soil
-  /// </summary>
-  public int soilThreshold;
-
-  /// <summary>
-  /// Game Manager Scene Instance
-  /// </summary>
-  GameManager gameManagerInstance;
 
   private void Awake()
   {
-    gameManagerInstance = GameObject.Find("Game Manager").GetComponent<GameManager>();
-    rows = gameManagerInstance.rows;
-    columns = gameManagerInstance.columns;
-    mapMatrix = new TileScript[gameManagerInstance.rows, gameManagerInstance.columns];
+    Debug.Log("starts mapScript");
+    mapMatrix = new TileScript[GameManager.Instance.rows, GameManager.Instance.columns];
   }
 
   /// <summary>
@@ -54,10 +33,10 @@ public class MapScript : MonoBehaviour
   /// </summary>
   public void SpawnRandomMap()
   {
-    for (int i = 0; i < rows; i++)
+    for (int i = 0; i < GameManager.Instance.rows; i++)
     {
       int distance_anthill = 0;
-      for (int j = 0; j < columns; j++)
+      for (int j = 0; j < GameManager.Instance.columns; j++)
       {
         if(i == 0 && j == 0) 
         {
@@ -65,7 +44,7 @@ public class MapScript : MonoBehaviour
         }
         else 
         {
-          WeightResourceTile(i, j, distance_anthill, rows + columns);
+          WeightResourceTile(i, j, distance_anthill, GameManager.Instance.rows + GameManager.Instance.columns);
           //RandomResourceTile(i, j, distance_anthill);
           distance_anthill++;
         }
@@ -81,62 +60,69 @@ public class MapScript : MonoBehaviour
   public void SpawnTerrainMap()
   {
     int[,] adder = new int[,] {{-1, 0}, {0, -1}, {0, 1}, {1, 0}};
-    for (int i = 0; i < rows; i++)
+    for (int i = 0; i < GameManager.Instance.rows; i++)
     {
-      for (int j = 0; j < columns; j++)
+      for (int j = 0; j < GameManager.Instance.columns; j++)
       {
         
         int sameFound = 0;
         for (int k = 0; k < adder.Length/2; k++)
         {
-          if (i + adder[k, 0] < rows && i + adder[k, 0] >= 0 && j + adder[k, 1] < columns && j + adder[k, 1] >= 0)
-            if (mapMatrix[i, j].TileType == mapMatrix[i + adder[k, 0], j + adder[k, 1]].TileType)
+          if (i + adder[k, 0] < GameManager.Instance.rows && i + adder[k, 0] >= 0 && j + adder[k, 1] < GameManager.Instance.columns && j + adder[k, 1] >= 0)
+            if (GameManager.Instance.Map[i, j].type == GameManager.Instance.Map[i + adder[k, 0], j + adder[k, 1]].type)
             {
               sameFound = 1;
             }
         }
         if(sameFound == 0 && (j != 0 || i != 0)) 
         { 
-          if(j + 1 > columns - 1) 
+          if(j + 1 > GameManager.Instance.columns - 1) 
           {
-            ExchangeTilePrefab(mapMatrix[i, j], mapMatrix[i, j - 1].TileType);
+            //ExchangeTilePrefab(mapMatrix[i, j], mapMatrix[i, j - 1].TileType);
+            ExchangeTilePrefab(i,j,GameManager.Instance.Map[i, j - 1].type);
           }
           else 
           {
-            ExchangeTilePrefab(mapMatrix[i, j], mapMatrix[i, j + 1].TileType);
+            //ExchangeTilePrefab(mapMatrix[i, j], mapMatrix[i, j + 1].TileType);
+            ExchangeTilePrefab(i,j,GameManager.Instance.Map[i, j + 1].type);
           }
         }
         if (i < 3 && j < 3 && (j != 0 || i != 0))
         {
-          ExchangeTilePrefab(mapMatrix[i, j], 1);
-          SetExplored(mapMatrix[i, j], true);
-          SetVisible(mapMatrix[i, j], true);
+          //ExchangeTilePrefab(mapMatrix[i, j], 1);
+          ExchangeTilePrefab(i,j,1);
+          //SetExplored(mapMatrix[i, j], true);
+          SetExplored(i,j, true);
+          //SetVisible(mapMatrix[i, j], true);
+          SetVisible(i,j, true);
         }
       }
     }
   }
 
-  public void SetExplored(TileScript tile, bool explored)
+
+  public void SetExplored(int posX, int posZ, bool explored)
   {
-    tile.Explored = explored;
-    if (tile.Explored == true)
+    GameManager.Instance.Map[posX, posZ].explored = explored;
+    if (explored == true)
     {
-      if(tile.TileType >= 5)
+      if(GameManager.Instance.Map[posX, posZ].type >= 5)
       {
-        ExchangeTilePrefab(mapMatrix[tile.XPos, tile.ZPos], tile.TileType - 5);
+        ExchangeTilePrefab(posX, posZ, GameManager.Instance.Map[posX, posZ].type - 5);
       }
       else
       {
-        ExchangeTilePrefab(mapMatrix[tile.XPos, tile.ZPos], tile.TileType);
+        ExchangeTilePrefab(posX, posZ, GameManager.Instance.Map[posX, posZ].type); // TODO: delete since it's doing nothing
       }
     }
     //tile.GetComponentInChildren<MeshRenderer>().enabled = false;
 
   }
-  public void SetVisible(TileScript tile, bool visible)
-  {
-    tile.Visible = visible;
+
+  public void SetVisible(int posX, int posZ, bool visible) {
+    GameManager.Instance.Map[posX, posZ].visible = visible;
   }
+
   /// <summary>
   /// Creates the anthill tile
   /// </summary>
@@ -147,20 +133,21 @@ public class MapScript : MonoBehaviour
     int tileType = 4;
     var tileEntry = Instantiate(tilePrefabs[tileType], this.transform) as Transform;
     TileScript newTile = tileEntry.GetComponent<TileScript>();
-    newTile.TileType = tileType;
-    newTile.TileDistance = -1;
-    newTile.XPos = i;
+    
+    GameManager.Instance.Map[i,j].type = tileType;
+    GameManager.Instance.Map[i,j].tileName = (TileName(tileType) + ": [" + i + "," + j + "]");
+    GameManager.Instance.Map[i,j].distanceAntHill = -1;
+    GameManager.Instance.Map[i,j].explored = false;
+    GameManager.Instance.Map[i,j].visible = false;
+    GameManager.Instance.Map[i,j].explored = false;
+    GameManager.Instance.Map[i,j].assignedAnts = 0;
+    GameManager.Instance.Map[i,j].maxAssignedAnts = GameManager.Instance.maxAntsAnthillTile;
+    
+    newTile.XPos = i; 
     newTile.ZPos = j;
-    newTile.name = (TileName(tileType) + ": [" + i + "," + j + "]");
-    newTile.IsAntHill = true;
-    newTile.Explored = false;
-    newTile.Visible = false;
-
+    
     //position of the spawn
     newTile.transform.position = new Vector3(i, 0, j);
-
-    //Assign ants on tile
-    newTile.AssignedAnts = 0;
 
     //save the script in the matrix
     mapMatrix[i, j] = newTile;
@@ -184,25 +171,29 @@ public class MapScript : MonoBehaviour
 
     var tileEntry = Instantiate(tilePrefabs[tileType], this.transform) as Transform;
     TileScript newTile = tileEntry.GetComponent<TileScript>();
-    newTile.TileType = tileType;
-    newTile.TileDistance = distance_anthill;
-    newTile.name = (TileName(tileType) + ": [" + i + "," + j + "]");
+
+    GameManager.Instance.Map[i,j].type = tileType;
+    GameManager.Instance.Map[i,j].tileName = (TileName(tileType) + ": [" + i + "," + j + "]");
+    GameManager.Instance.Map[i,j].distanceAntHill = distance_anthill;
+    GameManager.Instance.Map[i,j].explored = false;
+    GameManager.Instance.Map[i,j].visible = false;
+    GameManager.Instance.Map[i,j].explored = false;
+    GameManager.Instance.Map[i,j].assignedAnts = 0;
+
     newTile.XPos = i;
     newTile.ZPos = j;
-    newTile.IsAntHill = false;
 
     //Random Amount of resources on the tile
-    if (newTile.TileType == 1 || newTile.TileType == 2)
+    if (tileType == 1 || tileType == 2)
     {
-      newTile.ResourceAmount = Random.Range(50, 300);
-      newTile.MaxResourceAmount = 300;
+      GameManager.Instance.Map[i,j].resourceAmount = Random.Range(50,300);
+      GameManager.Instance.Map[i,j].resourceMaxAmount = 300;
+
+
     }
 
     //position of the spawn
     newTile.transform.position = new Vector3(i, 0, j);
-
-    //Assign ants on tile
-    newTile.AssignedAnts = 0;
 
     //save the script in the matrix
     mapMatrix[i, j] = newTile;
@@ -212,7 +203,6 @@ public class MapScript : MonoBehaviour
   {
 
     //weights
-    int basemax = 500;
     int tileType = Random.Range(5, 9); //For normal map : int tileType = Random.Range(0, 4);
     //int tileType = Random.Range(0, 4);
     if (Random.Range(0, maxdist) > i+j + (maxdist) * GameManager.Instance.grassWeight)
@@ -223,36 +213,38 @@ public class MapScript : MonoBehaviour
 
     var tileEntry = Instantiate(tilePrefabs[tileType], this.transform) as Transform;
     TileScript newTile = tileEntry.GetComponent<TileScript>();
-    newTile.TileType = tileType;
-    newTile.TileDistance = distance_anthill;
-    newTile.name = (TileName(tileType) + ": [" + i + "," + j + "]");
+
+    GameManager.Instance.Map[i,j].type = tileType;
+    GameManager.Instance.Map[i,j].tileName = (TileName(tileType) + ": [" + i + "," + j + "]");
+    GameManager.Instance.Map[i,j].distanceAntHill = distance_anthill;
+    GameManager.Instance.Map[i,j].explored = false;
+    GameManager.Instance.Map[i,j].visible = false;
+    GameManager.Instance.Map[i,j].explored = false;
+    GameManager.Instance.Map[i,j].ownedByPlayer = false;
+    GameManager.Instance.Map[i,j].assignedAnts = 0;
+    GameManager.Instance.Map[i,j].maxAssignedAnts = GameManager.Instance.maxAntsResourceTile;
+
+    
     newTile.XPos = i;
     newTile.ZPos = j;
-    newTile.IsAntHill = false;
-    newTile.Explored = false;
-    newTile.Visible = false;
-    newTile.OwnedByPlayer = false;
 
     //Random Amount of resources on the tile
-    if (newTile.TileType == 6 || newTile.TileType == 7)
+    if (tileType == 6 || tileType == 7)
     {
-      newTile.MaxResourceAmount = 300;
+      GameManager.Instance.Map[i,j].resourceMaxAmount = 300;
       for (int k = 0; k < i+j; k++)
       {
-        newTile.MaxResourceAmount = (int)(newTile.MaxResourceAmount + (newTile.MaxResourceAmount * GameManager.Instance.resourceWeight));
-      }
-      newTile.ResourceAmount = Random.Range(25, newTile.MaxResourceAmount);
-      if (newTile.TileType == 7)
+        GameManager.Instance.Map[i,j].resourceMaxAmount = (int)( GameManager.Instance.Map[i,j].resourceMaxAmount * (1 + GameManager.Instance.resourceWeight));
+      }      
+      GameManager.Instance.Map[i,j].resourceAmount = Random.Range(25,GameManager.Instance.Map[i,j].resourceMaxAmount);
+      if (tileType == 7)
       {
-        newTile.ResourceAmount = (int)(GameManager.Instance.soilWeight * newTile.ResourceAmount);
+        GameManager.Instance.Map[i,j].resourceAmount = (int)(GameManager.Instance.soilWeight *  GameManager.Instance.Map[i,j].resourceAmount);
       }
     }
 
     //position of the spawn
     newTile.transform.position = new Vector3(i, 0, j);
-
-    //Assign ants on tile
-    newTile.AssignedAnts = 0;
 
     //save the script in the matrix
     mapMatrix[i, j] = newTile;
@@ -319,84 +311,85 @@ public class MapScript : MonoBehaviour
   /// Tile Erosion 
   /// </summary>
   /// <param name="tile"></param>
-  public void TileErosionCheck(TileScript tile)
+  public void TileErosionCheck(int posX, int posZ)
   {
-    if (tile.TileType == 1) 
+    if (GameManager.Instance.Map[posX, posZ].type == 1) 
     {
-      if (tile.ResourceAmount < soilThreshold) 
+      if (GameManager.Instance.Map[posX, posZ].resourceAmount < GameManager.Instance.soilThreshold) 
       {
         //update to soil
         int newType = 2;
-        ExchangeTilePrefab(tile, newType);
+        ExchangeTilePrefab(posX, posZ, newType);
       }
     }
-    else if (tile.TileType == 2)
+    else if (GameManager.Instance.Map[posX, posZ].type == 2)
     {
-      if (tile.ResourceAmount >= grassThreshhold)
+      if (GameManager.Instance.Map[posX, posZ].resourceAmount >= GameManager.Instance.grassThreshhold)
       {
-        //update to gras
+        //update to grass
         int newType = 1;
-        ExchangeTilePrefab(tile, newType);
+        ExchangeTilePrefab(posX, posZ, newType);
       }
     }
   }
+
 
   /// <summary>
   /// Exchanges a tiles prefab to the set type
   /// </summary>
   /// <param name="tile"></param>
   /// <param name="newTileType"></param>
-  public void ExchangeTilePrefab(TileScript tile, int newTileType) 
+  public void ExchangeTilePrefab(int posX, int posZ, int newTileType) 
   {
-    Debug.Log(newTileType);
-    Debug.Log(tilePrefabs[newTileType]);
-    var tileEntry = Instantiate(tilePrefabs[newTileType], GameObject.Find("MapTiles").transform) as Transform;
-    tileEntry.name = (TileName(newTileType) + ": [" + tile.XPos + "," + tile.ZPos + "]");
-    tileEntry.position = tile.transform.position;
+    GameManager.Instance.Map[posX, posZ].type = newTileType;
+    GameManager.Instance.Map[posX,posZ].tileName = (TileName(newTileType) + ": [" + posX + "," + posZ + "]");
 
-    TileScript newTile = tileEntry.GetComponent<TileScript>();
-    newTile.XPos = tile.XPos;
-    newTile.ZPos = tile.ZPos;
-    newTile.Visible = tile.Visible;
-    newTile.TileType = newTileType;
-    newTile.Explored = tile.Explored;
-    newTile.FreeAnts = tile.FreeAnts;
-    newTile.TileDistance = tile.TileDistance;
-    newTile.assignedAnts = tile.AssignedAnts;
-    Debug.Log("Assigned Ants" + newTile.assignedAnts);
-    newTile.OwnedByPlayer = tile.OwnedByPlayer;
-    newTile.ResourceAmount = tile.ResourceAmount;
-    newTile.MaxAssignedAnts = tile.MaxAssignedAnts;
+    // flag should be already there
+
+    // exchange prefab at tile!!!
+    // TODO!
+    UpdatePrefab(posX, posZ, newTileType);
     
-
-    if(tile.assignedAnts == 10 && tile.getFlag != null) 
-    {
-      newTile.spawnOwnedFlagOnTile();
-    }
     
 
     //Resources on the Tile only soil and grass can have resources
     if (newTileType == 1 || newTileType == 2) 
     {
-      newTile.MaxResourceAmount = 250;
-      for (int k = 0; k < newTile.XPos + newTile.ZPos; k++)
+      GameManager.Instance.Map[posX, posZ].resourceMaxAmount = 250;
+      for (int k = 0; k < posX + posZ; k++)
       {
-        newTile.MaxResourceAmount = (int)(newTile.MaxResourceAmount + (newTile.MaxResourceAmount * GameManager.Instance.resourceWeight));
+        GameManager.Instance.Map[posX, posZ].resourceMaxAmount = (int)(GameManager.Instance.Map[posX, posZ].resourceMaxAmount * (1 + GameManager.Instance.resourceWeight));
       }
-      newTile.ResourceAmount = Random.Range(100, newTile.MaxResourceAmount);
-      if (newTile.TileType == 2)
+      GameManager.Instance.Map[posX, posZ].resourceAmount = Random.Range(100, GameManager.Instance.Map[posX, posZ].resourceMaxAmount);
+      if (newTileType == 2)
       {
-        newTile.ResourceAmount = (int)(GameManager.Instance.soilWeight * newTile.ResourceAmount);
+        GameManager.Instance.Map[posX, posZ].resourceAmount = (int)(GameManager.Instance.soilWeight * GameManager.Instance.Map[posX, posZ].resourceAmount);
       }
     }
     else 
     {
-      newTile.MaxResourceAmount = 0;
-      newTile.ResourceAmount = 0;
+      GameManager.Instance.Map[posX, posZ].resourceMaxAmount = 0;
+      GameManager.Instance.Map[posX, posZ].resourceAmount = 0;
     }
     
-    mapMatrix[tile.XPos, tile.ZPos] = newTile;
-    Debug.Log("Assigned Ants" + mapMatrix[tile.XPos, tile.ZPos].assignedAnts);
-    Destroy(tile.gameObject);
+    
   }
+
+  public void UpdatePrefab(int posX, int posZ, int tileType)
+  {
+
+    var tileEntry = Instantiate(tilePrefabs[tileType], GameObject.Find("MapTiles").transform) as Transform;
+    
+    tileEntry.position = mapMatrix[posX, posZ].transform.position; // all tiles are stored in mapMatrix
+    
+
+    TileScript newTile = tileEntry.GetComponent<TileScript>();
+    newTile.xPos = posX;
+    newTile.zPos = posZ;
+    Destroy(mapMatrix[posX, posZ].gameObject);
+
+    mapMatrix[posX, posZ] = newTile;
+  }
+
+
 }

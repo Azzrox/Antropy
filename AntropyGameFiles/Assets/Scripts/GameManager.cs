@@ -10,26 +10,79 @@ public class GameManager : MonoBehaviour
 {
 
     //general player properties
-    public string playerName;
-    public int totalAnts;
-    public int freeAnts;
-    //map specific properties
+
+    public struct Tile
+    {
+      public int type;
+      public string tileName;
+      public int assignedAnts;
+      public int maxAssignedAnts;
+      public int reservedResources;
+      public float resourceAmount;
+      public int resourceMaxAmount;
+      public bool ownedByPlayer;
+      public bool partOfAnthill;
+      public float distanceAntHill;
+      public bool explored; 
+      public bool visible;
+    }
+
+    public Tile[,] Map;
+    [Header("Map properties")]
     public int rows;
     public int columns;
-    public int[,] type;
-    public int[,] assignedMapAnts;
-    public int[,] maxAssignedMapAnts;
-    public float[,] resourceAmount;
-    public float[,] resouceMaxAmount;
-    public bool[,] partOfAnthill;
+   
+    public string playerName;
+    [Header("Current population data")]
+    public int totalAnts;
+    public int freeAnts; 
     //anthill specific properties (assuming a fixed list of chambers)
     public int[] assignedHillAnts;
+    //map specific properties
 
     /// <summary>
     /// Supported population cap
     /// </summary>
     public int currentMaximumPopulationCapacity;
+
+    [Header("Current economic data")]
+    /// <summary>
+    /// Current resources of the player
+    /// </summary>
+    public int resources;
+
+    /// <summary>
+    /// Max storage the player can fill up
+    /// </summary>
+    public int maxResourceStorage;
+
+    /// <summary>
+    /// Food requirement of the anthill
+    /// </summary>
+    public int currentUpkeep;
+
+    /// <summary>
+    /// Income rate of food, tileIncome - upkeep
+    /// </summary>
+    public int income;
     
+    [Header("Current Turn and Goal state")]
+    /// <summary>
+    /// Max allowed turn number
+    /// </summary>
+    public int currentTurnCount;
+
+    public int currentGoalProgress;
+    [Header("Grow / degrow rates")]
+
+    /// <summary>
+    /// Food need per Ant
+    /// </summary>
+    public float foodPerAnt;
+     /// <summary>
+    /// ant growth per turn
+    /// </summary>
+    public float antPopGrowthPerTurn;
     /// <summary>
     /// Death of Ants per turn, due to overpopulation
     /// </summary>
@@ -65,10 +118,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public float weatherRegrowMultiplier;
 
-    /// <summary>
-    /// Income rate of food, tileIncome - upkeep
-    /// </summary>
-    public int income;
+    
 
     /// <summary>
     /// [0]Spring, [1]Summer, [2]Autumn, [3]Winter
@@ -80,30 +130,10 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public int currentWeather;
 
-    /// <summary>
-    /// Current resources of the player
-    /// </summary>
-    public int resources;
+    
 
-    /// <summary>
-    /// Max storage the player can fill up
-    /// </summary>
-    public int maxResourceStorage;
 
-    /// <summary>
-    /// Food requirement of the anthill
-    /// </summary>
-    public int currentUpkeep;
-
-    /// <summary>
-    /// Food need per Ant
-    /// </summary>
-    public float foodPerAnt;
-
-    /// <summary>
-    /// ant growth per turn
-    /// </summary>
-    public float antPopGrowthPerTurn;
+   
 
     /// <summary>
     /// Current player hatchery level
@@ -220,22 +250,30 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public float soilWeight = 0.3f;
 
+    
+    /// <summary>
+    /// threshhold to update to grass
+    /// </summary>
+    public int grassThreshhold = 150;
+
+    /// <summary>
+    /// threshhold to update to soil
+    /// </summary>
+    public int soilThreshold = 50;
+
+    [Header("Time and Scope limit")]
     //Turns
     /// <summary>
     /// Current Turn Number
     /// </summary>
     public int maxTurnCount;
-
-    /// <summary>
-    /// Max allowed turn number
-    /// </summary>
-    public int currentTurnCount;
-
+    
     //PrototypeGoal
-    public int currentGoalProgress;
     public int goal;
-    private int totalResources;
-    private int totaldeaths;
+    [Header("Statistics (cummulated data)")]
+
+    public int totalResources;
+    public int totalDeaths;
 
     public MapScript mapInstance;
     public MapCameraScript cameraInstance;
@@ -261,6 +299,9 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
         // optional: load last gameplay (if saved)
         //LoadLastGame();
+        
+        Map = new Tile[rows, columns];
+        Debug.Log("Map created: " + Map[1,0].type + " before mapinstance is initialized");
 
         mapInstance = GameObject.Find("MapTiles").GetComponent<MapScript>();
         cameraInstance = GameObject.Find("MapControls").GetComponent<MapCameraScript>();
@@ -282,7 +323,7 @@ public class GameManager : MonoBehaviour
         public int[,] assignedMapAnts;
         public int[,] maxAssignedMapAnts;
         public float[,] resourceAmount;
-        public float[,] resouceMaxAmount;
+        public float[,] resourceMaxAmount;
         public bool[,] partOfAnthill;
         //anthill specific properties (assuming a fixed list of chambers)
         public int[] assignedHillAnts;
@@ -315,9 +356,55 @@ public class GameManager : MonoBehaviour
             //....
         }   
     }
+
+    public string TileName(int type) 
+    {
+      string type_name;
+
+      /// TilePrefabs: [0]stone, [1]grass, [2]soil, [3]water, [4] anthill
+      switch (type)
+      {
+        case 0:
+          type_name = "Stone";
+          break;
+        case 1:
+          type_name = "Grass";
+          break;
+        case 2:
+          type_name = "Soil";
+          break;
+        case 3:
+          type_name = "Water";
+          break;
+        case 4:
+          type_name = "Anthill";
+            break;
+        case 5:
+          type_name = "StoneBlack";
+          break;
+        case 6:
+          type_name = "GrassBlack";
+          break;
+        case 7:
+          type_name = "SoilBlack";
+          break;
+        case 8:
+          type_name = "WaterBlack";
+          break;
+        default:
+          type_name = "notSet";
+          break;
+      }
+      return type_name;
+    }
+
+
+
     // Start is called before the first frame update
     void Start()
     {
+
+      
       //Anthill values
       hatcheryLevel = 0;
       storageLevel = 0;
@@ -342,12 +429,11 @@ public class GameManager : MonoBehaviour
 
     float DistanceToHill(int pos_x, int pos_y)
     {
-        int nx = type.GetLength(0);
-        int ny = type.GetLength(1);
+        
         List<float> distances = new List<float>();
-        for (int i = 0; i < nx; i++){
-            for (int j = 0; j < ny; j++){
-                if (partOfAnthill[i,j])
+        for (int i = 0; i < rows; i++){
+            for (int j = 0; j < columns; j++){
+                if (Map[i,j].partOfAnthill)
                 {
                     distances.Add( Mathf.Sqrt( (pos_x - i)^2 + (pos_y - j)^2 ));
                 }
@@ -397,11 +483,11 @@ public class GameManager : MonoBehaviour
     {
       get
       {
-        return totaldeaths;
+        return totalDeaths;
       }
       set
       {
-        totaldeaths = value;
+        totalDeaths = value;
       }
     }
 }
