@@ -599,8 +599,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40be6b474c8d89946904cb1f93c1ddaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rows: 50
-  columns: 50
   tilePrefabs:
   - {fileID: 6490856156205094238, guid: cfc2af4279e27ef47850cbaffa7fde79, type: 3}
   - {fileID: 6490856156205094238, guid: 57c81b6233a39cb42ba92b407af19a75, type: 3}
@@ -611,8 +609,6 @@ MonoBehaviour:
   - {fileID: 6490856156205094238, guid: c33dff1adb8a55446a7bddc5447dd0d2, type: 3}
   - {fileID: 6490856156205094238, guid: e9e9f56f5605f6343b6c3ec328d630c0, type: 3}
   - {fileID: 6490856156205094238, guid: f991ade05d3b3cc44a160aca5190c19e, type: 3}
-  grassThreshhold: 150
-  soilThreshold: 50
 --- !u!4 &1241786169
 Transform:
   m_ObjectHideFlags: 0
@@ -756,13 +752,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3caf56688798ca4e8c7723f6ff157c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rows: 50
+  columns: 50
   playerName: 
   totalAnts: 20
   freeAnts: 20
-  rows: 50
-  columns: 50
   assignedHillAnts: 
   currentMaximumPopulationCapacity: 70
+  resources: 0
+  maxResourceStorage: 150
+  currentUpkeep: 0
+  income: 0
+  currentTurnCount: 0
+  currentGoalProgress: 0
+  foodPerAnt: 5
+  antPopGrowthPerTurn: 0.3
   antOverPopulationDeathRate: 2
   antDeathLackofResourcesRate: 0
   distanceGatheringReductionRate: 0
@@ -770,14 +774,8 @@ MonoBehaviour:
   tileRegrowAmount: 20
   weatherAcessMultiplier: 0
   weatherRegrowMultiplier: 0
-  income: 0
   currentSeason: 0
   currentWeather: 0
-  resources: 0
-  maxResourceStorage: 150
-  currentUpkeep: 0
-  foodPerAnt: 5
-  antPopGrowthPerTurn: 0.3
   hatcheryLevel: 0
   storageLevel: 0
   hatcheryMaxLevel: 0
@@ -801,10 +799,12 @@ MonoBehaviour:
   grassWeight: 0.5
   resourceWeight: 0.05
   soilWeight: 0.3
+  grassThreshhold: 150
+  soilThreshold: 50
   maxTurnCount: 100
-  currentTurnCount: 0
-  currentGoalProgress: 0
   goal: 80
+  totalResources: 0
+  totalDeaths: 0
   mapInstance: {fileID: 0}
   cameraInstance: {fileID: 0}
   weatherInstance: {fileID: 0}
