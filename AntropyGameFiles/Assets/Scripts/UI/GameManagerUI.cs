@@ -18,7 +18,9 @@ public class GameManagerUI : MonoBehaviour
     {
     //SpawnTiles(3,4);
       mapInstance.SpawnRandomMap();
-      mapInstance.SpawnTerrainMap();
+      mapInstance.SpawnTerrainMap();    
+      Debug.Log("Random Map created");
+
     }
 
     // Update is called once per frame

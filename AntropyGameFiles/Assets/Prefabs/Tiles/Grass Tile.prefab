@@ -145,11 +145,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbdfbb3bc840aa24da5a72bc88657f29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  reservedResources: 0
+  assignedAnts: 0
+  maxAssignedAnts: 0
   resourceAmount: 0
   resourceMaxAmount: 0
   ownedByPlayer: 0
   explored: 0
   visible: 0
+  redFlagPrefab: {fileID: 3931712470879122387, guid: c6c1cec0329b2724fbf33392a16f1493, type: 3}
 --- !u!64 &-8377243377111452828
 MeshCollider:
   m_ObjectHideFlags: 0

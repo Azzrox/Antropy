@@ -4,25 +4,94 @@ using UnityEngine;
 using System.IO;
 using System.Linq;
 using Unity.VisualScripting;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
 
     //general player properties
-    public string playerName;
-    public int totalAnts;
-    public int freeAnts;
-    //map specific properties
+
+    public struct Tile
+    {
+      public int type;
+      public string tileName;
+      public int assignedAnts;
+      public int maxAssignedAnts;
+      public int reservedResources;
+      public float resourceAmount;
+      public int resourceMaxAmount;
+      public bool ownedByPlayer;
+      public bool partOfAnthill;
+      public float distanceAntHill;
+      public bool explored; 
+      public bool visible;
+    }
+
+    public Tile[,] Map;
+    [Header("Map properties")]
     public int rows;
     public int columns;
-    public int[,] type;
-    public int[,] assignedMapAnts;
-    public int[,] maxAssignedMapAnts;
-    public float[,] resourceAmount;
-    public float[,] resouceMaxAmount;
-    public bool[,] partOfAnthill;
+   
+    public string playerName;
+    [Header("Current population data")]
+    public int totalAnts;
+    public int freeAnts; 
     //anthill specific properties (assuming a fixed list of chambers)
     public int[] assignedHillAnts;
+    //map specific properties
+
+    /// <summary>
+    /// Supported population cap
+    /// </summary>
+    public int currentMaximumPopulationCapacity;
+
+    [Header("Current economic data")]
+    /// <summary>
+    /// Current resources of the player
+    /// </summary>
+    public int resources;
+
+    /// <summary>
+    /// Max storage the player can fill up
+    /// </summary>
+    public int maxResourceStorage;
+
+    /// <summary>
+    /// Food requirement of the anthill
+    /// </summary>
+    public int currentUpkeep;
+
+    /// <summary>
+    /// Income rate of food, tileIncome - upkeep
+    /// </summary>
+    public int income;
+    
+    [Header("Current Turn and Goal state")]
+    /// <summary>
+    /// Max allowed turn number
+    /// </summary>
+    public int currentTurnCount;
+
+    public int currentGoalProgress;
+    [Header("Grow / degrow rates")]
+
+    /// <summary>
+    /// Food need per Ant
+    /// </summary>
+    public float foodPerAnt;
+     /// <summary>
+    /// ant growth per turn
+    /// </summary>
+    public float antPopGrowthPerTurn;
+    /// <summary>
+    /// Death of Ants per turn, due to overpopulation
+    /// </summary>
+    public float antOverPopulationDeathRate;
+
+    /// <summary>
+    /// Death of ants per turn due to lack of resources;
+    /// </summary>
+    public float antDeathLackofResourcesRate;
     
     /// <summary>
     /// Gathering distance deduction
@@ -49,10 +118,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public float weatherRegrowMultiplier;
 
-    /// <summary>
-    /// Income rate of food, tileIncome - upkeep
-    /// </summary>
-    public int income;
+    
 
     /// <summary>
     /// [0]Spring, [1]Summer, [2]Autumn, [3]Winter
@@ -64,35 +130,10 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public int currentWeather;
 
-    /// <summary>
-    /// Current resources of the player
-    /// </summary>
-    public int resources;
-
-    /// <summary>
-    /// Max storage the player can fill up
-    /// </summary>
-    public int maxResourceStorage;
-
-    /// <summary>
-    /// Food requirement of the anthill
-    /// </summary>
-    public int currentUpkeep;
-
-    /// <summary>
-    /// Food need per Ant
-    /// </summary>
-    public float foodPerAnt;
     
-    /// <summary>
-    /// Growth per hatchery assignment
-    /// </summary>
-    public float growthPerAnt;
 
-    /// <summary>
-    /// ant growth per turn
-    /// </summary>
-    public float antGrowth;
+
+   
 
     /// <summary>
     /// Current player hatchery level
@@ -135,7 +176,7 @@ public class GameManager : MonoBehaviour
     public int[] populationCapacityAmount;
 
     /// <summary>
-    /// ResourceTile, max boundry of antsile
+    /// ResourceTile, max boundry of an tile
     /// </summary>
     public int maxAntsResourceTile;
     
@@ -209,27 +250,40 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public float soilWeight = 0.3f;
 
+    
+    /// <summary>
+    /// threshhold to update to grass
+    /// </summary>
+    public int grassThreshhold = 150;
+
+    /// <summary>
+    /// threshhold to update to soil
+    /// </summary>
+    public int soilThreshold = 50;
+
+    [Header("Time and Scope limit")]
     //Turns
     /// <summary>
     /// Current Turn Number
     /// </summary>
     public int maxTurnCount;
+    
+    //PrototypeGoal
+    public int goal;
+    [Header("Statistics (cummulated data)")]
 
-    /// <summary>
-    /// Max allowed turn number
-    /// </summary>
-    public int currentTurnCount;
+    public int totalResources;
+    public int totalDeaths;
 
     public MapScript mapInstance;
     public MapCameraScript cameraInstance;
     public WeatherScript weatherInstance;
     public MiniBarInfoUI miniBarInfoInstance;
+    public NextTurnScript nextTurnInstance;
 
+    // Creates an instance that is present in all other classes
+    public static GameManager Instance;
 
-
-
-  // Creates an instance that is present in all other classes
-  public static GameManager Instance;
     //takes care that there is only one instance of GameManager
     private void Awake()
     {
@@ -245,11 +299,15 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
         // optional: load last gameplay (if saved)
         //LoadLastGame();
+        
+        Map = new Tile[rows, columns];
+        Debug.Log("Map created: " + Map[1,0].type + " before mapinstance is initialized");
 
         mapInstance = GameObject.Find("MapTiles").GetComponent<MapScript>();
         cameraInstance = GameObject.Find("MapControls").GetComponent<MapCameraScript>();
         weatherInstance = GameObject.Find("Weather").GetComponent<WeatherScript>();
         miniBarInfoInstance = GameObject.Find("MiniBarInfo").GetComponent<MiniBarInfoUI>();
+        nextTurnInstance = GameObject.Find("NextTurnCanvas").GetComponent<NextTurnScript>();
   }
 
   [System.Serializable]
@@ -265,14 +323,12 @@ public class GameManager : MonoBehaviour
         public int[,] assignedMapAnts;
         public int[,] maxAssignedMapAnts;
         public float[,] resourceAmount;
-        public float[,] resouceMaxAmount;
+        public float[,] resourceMaxAmount;
         public bool[,] partOfAnthill;
         //anthill specific properties (assuming a fixed list of chambers)
         public int[] assignedHillAnts;
 
     }
-
-    
 
     // optional: add filename from textInput
     public void SaveGame()
@@ -300,20 +356,70 @@ public class GameManager : MonoBehaviour
             //....
         }   
     }
+
+    public string TileName(int type) 
+    {
+      string type_name;
+
+      /// TilePrefabs: [0]stone, [1]grass, [2]soil, [3]water, [4] anthill
+      switch (type)
+      {
+        case 0:
+          type_name = "Stone";
+          break;
+        case 1:
+          type_name = "Grass";
+          break;
+        case 2:
+          type_name = "Soil";
+          break;
+        case 3:
+          type_name = "Water";
+          break;
+        case 4:
+          type_name = "Anthill";
+            break;
+        case 5:
+          type_name = "StoneBlack";
+          break;
+        case 6:
+          type_name = "GrassBlack";
+          break;
+        case 7:
+          type_name = "SoilBlack";
+          break;
+        case 8:
+          type_name = "WaterBlack";
+          break;
+        default:
+          type_name = "notSet";
+          break;
+      }
+      return type_name;
+    }
+
+
+
     // Start is called before the first frame update
     void Start()
     {
+
+      
       //Anthill values
       hatcheryLevel = 0;
       storageLevel = 0;
-      hatcheryMaxLevel = 3;
-      storageMaxLevel = 3;
-      hatcheryCost = new int[] {200, 400, 600, 800 };
-      storageCost = new int[] {100, 200, 400, 600 };
-      storageCapacityAmount = new int[] { 350, 500, 1000, 1500};
-      populationCapacityAmount = new int[] {250, 500, 750, 1000};
+      
+      currentUpkeep = (int)Mathf.Ceil(totalAnts * foodPerAnt);
+      income -= currentUpkeep;
+      hatcheryCost =             new int[] {200,  400, 600,   800,  1600, 3200, 4800, 5400, 5800, 6500, 7000 };
+      storageCapacityAmount =    new int[] {350,  500, 1000,  1500, 2000, 2500, 3000, 3500, 4000, 5000, 7000 };
+      storageCost =              new int[] {100,  200, 400,   600,  1200, 1800, 2400, 3000, 3600, 4200, 4800 };
+      populationCapacityAmount = new int[] {250,  400, 550,   700,  1000, 1200, 1400, 2000, 2500, 3000, 6000};
+
+      hatcheryMaxLevel = populationCapacityAmount.Length;
+      storageMaxLevel = storageCapacityAmount.Length;
       miniBarInfoInstance.MiniBarInfoUpdate();
-  }
+    }
 
     // Update is called once per frame
     void Update()
@@ -321,20 +427,67 @@ public class GameManager : MonoBehaviour
         
     }
 
-
     float DistanceToHill(int pos_x, int pos_y)
     {
-        int nx = type.GetLength(0);
-        int ny = type.GetLength(1);
+        
         List<float> distances = new List<float>();
-        for (int i = 0; i < nx; i++){
-            for (int j = 0; j < ny; j++){
-                if (partOfAnthill[i,j])
+        for (int i = 0; i < rows; i++){
+            for (int j = 0; j < columns; j++){
+                if (Map[i,j].partOfAnthill)
                 {
                     distances.Add( Mathf.Sqrt( (pos_x - i)^2 + (pos_y - j)^2 ));
                 }
             }
         }
         return distances.Min();
+    }
+
+    /// <summary>
+    /// Prototype end screen (Remove Later)
+    /// </summary>
+    public void prototypeGoalCheck() 
+    { 
+      if(currentGoalProgress >= goal || currentTurnCount >= maxTurnCount) 
+      {
+        SceneManager.LoadScene("PrototypeEndScreen", LoadSceneMode.Additive);
+      }
+      
+    }
+  public void prototypeLooseCheck() 
+  {
+    if (resources <= 0 && income < 0)
+    {
+      SceneManager.LoadScene("PrototypeEndScreen", LoadSceneMode.Additive);
+    }
+  }
+
+    /// <summary>
+    /// Endscore resource counter
+    /// </summary>
+    public int TotalResources
+    {
+      get
+      {
+        return totalResources;
+      }
+      set
+      {
+        totalResources = value;
+      }
+    }
+
+    /// <summary>
+    /// Endscore death counter
+    /// </summary>
+    public int TotalDeaths
+    {
+      get
+      {
+        return totalDeaths;
+      }
+      set
+      {
+        totalDeaths = value;
+      }
     }
 }

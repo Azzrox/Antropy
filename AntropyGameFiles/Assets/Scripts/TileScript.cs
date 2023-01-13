@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting.Dependencies.NCalc;
+//using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
 using System;
+//using Unity.VisualScripting;
+using UnityEditor;
 
 public class TileScript : MonoBehaviour
 {
@@ -14,55 +16,18 @@ public class TileScript : MonoBehaviour
   /// <summary>
   /// X,Z Pos of the tile
   /// </summary>
-  int xPos;
-  int zPos;
+  public int xPos;
+  public int zPos;
 
   /// <summary>
-  /// Type of the tile
+  /// Flag currently displayed on the tile
   /// </summary>
-  int type;
+  GameObject flag;
 
   /// <summary>
-  /// Ants on tile
+  /// Flag Prefab for Owned Tiles
   /// </summary>
-  int assignedAnts;
-
-  /// <summary>
-  /// Max Counter of assigned ants on tile
-  /// </summary>
-  int maxAssignedAnts;
-
-  /// <summary>
-  /// Free Ants Global
-  /// </summary>
-  int freeAnts;
-
-  /// <summary>
-  /// Resources on the tile
-  /// </summary>
-  public double resourceAmount;
-
-  /// <summary>
-  /// Maximum of resources a tile can hold
-  /// </summary>
-  public int resourceMaxAmount;
-
-  /// <summary>
-  /// Owned by player
-  /// </summary>
-  public bool ownedByPlayer = false;
-
-  /// <summary>
-  /// Fog of war Unexplored/Explored
-  /// </summary>
-  public bool explored = false;
-
-  /// <summary>
-  /// Fog of war Visible
-  /// </summary>
-  public bool visible = false;
-
-  bool isAnthill = false;
+  public GameObject redFlagPrefab;
 
   GameManager gameManagerInstance;
   private MouseListenerUI uiListener;
@@ -73,17 +38,6 @@ public class TileScript : MonoBehaviour
   }
   private void Start()
   {
-    if (isAnthill) 
-    {
-      maxAssignedAnts = gameManagerInstance.maxAntsAnthillTile;
-    }
-    else 
-    {
-      maxAssignedAnts = gameManagerInstance.maxAntsResourceTile;
-    }
-    
-    assignedAnts = 0;
-    freeAnts = 0;
     uiListener = GameObject.Find("NextTurnCanvas").GetComponent<MouseListenerUI>();
   }
 
@@ -92,7 +46,7 @@ public class TileScript : MonoBehaviour
   /// </summary>
   private void OnMouseDown()
   {
-
+    Debug.Log("CLICKED");
     if (uiListener.isUIOverride)
     {
       Debug.Log("Cancelled OnMouseDown! A UI element has override this object!");
@@ -105,158 +59,46 @@ public class TileScript : MonoBehaviour
         GameObject anthillUI = GameObject.Find("Anthill");
         anthillUI.GetComponent<Canvas>().enabled = true;
         AntHillUI antHill = anthillUI.GetComponent<AntHillUI>();
-        antHill.SetAssignedAnts(XPos, ZPos, assignedAnts, maxAssignedAnts, false);
         antHill.tile = this;
         antHill.UpdateAntText();
 
         GameObject uiMiniBarInfo = GameObject.Find("MiniBarInfo");
         uiMiniBarInfo.GetComponent<MiniBarInfoUI>().MiniBarInfoUpdate();
-
       }
       else
       {
         GameObject uiAssignAnts = GameObject.Find("AssignAnts");
         uiAssignAnts.GetComponent<Canvas>().enabled = true;
-
+      
         AntCounter antCounter = uiAssignAnts.GetComponent<AntCounter>();
-        antCounter.SetAssignedAnts(XPos, ZPos, assignedAnts, maxAssignedAnts, false);
+        antCounter.SetAssignedAnts(XPos, ZPos, 0, 0, false);
         antCounter.UpdateAntText();
 
         GameObject uiMiniBarInfo = GameObject.Find("MiniBarInfo");
         uiMiniBarInfo.GetComponent<MiniBarInfoUI>().MiniBarInfoUpdate();
       }
-
       Debug.Log("element clicked" + UnityEngine.Random.Range(0, 40) + " pos: " + XPos + "|" + ZPos);
     }
-
-    
   }
 
+  
+
   /// <summary>
-  /// Calculate new tile resource count
+  /// Spawns the owned flag prefab on the tile
   /// </summary>
-  /// <param name="percentage_of_change"> multiplicator </param>
-  public void CalculateNewResourceAmount(double percentage_of_change)
+  public void spawnOwnedFlagOnTile()
   {
-    ResourceAmount += Math.Round(((ResourceAmount / 100) * percentage_of_change), 2);
-
-    if (ResourceAmount < 0)
-    {
-      ResourceAmount = 0;
-    }
-
-    if (ResourceAmount > MaxResourceAmount)
-    {
-      ResourceAmount = MaxResourceAmount;
-    }
+    flag = Instantiate<GameObject>(redFlagPrefab, new Vector3(xPos + 0.5f, 0.2f, zPos + 0.5f), Quaternion.identity, transform);
   }
 
   /// <summary>
-  /// Adds an integer number to the current resource amount on the tile
+  /// Destroys any flag object on the tile
   /// </summary>
-  /// <param name="amount_of_change"></param>
-  public void CalculateNewResourceAmountFlat(int amount_of_change)
+  public void deleteFlagOnTile() 
   {
-    ResourceAmount += amount_of_change;
-
-    if (ResourceAmount < 0)
+    if(flag != null) 
     {
-      ResourceAmount = 0;
-    }
-    else if (ResourceAmount > MaxResourceAmount)
-    {
-      ResourceAmount = MaxResourceAmount;
-    }
-  }
-
-  /// <summary>
-  ///  Ants on tile, getter and setter
-  /// </summary>
-  public int AssignedAnts
-  {
-    get
-    {
-      return assignedAnts;
-    }
-    set
-    {
-      assignedAnts = value;
-    }
-  }
-
-  /// <summary>
-  ///  Max ants on tile, getter and setter
-  /// </summary>
-  public int MaxAssignedAnts
-  {
-    get
-    {
-      return maxAssignedAnts;
-    }
-    set
-    {
-      maxAssignedAnts = value;
-    }
-  }
-
-
-  /// <summary>
-  /// Tile type, getter and setter
-  /// </summary>
-  public int TileType 
-  { 
-    get 
-    { 
-      return type; 
-    }
-    set
-    {
-      type = value;
-    }
-  }
-
-  /// <summary>
-  /// Tile distance to anthill, getter and setter
-  /// </summary>
-  public int TileDistance
-  {
-    get
-    {
-      return distanceAnthill;
-    }
-    set
-    {
-      distanceAnthill = value;
-    }
-  }
-
-  /// <summary>
-  /// Tile resources, getter and setter
-  /// </summary>
-  public double ResourceAmount
-  {
-    get 
-    {
-      return resourceAmount;
-    }
-    set 
-    {
-      resourceAmount = value;
-    }
-  }
-
-  /// <summary>
-  /// Tile resources, getter and setter
-  /// </summary>
-  public int FreeAnts
-  {
-    get
-    {
-      return freeAnts;
-    }
-    set
-    {
-      freeAnts = value;
+      Destroy(flag);
     }
   }
 
@@ -290,77 +132,4 @@ public class TileScript : MonoBehaviour
     }
   }
 
-  /// <summary>
-  /// Max tile resources, getter and setter
-  /// </summary>
-  public int  MaxResourceAmount
-  {
-    get
-    {
-      return resourceMaxAmount;
-    }
-    set
-    {
-      resourceMaxAmount = value;
-    }
-  }
-
-  /// <summary>
-  /// Anthill?, getter/setter
-  /// </summary>
-  public bool IsAntHill
-  {
-    get
-    {
-      return isAnthill;
-    }
-    set
-    {
-      isAnthill = value;
-    }
-  }
-
-  /// <summary>
-  /// Owner Status, getter/setter
-  /// </summary>
-  public bool OwnedByPlayer 
-  {
-    get
-    {
-      return ownedByPlayer;
-    }
-    set
-    {
-      ownedByPlayer = value;
-    }
-  }
-
-  /// <summary>
-  /// Owner Status, getter/setter
-  /// </summary>
-  public bool Explored
-  {
-    get
-    {
-      return explored;
-    }
-    set
-    {
-      explored = value;
-    }
-  }
-  /// <summary>
-  /// Owner Status, getter/setter
-  /// </summary>
-  public bool Visible
-  {
-    get
-    {
-      return visible;
-    }
-    set
-    {
-      visible = value;
-    }
-  }
 }

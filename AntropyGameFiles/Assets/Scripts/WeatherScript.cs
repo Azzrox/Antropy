@@ -26,8 +26,8 @@ public class WeatherScript : MonoBehaviour
           //Basic Implementation for the Prototype
           int weather = Random.Range(0, 2);
           gameManagerInstance.currentWeather = weather;
-          WeatherMultiplierUpdate(weather);
           WeatherEffectsUpdate(currentSeason, weather);
+          //WeatherMultiplierUpdate(weather);
           break;
 
         case 1:

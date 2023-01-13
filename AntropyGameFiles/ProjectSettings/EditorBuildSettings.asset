@@ -6,9 +6,15 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/GameManager.unity
-    guid: 61d9046d3f548ec4d95dd883a4b02c1a
+    path: Assets/Scenes/Start.unity
+    guid: a2b25f369610c4b44b76acc94658c84d
   - enabled: 1
-    path: Assets/Scenes/Prototype_v0TestMapErosion.unity
-    guid: 3b22afe0ce92cb149bb3769cd16e77a7
+    path: Assets/Scenes/PrototypeStartScreen.unity
+    guid: 1ed314d56febafe46a22654e7ab31e2b
+  - enabled: 1
+    path: Assets/Scenes/Prototype_v3.unity
+    guid: 42e718d282502944fb747bd7d825d880
+  - enabled: 1
+    path: Assets/Scenes/PrototypeEndScreen.unity
+    guid: 3d7ea85c1a6fe094eac6159e0c153d35
   m_configObjects: {}
