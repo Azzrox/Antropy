@@ -40,7 +40,7 @@ public class RoomSelectScript : MonoBehaviour
       uiAssignAnts.GetComponent<Canvas>().enabled = true;
 
       AntCounter antCounter = uiAssignAnts.GetComponent<AntCounter>();
-      antCounter.SetAssignedAnts(roomId, 0, assignedAnts, 10, true);
+      antCounter.SetSelectedTile(roomId, 0);
       
       antCounter.UpdateAntText();
    }

@@ -71,7 +71,7 @@ public class TileScript : MonoBehaviour
         uiAssignAnts.GetComponent<Canvas>().enabled = true;
       
         AntCounter antCounter = uiAssignAnts.GetComponent<AntCounter>();
-        antCounter.SetAssignedAnts(XPos, ZPos, 0, 0, false);
+        antCounter.SetSelectedTile(XPos, ZPos);
         antCounter.UpdateAntText();
 
         GameObject uiMiniBarInfo = GameObject.Find("MiniBarInfo");

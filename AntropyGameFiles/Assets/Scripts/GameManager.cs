@@ -20,11 +20,13 @@ public class GameManager : MonoBehaviour
       public int reservedResources;
       public float resourceAmount;
       public int resourceMaxAmount;
-      public bool ownedByPlayer;
+      public bool dominatedByPlayer;
+      public bool occupiedByPlayer; 
       public bool partOfAnthill;
       public float distanceAntHill;
       public bool explored; 
       public bool visible;
+      // to be added -> fertility (0 - desert, 7 - really fertile (ant paradise))
     }
 
     public Tile[,] Map;
@@ -57,12 +59,7 @@ public class GameManager : MonoBehaviour
     public int maxResourceStorage;
 
     /// <summary>
-    /// Food requirement of the anthill
-    /// </summary>
-    public int currentUpkeep;
-
-    /// <summary>
-    /// Income rate of food, tileIncome - upkeep
+    /// Income rate of food, tileIncome - Upkeep()
     /// </summary>
     public int income;
     
@@ -319,14 +316,7 @@ public class GameManager : MonoBehaviour
         public int totalAnts;
         public int freeAnts;
         //map specific properties
-        public int[,] type;
-        public int[,] assignedMapAnts;
-        public int[,] maxAssignedMapAnts;
-        public float[,] resourceAmount;
-        public float[,] resourceMaxAmount;
-        public bool[,] partOfAnthill;
-        //anthill specific properties (assuming a fixed list of chambers)
-        public int[] assignedHillAnts;
+        public Tile[,] map;
 
     }
 
@@ -336,8 +326,11 @@ public class GameManager : MonoBehaviour
         SaveData data = new SaveData();
         data.playerName = playerName;
         data.totalAnts = totalAnts;
-        //....
+        data.freeAnts = freeAnts;
+        data.map = Map;
         string json = JsonUtility.ToJson(data);
+
+        Debug.Log("Array_length: " + data.map.Length);
     
         File.WriteAllText(Application.persistentDataPath + "/savefile.json", json);
     }
@@ -409,8 +402,7 @@ public class GameManager : MonoBehaviour
       hatcheryLevel = 0;
       storageLevel = 0;
       
-      currentUpkeep = (int)Mathf.Ceil(totalAnts * foodPerAnt);
-      income -= currentUpkeep;
+      income -= Upkeep();
       hatcheryCost =             new int[] {200,  400, 600,   800,  1600, 3200, 4800, 5400, 5800, 6500, 7000 };
       storageCapacityAmount =    new int[] {350,  500, 1000,  1500, 2000, 2500, 3000, 3500, 4000, 5000, 7000 };
       storageCost =              new int[] {100,  200, 400,   600,  1200, 1800, 2400, 3000, 3600, 4200, 4800 };
@@ -440,6 +432,48 @@ public class GameManager : MonoBehaviour
             }
         }
         return distances.Min();
+    }
+
+    int Harvest()
+    {
+      int income = 0;
+      for(int i = 0; i < rows; i++){
+        for(int j = 0; j < columns; j++){
+          // calculates the total amount of harvested food by the ants taking into account to projected regrow
+          // NOTE: regrow rates may be dependent on the tile fertility (to be discussed)
+          // SECOND NOTE: income may be reduced by the distance to the anthill via the formula
+          // exp(- distance * distanceGatheringReductionRate)
+          income += (int) Mathf.Round(Mathf.Min(Map[i,j].assignedAnts * resourceGatherRate, Map[i,j].resourceAmount + tileRegrowAmount) * Mathf.Exp(-Map[i,j].distanceAntHill * distanceGatheringReductionRate));
+        }
+      }
+      return income;
+    }
+    
+    public int Upkeep()
+    {
+      int upkeep =  (int) Mathf.Ceil(totalAnts * foodPerAnt);
+      if (totalAnts  > currentMaximumPopulationCapacity)
+      {
+        // To be discussed
+          upkeep += (int) Mathf.Ceil((totalAnts -  currentMaximumPopulationCapacity) * (foodPerAnt * 5));
+      }
+      return upkeep;
+    }
+
+    public void UpdateIncome()
+    {
+      // calculate income
+      income = Harvest() - Upkeep();
+      
+
+    }
+
+    public int Juniors()
+    {
+      // use nurse ants == free ants
+      //freeAnts * c ;
+      return (int)Mathf.Ceil((float)totalAnts * antPopGrowthPerTurn);
+
     }
 
     /// <summary>
