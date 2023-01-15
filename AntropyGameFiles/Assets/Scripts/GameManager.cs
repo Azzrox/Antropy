@@ -443,7 +443,10 @@ public class GameManager : MonoBehaviour
           // NOTE: regrow rates may be dependent on the tile fertility (to be discussed)
           // SECOND NOTE: income may be reduced by the distance to the anthill via the formula
           // exp(- distance * distanceGatheringReductionRate)
-          income += (int) Mathf.Round(Mathf.Min(Map[i,j].assignedAnts * resourceGatherRate, Map[i,j].resourceAmount + tileRegrowAmount) * Mathf.Exp(-Map[i,j].distanceAntHill * distanceGatheringReductionRate));
+          if (Map[i,j].type == 1 || Map[i,j].type == 2)
+          {
+            income += (int) Mathf.Round(Mathf.Min(Map[i,j].assignedAnts * resourceGatherRate, Map[i,j].resourceAmount) * Mathf.Exp(-Map[i,j].distanceAntHill * distanceGatheringReductionRate));
+          }
         }
       }
       return income;
@@ -454,7 +457,7 @@ public class GameManager : MonoBehaviour
       int upkeep =  (int) Mathf.Ceil(totalAnts * foodPerAnt);
       if (totalAnts  > currentMaximumPopulationCapacity)
       {
-        // To be discussed
+        // To be be discussed
           upkeep += (int) Mathf.Ceil((totalAnts -  currentMaximumPopulationCapacity) * (foodPerAnt * 5));
       }
       return upkeep;
@@ -464,8 +467,6 @@ public class GameManager : MonoBehaviour
     {
       // calculate income
       income = Harvest() - Upkeep();
-      
-
     }
 
     public int Juniors()
