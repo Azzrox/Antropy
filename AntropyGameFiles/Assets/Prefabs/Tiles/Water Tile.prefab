@@ -19,7 +19,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &6490856156205094238
 Transform:
@@ -56,7 +56,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
+  m_StaticShadowCaster: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -101,7 +101,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   resolution: 15
   tyleType: 1
-  density: 0
+  ressourcesPerGrass: 0
+  stoneDensity: 0
   size: 0.5
   decorationPrefab: {fileID: 4838076072146179403, guid: 3b0065af47f5dce4fbb2e16da7f43f24, type: 3}
   colorGradient:
@@ -145,14 +146,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbdfbb3bc840aa24da5a72bc88657f29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  reservedResources: 0
-  assignedAnts: 0
-  maxAssignedAnts: 0
-  resourceAmount: 0
-  resourceMaxAmount: 0
-  ownedByPlayer: 0
-  explored: 0
-  visible: 0
+  xPos: 0
+  zPos: 0
   redFlagPrefab: {fileID: 3931712470879122387, guid: c6c1cec0329b2724fbf33392a16f1493, type: 3}
 --- !u!64 &-1105745383808857820
 MeshCollider:
@@ -175,6 +170,22 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6490856156205094238}
     m_Modifications:
+    - target: {fileID: 751409929057244358, guid: 9acd3104d91a81443954ea7571a3b445, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 1964277377081989450, guid: 9acd3104d91a81443954ea7571a3b445, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 2892307009072173581, guid: 9acd3104d91a81443954ea7571a3b445, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 5739020498880169160, guid: 9acd3104d91a81443954ea7571a3b445, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 5947877436916447157, guid: 9acd3104d91a81443954ea7571a3b445, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -219,9 +230,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6400334886103711690, guid: 9acd3104d91a81443954ea7571a3b445, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 6466044699995072811, guid: 9acd3104d91a81443954ea7571a3b445, type: 3}
       propertyPath: m_Name
       value: WeatherEffects
+      objectReference: {fileID: 0}
+    - target: {fileID: 6466044699995072811, guid: 9acd3104d91a81443954ea7571a3b445, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9acd3104d91a81443954ea7571a3b445, type: 3}
