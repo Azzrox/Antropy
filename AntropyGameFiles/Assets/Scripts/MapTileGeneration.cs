@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
@@ -15,6 +16,7 @@ public class MapTileGeneration : MonoBehaviour
     private Vector3[] vertices;
     private int[] triangles;
     private Color[] colors;
+    private GameObject[] decorations;
 
     float minTerrainHeight = float.MaxValue;
     float maxTerrainHeight = float.MinValue;
@@ -26,7 +28,8 @@ public class MapTileGeneration : MonoBehaviour
     //private bool3x3 isNeighbourWater = false;
 
     [Header("Decoration")]
-    [SerializeField] private float density;
+    [SerializeField] private float ressourcesPerGrass;
+    [SerializeField] private float stoneDensity;
     [SerializeField] private float size;
     [SerializeField] private GameObject decorationPrefab;
 
@@ -39,7 +42,11 @@ public class MapTileGeneration : MonoBehaviour
     {
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
-        density = Mathf.Clamp(density, 0f, 1f);
+        
+        if (tyleType != TyleType.water)
+        {
+            decorations= new GameObject[(resolution-1)*(resolution-1)];
+        }
 
         CreateShape();
         UpdateMesh();
@@ -92,7 +99,7 @@ public class MapTileGeneration : MonoBehaviour
         vertices = new Vector3[(resolution + 1) * (resolution + 1)];
         colors = new Color[vertices.Length];
 
-        GameObject foliage;
+        int n = 0;
 
         //generate the verctives of our mesh
         for (int i = 0, z = 0; z <= resolution; z++)
@@ -113,7 +120,7 @@ public class MapTileGeneration : MonoBehaviour
                 if (x != 0 && x != resolution && z != 0 && z != resolution)
                 {
                     //add foliage
-                    if (tyleType != TyleType.water && density >= UnityEngine.Random.value)
+                    if (tyleType != TyleType.water)
                     {
                         //random rotation
                         Quaternion decorationRotation = Quaternion.identity;
@@ -124,8 +131,12 @@ public class MapTileGeneration : MonoBehaviour
 
                         if(decorationPrefab != null)
                         {
-                          foliage = Instantiate(decorationPrefab, new Vector3((float)(x + UnityEngine.Random.value * 0.2f) / resolution + originX, y, (float)(z + UnityEngine.Random.value * 0.2f) / resolution + originZ), decorationRotation, gameObject.transform);
-                          foliage.transform.localScale = new Vector3((1f + UnityEngine.Random.value * 0.2f) * size, (1f + UnityEngine.Random.value * 0.2f) * size, (1f + UnityEngine.Random.value * 0.2f) * size);
+                            if (!(tyleType == TyleType.stones && stoneDensity < UnityEngine.Random.value))
+                            {
+                                decorations[n] = Instantiate(decorationPrefab, new Vector3((float)(x + UnityEngine.Random.value * 0.2f) / resolution + originX, y, (float)(z + UnityEngine.Random.value * 0.2f) / resolution + originZ), decorationRotation, gameObject.transform);
+                                decorations[n].transform.localScale = new Vector3((1f + UnityEngine.Random.value * 0.2f) * size, (1f + UnityEngine.Random.value * 0.2f) * size, (1f + UnityEngine.Random.value * 0.2f) * size);
+                            }
+                            n++;
                         }   
                     }
                 }
@@ -195,6 +206,42 @@ public class MapTileGeneration : MonoBehaviour
 
         mesh.RecalculateNormals();
 
+    }
+
+    public void RecalculateGrassDensity(float ressources)
+    {
+        int totalDecoration = (resolution - 1)*(resolution- 1);
+        int neededDecoration = Mathf.FloorToInt(ressources / ressourcesPerGrass);
+        neededDecoration = Mathf.Min(neededDecoration, totalDecoration);
+        int activeDecoration = Array.FindAll(decorations, ob => ob.activeInHierarchy).Length;
+
+        if (neededDecoration < activeDecoration) 
+        { 
+            GameObject[] enabledGrass = Array.FindAll(decorations, ob => ob.activeInHierarchy);
+            float removalChance = (activeDecoration - neededDecoration) / enabledGrass.Length;
+
+            foreach (GameObject grassPrefab in enabledGrass)
+            {
+                if (removalChance > UnityEngine.Random.value)
+                {
+                    grassPrefab.SetActive(false);
+                }
+            }
+
+        }
+        else if (neededDecoration > activeDecoration)
+        {
+            GameObject[] disabledGrass = Array.FindAll(decorations, ob => !ob.activeInHierarchy);
+            float activateChance = (neededDecoration - activeDecoration) / disabledGrass.Length;
+
+            foreach (GameObject grassPrefab in disabledGrass)
+            {
+                if (activateChance > UnityEngine.Random.value)
+                {
+                    grassPrefab.SetActive(true);
+                }
+            }
+        }
     }
 
 }
