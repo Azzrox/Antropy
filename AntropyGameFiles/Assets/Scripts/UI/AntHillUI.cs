@@ -19,7 +19,6 @@ public class AntHillUI : MonoBehaviour
   public TextMeshProUGUI popPerTurnText;
 
   public TileScript tile;
-  private GameManager gm = GameManager.Instance;
 
 
   private void Awake()
@@ -42,28 +41,28 @@ public class AntHillUI : MonoBehaviour
   /// </summary>
   public void UpdateAntText()
   {
-    hatcheryLevelText.text = "Hatchery Level: " + gm.hatcheryLevel;
+    hatcheryLevelText.text = "Hatchery Level: " + GameManager.Instance.hatcheryLevel;
     
-    storageLevelText.text = "Storage Level: " + gm.storageLevel;
+    storageLevelText.text = "Storage Level: " + GameManager.Instance.storageLevel;
 
 
-    if (gm.hatcheryLevel >= gm.hatcheryMaxLevel)
+    if (GameManager.Instance.hatcheryLevel >= GameManager.Instance.hatcheryMaxLevel)
     {
       costHatcheryText.text = "Cost: " + "Max";
     }
     else
     {
-      costHatcheryText.text = "Cost: " + gm.hatcheryCost[gm.hatcheryLevel];
+      costHatcheryText.text = "Cost: " + GameManager.Instance.hatcheryCost[GameManager.Instance.hatcheryLevel];
     }
 
 
-    if (gm.storageLevel >= gm.storageMaxLevel)
+    if (GameManager.Instance.storageLevel >= GameManager.Instance.storageMaxLevel)
     {
       costStorageText.text = "Cost: " + "Max";
     }
     else
     {
-      costStorageText.text = "Cost: " + gm.storageCost[gm.storageLevel];
+      costStorageText.text = "Cost: " + GameManager.Instance.storageCost[GameManager.Instance.storageLevel];
     }
   }
 
@@ -72,30 +71,31 @@ public class AntHillUI : MonoBehaviour
   /// </summary>
   void IncreaseLevelHatchery() 
   {
-    if(gm.hatcheryLevel < gm.hatcheryMaxLevel) 
+    if(GameManager.Instance.hatcheryLevel < GameManager.Instance.hatcheryMaxLevel) 
     {
 
       //check resources
-      if(gm.resources >= gm.hatcheryCost[gm.hatcheryLevel])
+      if(GameManager.Instance.resources >= GameManager.Instance.hatcheryCost[GameManager.Instance.hatcheryLevel])
       {
-        hatcheryLevelText.text = "Hatchery Level: " + (gm.hatcheryLevel + 1);
+        hatcheryLevelText.text = "Hatchery Level: " + (GameManager.Instance.hatcheryLevel + 1);
 
         //take resources from the player update the maxSupportedAnts and add +1 to the level and (correct the upkeep "needs to be implemented);
-        gm.resources -= gm.hatcheryCost[gm.hatcheryLevel];
-        gm.hatcheryLevel += 1;
-        gm.currentMaximumPopulationCapacity = gm.populationCapacityAmount[gm.hatcheryLevel];
+        GameManager.Instance.resources -= GameManager.Instance.hatcheryCost[GameManager.Instance.hatcheryLevel];
+        GameManager.Instance.hatcheryLevel += 1;
+        GameManager.Instance.currentMaximumPopulationCapacity = GameManager.Instance.populationCapacityAmount[GameManager.Instance.hatcheryLevel];
 
-        if (gm.hatcheryLevel >= gm.hatcheryMaxLevel)
+        if (GameManager.Instance.hatcheryLevel >= GameManager.Instance.hatcheryMaxLevel)
         {
           costHatcheryText.text = "Cost: " + "Max";
         }
         else
         {
-          costHatcheryText.text = "Cost: " + gm.hatcheryCost[gm.hatcheryLevel];
+          costHatcheryText.text = "Cost: " + GameManager.Instance.hatcheryCost[GameManager.Instance.hatcheryLevel];
           
         }
+        GameManager.Instance.UpdateIncome();
        
-        gm.miniBarInfoInstance.MiniBarInfoUpdate();
+        GameManager.Instance.miniBarInfoInstance.MiniBarInfoUpdate();
       }
       else 
       {
@@ -109,30 +109,31 @@ public class AntHillUI : MonoBehaviour
   /// </summary>
   void IncreaseLevelStorage()
   {
-    if (gm.storageLevel < gm.storageMaxLevel)
+    if (GameManager.Instance.storageLevel < GameManager.Instance.storageMaxLevel)
     {
       //check cost
-      if(gm.resources >= gm.storageCost[gm.storageLevel])
+      if(GameManager.Instance.resources >= GameManager.Instance.storageCost[GameManager.Instance.storageLevel])
       {
         //(correct the upkeep "needs to be implemented)
-        storageLevelText.text = "Storage Level: " + (gm.storageLevel + 1);
-        gm.resources -= gm.storageCost[gm.storageLevel];
-        gm.storageLevel += 1;
-        gm.maxResourceStorage = gm.storageCapacityAmount[gm.storageLevel];
+        storageLevelText.text = "Storage Level: " + (GameManager.Instance.storageLevel + 1);
+        GameManager.Instance.resources -= GameManager.Instance.storageCost[GameManager.Instance.storageLevel];
+        GameManager.Instance.storageLevel += 1;
+        GameManager.Instance.maxResourceStorage = GameManager.Instance.storageCapacityAmount[GameManager.Instance.storageLevel];
 
-        if (gm.storageLevel >= gm.storageMaxLevel)
+        if (GameManager.Instance.storageLevel >= GameManager.Instance.storageMaxLevel)
         {
           costStorageText.text = "Cost: " + "Max";
         }
         else
         {
-          costStorageText.text = "Cost: " + gm.storageCost[gm.storageLevel];
+          costStorageText.text = "Cost: " + GameManager.Instance.storageCost[GameManager.Instance.storageLevel];
         }
-        gm.miniBarInfoInstance.MiniBarInfoUpdate();
+        GameManager.Instance.UpdateIncome();
+        GameManager.Instance.miniBarInfoInstance.MiniBarInfoUpdate();
       }
       else
       {
-        Debug.Log("Not Enough Resources to upgrade Storage");
+        Debug.Log("Not Enough Resources to upgrade Storage " + GameManager.Instance.resources + "/" + GameManager.Instance.storageCost[GameManager.Instance.storageLevel]);
       }
     }
   }
