@@ -220,7 +220,8 @@ public class MapScript : MonoBehaviour
     GameManager.Instance.Map[i,j].explored = false;
     GameManager.Instance.Map[i,j].visible = false;
     GameManager.Instance.Map[i,j].explored = false;
-    GameManager.Instance.Map[i,j].ownedByPlayer = false;
+    GameManager.Instance.Map[i,j].occupiedByPlayer = false;
+    GameManager.Instance.Map[i,j].dominatedByPlayer = false;
     GameManager.Instance.Map[i,j].assignedAnts = 0;
     GameManager.Instance.Map[i,j].maxAssignedAnts = GameManager.Instance.maxAntsResourceTile;
 

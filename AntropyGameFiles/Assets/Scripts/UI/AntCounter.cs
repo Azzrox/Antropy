@@ -11,9 +11,7 @@ public class AntCounter : MonoBehaviour
 {
   private int posX;
   private int posZ;
-  private int assignedAnts;
-  private int maxAssignedAnts;
-  private bool isAntHill;
+
   private GameObject antCollection;
   public Button plusButton;
   public Button plusPlusButton;
@@ -27,11 +25,11 @@ public class AntCounter : MonoBehaviour
   public TextMeshProUGUI tileName;
   
   public GameObject antPrefab;
-  private GameManager gameManager;
+  
 
   private void Awake()
   {
-    gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
+    
   }
 
   // Start is called before the first frame update
@@ -48,51 +46,44 @@ public class AntCounter : MonoBehaviour
 
     void IncreaseAnts()
     {
-        int freeAnts = GameManager.Instance.freeAnts;
-        if (freeAnts > 0 && assignedAnts < maxAssignedAnts)
+        //int freeAnts = GameManager.Instance.freeAnts;
+        if (GameManager.Instance.freeAnts > 0 && GameManager.Instance.Map[posX, posZ].assignedAnts < GameManager.Instance.Map[posX, posZ].maxAssignedAnts)
         {
-          assignedAnts += 1;
-
-          //Spawn the Ant sprite (only one due to limitations, "starts to lag at some point with larger maps)
-          if (!isAntHill && GameManager.Instance.Map[posX, posZ].assignedAnts == 0) { SpawnAnt(); }
-
+          // update data
+          GameManager.Instance.Map[posX, posZ].assignedAnts += 1;
+          GameManager.Instance.Map[posX, posZ].occupiedByPlayer = true;
           GameManager.Instance.freeAnts -= 1;
-          SetAssignedAnts_remote();
+          // update economic data
+          GameManager.Instance.UpdateIncome();
+          // update UI
           UpdateAntText();
+          GameManager.Instance.miniBarInfoInstance.MiniBarInfoUpdate();
+          
+          //Spawn the Ant sprite (only one due to limitations, "starts to lag at some point with larger maps)
+          if (!GameManager.Instance.Map[posX, posZ].partOfAnthill && GameManager.Instance.Map[posX, posZ].assignedAnts == 0) { SpawnAnt(); }
 
-          if (GameManager.Instance.Map[posX, posZ].type != 0 && 
-              GameManager.Instance.Map[posX, posZ].type != 3 &&
-              GameManager.Instance.Map[posX, posZ].resourceAmount > GameManager.Instance.resourceGatherRate &&
-              GameManager.Instance.Map[posX, posZ].resourceAmount - GameManager.Instance.Map[posX, posZ].reservedResources >=  GameManager.Instance.resourceGatherRate) 
-              {
-                GameManager.Instance.income += (int)GameManager.Instance.resourceGatherRate;
-                GameManager.Instance.Map[posX, posZ].reservedResources += (int) GameManager.Instance.resourceGatherRate;
-              }
-                
         }
-    GameManager.Instance.miniBarInfoInstance.MiniBarInfoUpdate();
+    
   } 
 
     void DecreaseAnts()
     {
-      if (assignedAnts > 0)
+      if (GameManager.Instance.Map[posX, posZ].assignedAnts > 0)
       {
-        assignedAnts -= 1;
+        // update data
+        GameManager.Instance.Map[posX, posZ].assignedAnts -= 1;
         GameManager.Instance.freeAnts += 1;
-        SetAssignedAnts_remote();
-        UpdateAntText();
-
-        //Correcting the income and resource calculation in real time
-        if (GameManager.Instance.Map[posX, posZ].type != 0 && 
-            GameManager.Instance.Map[posX, posZ].type != 3 &&
-            GameManager.Instance.Map[posX, posZ].reservedResources > 0)
+        if (GameManager.Instance.Map[posX, posZ].assignedAnts == 0)
         {
-           GameManager.Instance.income -= (int)GameManager.Instance.resourceGatherRate;
-           GameManager.Instance.Map[posX, posZ].reservedResources -= (int)GameManager.Instance.resourceGatherRate;
+          GameManager.Instance.Map[posX, posZ].occupiedByPlayer = false;
         }
-
+        // update economic data
+        GameManager.Instance.UpdateIncome();
+        // update UI
+        UpdateAntText();
         GameManager.Instance.miniBarInfoInstance.MiniBarInfoUpdate();
-        if (!isAntHill) { RemoveAnt(); }
+
+        if (!GameManager.Instance.Map[posX, posZ].partOfAnthill) { RemoveAnt(); }
       }
     }
 
@@ -101,15 +92,11 @@ public class AntCounter : MonoBehaviour
         //GetComponentInParent<GameObject>().SetActive(false);
         gameObject.GetComponent<Canvas>().enabled = false;
     }
-    public void SetAssignedAnts(int ix, int iz, int asAnts, int maxAnts, bool isHill)
+    public void SetSelectedTile(int ix, int iz)
     {
         // could be replaced by ix, iy to get values from matrix
         posX = ix;
         posZ = iz;
-        assignedAnts = GameManager.Instance.Map[ix,iz].assignedAnts;
-        maxAssignedAnts = GameManager.Instance.Map[ix,iz].maxAssignedAnts;
-        isAntHill = GameManager.Instance.Map[ix,iz].partOfAnthill;
-        SetAssignedAnts_remote();
     }
 
     void AddAllAnts() 
@@ -130,38 +117,19 @@ public class AntCounter : MonoBehaviour
       }
     }
 
-  public void SetAssignedAnts_remote()
-    {
-      if (isAntHill)
-      {
-          GameManager.Instance.Map[posX,posZ].assignedAnts = assignedAnts;
-      } 
-      else
-      {
-        GameManager.Instance.Map[posX,posZ].assignedAnts = assignedAnts;
-        if(assignedAnts > 0)
-        {
-          GameManager.Instance.Map[posX, posZ].ownedByPlayer = true;
-        }
-        else
-        {
-          GameManager.Instance.Map[posX, posZ].ownedByPlayer = false;
-        }
-      }
-    }
 
     public void UpdateAntText()
     {
     freeAnts.text = "Free Ants: " + GameManager.Instance.freeAnts;
-    if (assignedAnts == 1)
+    if (GameManager.Instance.Map[posX, posZ].assignedAnts == 1)
       { 
-          assignedAntsText.text = assignedAnts + "/"  + GameManager.Instance.Map[posX, posZ].maxAssignedAnts + " ants";
+          assignedAntsText.text = GameManager.Instance.Map[posX, posZ].assignedAnts + "/"  + GameManager.Instance.Map[posX, posZ].maxAssignedAnts + " ants";
           resources.text = "Resources: " + GameManager.Instance.Map[posX, posZ].resourceAmount;
           tileName.text = GameManager.Instance.TileName(GameManager.Instance.Map[posX, posZ].type) + "[" + posX + "," + posZ + "]"; 
       } 
       else
       {
-          assignedAntsText.text = assignedAnts + "/" + GameManager.Instance.Map[posX, posZ].maxAssignedAnts + " ants";
+          assignedAntsText.text = GameManager.Instance.Map[posX, posZ].assignedAnts + "/" + GameManager.Instance.Map[posX, posZ].maxAssignedAnts + " ants";
           resources.text = "Resources: " + GameManager.Instance.Map[posX, posZ].resourceAmount;
           tileName.text = GameManager.Instance.TileName(GameManager.Instance.Map[posX, posZ].type) + "[" + posX + "," + posZ + "]";
       }
@@ -175,7 +143,8 @@ public class AntCounter : MonoBehaviour
     void RemoveAnt() 
     {
         GameObject[] allAnts = GameObject.FindGameObjectsWithTag("Ant");
-
+        
+        // some ants might fall outside that area?
         Vector3 where = new Vector3(posX + 0.5f, 0.2f, posZ + 0.5f);
         if (allAnts.Length > 0)
         {
