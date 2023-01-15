@@ -457,7 +457,7 @@ public class GameManager : MonoBehaviour
   {
     if (resources <= 0 && income < 0)
     {
-      SceneManager.LoadScene("PrototypeEndScreen", LoadSceneMode.Additive);
+      //SceneManager.LoadScene("PrototypeEndScreen", LoadSceneMode.Additive);
     }
   }
 
