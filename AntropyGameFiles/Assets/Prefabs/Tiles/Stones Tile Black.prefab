@@ -19,7 +19,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &6490856156205094238
 Transform:
@@ -56,7 +56,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
+  m_StaticShadowCaster: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -101,7 +101,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   resolution: 15
   tyleType: 2
-  density: 0.05
+  ressourcesPerGrass: 0
+  stoneDensity: 0
   size: 0.8
   decorationPrefab: {fileID: 0}
   colorGradient:
@@ -145,11 +146,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbdfbb3bc840aa24da5a72bc88657f29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resourceAmount: 0
-  resourceMaxAmount: 0
-  ownedByPlayer: 0
-  explored: 0
-  visible: 0
+  xPos: 0
+  zPos: 0
+  redFlagPrefab: {fileID: 0}
 --- !u!64 &7868478642722073911
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -174,6 +173,10 @@ PrefabInstance:
     - target: {fileID: 1399923481041628051, guid: bf47838c1125f494bae38a63779fbbb6, type: 3}
       propertyPath: m_Name
       value: Fog
+      objectReference: {fileID: 0}
+    - target: {fileID: 1399923481041628051, guid: bf47838c1125f494bae38a63779fbbb6, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 9105953999705968499, guid: bf47838c1125f494bae38a63779fbbb6, type: 3}
       propertyPath: m_RootOrder

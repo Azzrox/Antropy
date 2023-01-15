@@ -1141,7 +1141,7 @@
         "preventRotation": false
     },
     "m_Path": "Shader Graphs",
-    "m_GraphPrecision": 1,
+    "m_GraphPrecision": 2,
     "m_PreviewMode": 2,
     "m_OutputNode": {
         "m_Id": ""
@@ -1238,7 +1238,7 @@
     "m_RenderFace": 0,
     "m_AlphaClip": true,
     "m_CastShadows": true,
-    "m_ReceiveShadows": true,
+    "m_ReceiveShadows": false,
     "m_CustomEditorGUI": "",
     "m_SupportVFX": false
 }
@@ -5325,10 +5325,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": 1229.33349609375,
-            "y": 185.33331298828126,
-            "width": 184.66650390625,
-            "height": 254.66668701171876
+            "x": 1229.3333740234375,
+            "y": 236.00001525878907,
+            "width": 184.6666259765625,
+            "height": 254.66664123535157
         }
     },
     "m_Slots": [
