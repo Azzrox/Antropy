@@ -24,8 +24,9 @@ public class WeatherScript : MonoBehaviour
         case 0:
           //higher probability of rain and sun
           //Basic Implementation for the Prototype
-          //int weather = Random.Range(0, 2);
-          gameManagerInstance.currentWeather = 0;
+          int weather = Random.Range(0, 2);
+          gameManagerInstance.currentWeather = weather;
+          WeatherEffectsUpdate(currentSeason, weather);
           //WeatherMultiplierUpdate(weather);
           break;
 
@@ -46,6 +47,66 @@ public class WeatherScript : MonoBehaviour
           break;
     }
   }
+
+    /// <summary>
+    /// Updates the particle systems in the world
+    /// </summary>
+    /// <param name="weather"></param>
+    private void WeatherEffectsUpdate(int currentSeason, int weather)
+    {
+        bool rain = false;
+        bool snow = false;
+        bool leaves = false;
+        bool lightning = false;
+
+
+        switch (weather)
+        {
+            case 0: //Sun
+                if (currentSeason != 3) //no leaves in the winter
+                {
+                    leaves = true;
+                }
+                break;
+            case 1: //Rain
+                rain = true;
+                lightning = true;
+                break;
+            case 2: //Overcast
+                break; 
+            case 3: //Fog
+                break;
+            case 4: //Snow
+                snow = true;
+                break;
+            default:
+                Debug.Log("Error with updating weather particle systems");
+                break;
+        }
+
+        foreach (GameObject wEffect in GameObject.FindGameObjectsWithTag("WeatherEffect"))
+        {
+            var em = wEffect.GetComponent<ParticleSystem>().emission;
+                switch (wEffect.name)
+                {
+                    case "Autumn Leaves":
+                        em.enabled = leaves && (currentSeason == 2);
+                        break;
+                    case "Lush Leaves":
+                        em.enabled = leaves && (currentSeason <= 1);
+                        break;
+                    case "Rain":
+                        em.enabled = rain;
+                        break;
+                    case "Snow":
+                        em.enabled = snow;
+                        break;
+                    case "Lightning":
+                        em.enabled = lightning;
+                        break;
+            }
+        }
+    }
 
   /// <summary>
   /// Updates the current active multiplier

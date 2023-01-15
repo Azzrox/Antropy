@@ -37,7 +37,7 @@ public class NextTurnScript : MonoBehaviour
       Debug.Log("Turn: " + GameManager.Instance.currentTurnCount);
       AntTurn();
       MapTurn();
-      //WeatherTurn();
+      WeatherTurn();
       EventTurn();
       SeasonTurn();
       MessageTurn();
