@@ -22,8 +22,7 @@ public class NextTurnScript : MonoBehaviour
 
   private void Start()
   {
-    //Calculate the first upkeep
-    GameManager.Instance.currentUpkeep = (int)Mathf.Ceil(GameManager.Instance.totalAnts * GameManager.Instance.foodPerAnt);
+    
     TurnInfoUpdate();
     antCounter.UpdateAntText();
   }
@@ -61,61 +60,54 @@ public class NextTurnScript : MonoBehaviour
   void AntTurn() 
   {
 
-    //Reset GoalCheck
-    GameManager.Instance.currentGoalProgress = 0;
+    // update resources
+    // Storage room check 
+    if (GameManager.Instance.resources + GameManager.Instance.income > GameManager.Instance.maxResourceStorage)
+    {
+      // Trigger for storage overflow
+      // effectively stored income (needed for historic data)
+      GameManager.Instance.income = GameManager.Instance.maxResourceStorage - GameManager.Instance.resources;
+    }
 
-    //Insert Ant Turn
+    GameManager.Instance.resources += GameManager.Instance.income;
+
+    // historic data
+    GameManager.Instance.totalResources += GameManager.Instance.income;
+
+    // Reset goal check
+    //GameManager.Instance.currentGoalProgress = 0;
+
+    // update left resources on tiles
     for (int i = 0; i < GameManager.Instance.rows; i++)
     {
       for (int j = 0; j < GameManager.Instance.columns; j++)
       {
-        if(GameManager.Instance.Map[i, j].ownedByPlayer) 
+        // regrow resources
+        GameManager.Instance.Map[i,j].resourceAmount = Mathf.Max( GameManager.Instance.Map[i,j].resourceAmount + GameManager.Instance.tileRegrowAmount, GameManager.Instance.Map[i,j].resourceMaxAmount);
+        
+        // reduce by harvested amount
+        if (GameManager.Instance.Map[i,j].occupiedByPlayer)
         {
-          //Tile Distance Degradation + Current Weather influence
-          float gatheringBase = GameManager.Instance.Map[i, j].assignedAnts * GameManager.Instance.resourceGatherRate;// * gameManager.weatherAcessMultiplier);
-          for (int k = 0; k < GameManager.Instance.Map[i, j].distanceAntHill; k++)
-          {
-            //gatheringBase = Mathf.Ceil(gatheringBase * gameManager.distanceGatheringReductionRate);
-          }
+          GameManager.Instance.Map[i,j].resourceAmount -= Mathf.Min(GameManager.Instance.Map[i,j].assignedAnts * GameManager.Instance.resourceGatherRate, 
+                                                                      GameManager.Instance.Map[i,j].resourceAmount); 
 
-          if(GameManager.Instance.Map[i, j].type == 1 || GameManager.Instance.Map[i, j].type == 2) // tile is grass or soil
-          {
-            GameManager.Instance.resources += GameManager.Instance.Map[i, j].reservedResources;
-            //Debug.Log("NewResources: " + GameManager.Instance.resources);
-
-            //End Score
-            GameManager.Instance.totalResources += GameManager.Instance.Map[i, j].reservedResources;
-            CalculateNewResourceAmountFlat((int)-GameManager.Instance.Map[i, j].reservedResources, i, j);
-          
-          }
-          
-          //add the flag because it's owned (Prototype) only if 10 are on a tile you get a flag
-          if(GameManager.Instance.Map[i, j].assignedAnts == 10) 
-          {
-            GameManager.Instance.mapInstance.mapMatrix[i, j].spawnOwnedFlagOnTile();
+          // check goals
+          if (!GameManager.Instance.Map[i,j].dominatedByPlayer && GameManager.Instance.Map[i,j].assignedAnts == GameManager.Instance.Map[i,j].maxAssignedAnts){
+            GameManager.Instance.Map[i,j].dominatedByPlayer = true;
             GameManager.Instance.currentGoalProgress += 1;
+            GameManager.Instance.mapInstance.mapMatrix[i, j].spawnOwnedFlagOnTile();
           }
-          else 
-          {
-            GameManager.Instance.mapInstance.mapMatrix[i, j].deleteFlagOnTile();
+
+          }         
+          if (GameManager.Instance.Map[i,j].dominatedByPlayer && GameManager.Instance.Map[i,j].assignedAnts != GameManager.Instance.Map[i,j].maxAssignedAnts){
+            GameManager.Instance.Map[i,j].dominatedByPlayer = false;
             GameManager.Instance.currentGoalProgress -= 1;
-          }    
+            GameManager.Instance.mapInstance.mapMatrix[i, j].deleteFlagOnTile();
+        // update visuals of grass tile
+          }                                           
         }
-        else if (GameManager.Instance.Map[i, j].assignedAnts != 10) 
-        {
-          //if tile not owned by player remove flag
-          GameManager.Instance.mapInstance.mapMatrix[i, j].deleteFlagOnTile();
-        }
-      }
+       
     }
-
-    //Current Upkeep Calculation
-    GameManager.Instance.currentUpkeep = (int)Mathf.Ceil(GameManager.Instance.totalAnts * GameManager.Instance.foodPerAnt);
-
-    //Storage Room Check
-    //resources - currentUpkeet => leftover resources
-    int netto_resource = GameManager.Instance.resources - GameManager.Instance.currentUpkeep;
-    GameManager.Instance.resources = Mathf.Min(GameManager.Instance.maxResourceStorage, Mathf.Max(0, netto_resource));
     /*
     if ((GameManager.Instance.resources - GameManager.Instance.currentUpkeep) > 0) 
     {
@@ -131,22 +123,28 @@ public class NextTurnScript : MonoBehaviour
       GameManager.Instance.resources = GameManager.Instance.maxResourceStorage;
     }
     */
-    //Check if we reached the prototype goal
-    GameManager.Instance.prototypeLooseCheck();
-
+    // update population
     //Population growth
     int new_pop = (int)Mathf.Ceil((float)GameManager.Instance.totalAnts * GameManager.Instance.antPopGrowthPerTurn);
     GameManager.Instance.freeAnts += new_pop;
     GameManager.Instance.totalAnts += new_pop;
     
-    //Calculate new upkeep for the next turn
-    GameManager.Instance.currentUpkeep = (int)Mathf.Ceil(GameManager.Instance.totalAnts * GameManager.Instance.foodPerAnt);
+    // ------------------ WINNING / LOSING condition and message triggers --------------------
+    //Check if we reached the prototype goal
+    GameManager.Instance.prototypeLooseCheck();
+
+    if (GameManager.Instance.resources < GameManager.Instance.maxResourceStorage * 0.1)
+    {
+      // Trigger for low food warning.
+    }
+    
+ 
   }
   void MapTurn() 
   {
     //Insert Map Turn
     //change the tile object
-    GameManager.Instance.income = 0 - GameManager.Instance.currentUpkeep;
+    //GameManager.Instance.income = 0 - GameManager.Instance.Upkeep();
     for (int i = 0; i < GameManager.Instance.rows; i++)
     {
       for (int j = 0; j < GameManager.Instance.columns; j++)
@@ -156,13 +154,13 @@ public class NextTurnScript : MonoBehaviour
         
         if(GameManager.Instance.Map[i, j].assignedAnts * (int)GameManager.Instance.resourceGatherRate > (int)GameManager.Instance.Map[i,j].resourceAmount)
         {
-          GameManager.Instance.Map[i, j].reservedResources = (int) GameManager.Instance.Map[i, j].resourceAmount;
+          //GameManager.Instance.Map[i, j].reservedResources = (int) GameManager.Instance.Map[i, j].resourceAmount;
         }
         else
         {
-          GameManager.Instance.Map[i, j].reservedResources = GameManager.Instance.Map[i, j].assignedAnts * (int)GameManager.Instance.resourceGatherRate;
+          //GameManager.Instance.Map[i, j].reservedResources = GameManager.Instance.Map[i, j].assignedAnts * (int)GameManager.Instance.resourceGatherRate;
         }
-        GameManager.Instance.income += GameManager.Instance.Map[i, j].reservedResources;
+        //GameManager.Instance.income += GameManager.Instance.Map[i, j].reservedResources;
         
 
         //check if the growth if we reached a threshhold to update the tile mesh
