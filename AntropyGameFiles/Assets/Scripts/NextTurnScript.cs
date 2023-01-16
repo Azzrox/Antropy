@@ -149,8 +149,15 @@ public class NextTurnScript : MonoBehaviour
     {
       for (int j = 0; j < GameManager.Instance.columns; j++)
       {
+
         GameManager.Instance.Map[i,j].resourceAmount = (int) Mathf.Clamp(GameManager.Instance.Map[i,j].resourceAmount + GameManager.Instance.tileRegrowAmount, 0, GameManager.Instance.Map[i,j].resourceMaxAmount);
       
+        // update visuals of grass tile
+        if (GameManager.Instance.Map[i, j].type == 1 || GameManager.Instance.Map[i, j].type == 2)
+        {
+            GameManager.Instance.mapInstance.mapMatrix[i, j].GetComponent<MapTileGeneration>().RecalculateGrassDensity(GameManager.Instance.Map[i, j].resourceAmount);
+        }
+        
         //check if the growth if we reached a threshhold to update the tile mesh
         GameManager.Instance.mapInstance.TileErosionCheck(i,j); // TODO: think about where to set TileErosion (ExchangeTilePrefab) function!
       }
