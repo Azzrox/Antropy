@@ -101,7 +101,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   resolution: 15
   tyleType: 3
-  ressourcesPerGrass: 10
+  ressourcesPerGrass: 5
   stoneDensity: 0
   size: 0.5
   decorationPrefab: {fileID: 6671550061291770464, guid: 7e7771155377ca048a03d307fe5aee11, type: 3}

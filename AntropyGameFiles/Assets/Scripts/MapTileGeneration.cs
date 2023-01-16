@@ -23,7 +23,7 @@ public class MapTileGeneration : MonoBehaviour
 
     public int resolution = 5;
 
-    public enum TyleType {gras, water, stones, soil}
+    public enum TyleType { gras, water, stones, soil }
     public TyleType tyleType;
     //private bool3x3 isNeighbourWater = false;
 
@@ -42,10 +42,10 @@ public class MapTileGeneration : MonoBehaviour
     {
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
-        
+
         if (tyleType != TyleType.water)
         {
-            decorations= new GameObject[(resolution-1)*(resolution-1)];
+            decorations = new GameObject[(resolution - 1) * (resolution - 1)];
         }
 
         CreateShape();
@@ -90,7 +90,7 @@ public class MapTileGeneration : MonoBehaviour
     //    mesh.colors = colors;
     //}
 
-    void CreateShape ()
+    void CreateShape()
     {
         float originX = transform.position.x;
         float originZ = transform.position.z;
@@ -106,13 +106,13 @@ public class MapTileGeneration : MonoBehaviour
         {
             for (int x = 0; x <= resolution; x++)
             {
-                float y = Mathf.PerlinNoise((originX*resolution + x) * noise, (originZ*resolution + z) * noise) * 0.05f;
+                float y = Mathf.PerlinNoise((originX * resolution + x) * noise, (originZ * resolution + z) * noise) * 0.05f;
 
                 //set the water bit lower
                 if (tyleType == TyleType.water)
                 {
                     int[] distanceToEdge = { x, z, resolution - x, resolution - z };
-                    y -= Mathf.Sqrt((float)Mathf.Min(distanceToEdge)/resolution/8f);
+                    y -= Mathf.Sqrt((float)Mathf.Min(distanceToEdge) / resolution / 8f);
                 }
 
 
@@ -129,32 +129,33 @@ public class MapTileGeneration : MonoBehaviour
                         else if (tyleType == TyleType.stones)
                         { decorationRotation = UnityEngine.Random.rotation; }
 
-                        if(decorationPrefab != null)
+                        if (decorationPrefab != null)
                         {
                             if (!(tyleType == TyleType.stones && stoneDensity < UnityEngine.Random.value))
                             {
                                 decorations[n] = Instantiate(decorationPrefab, new Vector3((float)(x + UnityEngine.Random.value * 0.2f) / resolution + originX, y, (float)(z + UnityEngine.Random.value * 0.2f) / resolution + originZ), decorationRotation, gameObject.transform);
                                 decorations[n].transform.localScale = new Vector3((1f + UnityEngine.Random.value * 0.2f) * size, (1f + UnityEngine.Random.value * 0.2f) * size, (1f + UnityEngine.Random.value * 0.2f) * size);
+
                             }
                             n++;
-                        }   
+                        }
                     }
                 }
 
                 if (minTerrainHeight > y) { minTerrainHeight = y; }
                 if (maxTerrainHeight < y) { maxTerrainHeight = y; }
 
-                vertices[i] = new Vector3((float) x /resolution, y, (float)z /resolution);
+                vertices[i] = new Vector3((float)x / resolution, y, (float)z / resolution);
 
                 i++;
             }
         }
 
-    //add water
-    if (decorationPrefab != null)
-    {
-      if (tyleType == TyleType.water) { Instantiate(decorationPrefab, new Vector3(originX, transform.position.y - 0.08f, originZ), Quaternion.identity, gameObject.transform); }
-    }
+        //add water
+        if (decorationPrefab != null)
+        {
+            if (tyleType == TyleType.water) { Instantiate(decorationPrefab, new Vector3(originX, transform.position.y - 0.08f, originZ), Quaternion.identity, gameObject.transform); }
+        }
         Gradient gradient = colorGradient;
 
         //color the vertices
@@ -170,7 +171,7 @@ public class MapTileGeneration : MonoBehaviour
         }
 
 
-        triangles = new int[resolution*resolution*6];
+        triangles = new int[resolution * resolution * 6];
 
 
         int vert = 0;
@@ -210,38 +211,41 @@ public class MapTileGeneration : MonoBehaviour
 
     public void RecalculateGrassDensity(float ressources)
     {
-        int totalDecoration = (resolution - 1)*(resolution- 1);
+
+        int totalDecoration = (resolution - 1) * (resolution - 1);
         int neededDecoration = Mathf.FloorToInt(ressources / ressourcesPerGrass);
         neededDecoration = Mathf.Min(neededDecoration, totalDecoration);
-        int activeDecoration = Array.FindAll(decorations, ob => ob.activeInHierarchy).Length;
 
-        if (neededDecoration < activeDecoration) 
-        { 
-            GameObject[] enabledGrass = Array.FindAll(decorations, ob => ob.activeInHierarchy);
-            float removalChance = (activeDecoration - neededDecoration) / enabledGrass.Length;
+        //if (decorations is not null)
+        //{
+            int activeDecoration = Array.FindAll(decorations, ob => ob.activeInHierarchy).Length;
 
-            foreach (GameObject grassPrefab in enabledGrass)
+            if (neededDecoration < activeDecoration)
             {
-                if (removalChance > UnityEngine.Random.value)
+                GameObject[] enabledGrass = Array.FindAll(decorations, ob => ob.activeInHierarchy);
+                float removalChance = ((float)activeDecoration - (float)neededDecoration) / (float)enabledGrass.Length;
+                foreach (GameObject grassPrefab in enabledGrass)
                 {
-                    grassPrefab.SetActive(false);
+                    if (removalChance > UnityEngine.Random.value)
+                    {
+                        grassPrefab.SetActive(false);
+                    }
+                }
+
+            }
+            else if (neededDecoration > activeDecoration)
+            {
+                GameObject[] disabledGrass = Array.FindAll(decorations, ob => !ob.activeInHierarchy);
+                float activateChance = ((float)neededDecoration - (float)activeDecoration) / (float)disabledGrass.Length;
+                foreach (GameObject grassPrefab in disabledGrass)
+                {
+                    if (activateChance > UnityEngine.Random.value)
+                    {
+                        grassPrefab.SetActive(true);
+                    }
                 }
             }
-
-        }
-        else if (neededDecoration > activeDecoration)
-        {
-            GameObject[] disabledGrass = Array.FindAll(decorations, ob => !ob.activeInHierarchy);
-            float activateChance = (neededDecoration - activeDecoration) / disabledGrass.Length;
-
-            foreach (GameObject grassPrefab in disabledGrass)
-            {
-                if (activateChance > UnityEngine.Random.value)
-                {
-                    grassPrefab.SetActive(true);
-                }
-            }
-        }
+        //}
     }
 
 }

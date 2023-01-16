@@ -151,8 +151,14 @@ public class NextTurnScript : MonoBehaviour
       {
         int regrowAmount = (int)Mathf.Ceil(GameManager.Instance.tileRegrowAmount);
         CalculateNewResourceAmountFlat(regrowAmount,i ,j);
-        
-        if(GameManager.Instance.Map[i, j].assignedAnts * (int)GameManager.Instance.resourceGatherRate > (int)GameManager.Instance.Map[i,j].resourceAmount)
+
+        // update visuals of grass tile
+        if (GameManager.Instance.Map[i, j].type == 1 || GameManager.Instance.Map[i, j].type == 2)
+        {
+            GameManager.Instance.mapInstance.mapMatrix[i, j].GetComponent<MapTileGeneration>().RecalculateGrassDensity(GameManager.Instance.Map[i, j].resourceAmount);
+        }
+
+        if (GameManager.Instance.Map[i, j].assignedAnts * (int)GameManager.Instance.resourceGatherRate > (int)GameManager.Instance.Map[i,j].resourceAmount)
         {
           //GameManager.Instance.Map[i, j].reservedResources = (int) GameManager.Instance.Map[i, j].resourceAmount;
         }
