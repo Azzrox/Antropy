@@ -390,6 +390,10 @@ public class MapScript : MonoBehaviour
     Destroy(mapMatrix[posX, posZ].gameObject);
 
     mapMatrix[posX, posZ] = newTile;
+    if (GameManager.Instance.Map[posX, posZ].occupiedByPlayer)
+    {
+      mapMatrix[posX, posZ].spawnOwnedFlagOnTile();
+    }
   }
 
 

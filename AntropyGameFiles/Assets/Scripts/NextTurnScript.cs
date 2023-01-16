@@ -47,6 +47,7 @@ public class NextTurnScript : MonoBehaviour
       checker = false;
 
       //Update the infobars
+      GameManager.Instance.UpdateIncome();
       GameManager.Instance.miniBarInfoInstance.MiniBarInfoUpdate();
       antCounter.UpdateAntText();
     }
@@ -82,8 +83,7 @@ public class NextTurnScript : MonoBehaviour
     {
       for (int j = 0; j < GameManager.Instance.columns; j++)
       {
-        // regrow resources
-        GameManager.Instance.Map[i,j].resourceAmount = Mathf.Max( GameManager.Instance.Map[i,j].resourceAmount + GameManager.Instance.tileRegrowAmount, GameManager.Instance.Map[i,j].resourceMaxAmount);
+        
         
         // reduce by harvested amount
         if (GameManager.Instance.Map[i,j].occupiedByPlayer)
@@ -125,7 +125,7 @@ public class NextTurnScript : MonoBehaviour
     */
     // update population
     //Population growth
-    int new_pop = (int)Mathf.Ceil((float)GameManager.Instance.totalAnts * GameManager.Instance.antPopGrowthPerTurn);
+    int new_pop =  GameManager.Instance.Juniors();
     GameManager.Instance.freeAnts += new_pop;
     GameManager.Instance.totalAnts += new_pop;
     
@@ -149,26 +149,15 @@ public class NextTurnScript : MonoBehaviour
     {
       for (int j = 0; j < GameManager.Instance.columns; j++)
       {
-        int regrowAmount = (int)Mathf.Ceil(GameManager.Instance.tileRegrowAmount);
-        CalculateNewResourceAmountFlat(regrowAmount,i ,j);
 
+        GameManager.Instance.Map[i,j].resourceAmount = (int) Mathf.Clamp(GameManager.Instance.Map[i,j].resourceAmount + GameManager.Instance.tileRegrowAmount, 0, GameManager.Instance.Map[i,j].resourceMaxAmount);
+      
         // update visuals of grass tile
         if (GameManager.Instance.Map[i, j].type == 1 || GameManager.Instance.Map[i, j].type == 2)
         {
             GameManager.Instance.mapInstance.mapMatrix[i, j].GetComponent<MapTileGeneration>().RecalculateGrassDensity(GameManager.Instance.Map[i, j].resourceAmount);
         }
-
-        if (GameManager.Instance.Map[i, j].assignedAnts * (int)GameManager.Instance.resourceGatherRate > (int)GameManager.Instance.Map[i,j].resourceAmount)
-        {
-          //GameManager.Instance.Map[i, j].reservedResources = (int) GameManager.Instance.Map[i, j].resourceAmount;
-        }
-        else
-        {
-          //GameManager.Instance.Map[i, j].reservedResources = GameManager.Instance.Map[i, j].assignedAnts * (int)GameManager.Instance.resourceGatherRate;
-        }
-        //GameManager.Instance.income += GameManager.Instance.Map[i, j].reservedResources;
         
-
         //check if the growth if we reached a threshhold to update the tile mesh
         GameManager.Instance.mapInstance.TileErosionCheck(i,j); // TODO: think about where to set TileErosion (ExchangeTilePrefab) function!
       }
