@@ -425,8 +425,7 @@ public class GameManager : MonoBehaviour
       hatcheryLevel = 0;
       storageLevel = 0;
       
-      UpdateIncome();
-      UpdateGrowth();
+      UpdateIncomeGrowth();
       hatcheryCost =             new int[] {200,  400, 600,   800,  1600, 3200, 4800, 5400, 5800, 6500, 7000 };
       storageCapacityAmount =    new int[] {350,  500, 1000,  1500, 2000, 2500, 3000, 3500, 4000, 5000, 7000 };
       storageCost =              new int[] {100,  200, 400,   600,  1200, 1800, 2400, 3000, 3600, 4200, 4800 };
@@ -498,11 +497,18 @@ public class GameManager : MonoBehaviour
       growth = Juniors();
     }
 
+    public void UpdateIncomeGrowth()
+    {
+      UpdateIncome();
+      UpdateGrowth();
+    }
+
     public int Juniors()
     {
       // use nurse ants == free ants
-      //freeAnts * c ;
-      return (int)Mathf.Ceil((float)totalAnts * antPopGrowthPerTurn);
+      return (int) Mathf.Ceil(freeAnts * 3 * antPopGrowthPerTurn);
+      // old: 
+      //return (int)Mathf.Ceil((float)totalAnts * antPopGrowthPerTurn);
 
     }
 

@@ -48,7 +48,7 @@ public class NextTurnScript : MonoBehaviour
       checker = false;
 
       //Update the infobars
-      GameManager.Instance.UpdateIncome();
+      GameManager.Instance.UpdateIncomeGrowth();
       GameManager.Instance.miniBarInfoInstance.MiniBarInfoUpdate();
       antCounter.UpdateAntText();
 
