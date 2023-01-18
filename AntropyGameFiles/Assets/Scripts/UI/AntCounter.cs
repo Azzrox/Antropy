@@ -91,6 +91,8 @@ public class AntCounter : MonoBehaviour
     {
         //GetComponentInParent<GameObject>().SetActive(false);
         gameObject.GetComponent<Canvas>().enabled = false;
+        GameObject highlight = GameObject.Find("HighlightTile");
+        highlight.GetComponent<MeshRenderer>().enabled = false;
     }
     public void SetSelectedTile(int ix, int iz)
     {

@@ -12,7 +12,6 @@ public class RelativeBoxUI : MonoBehaviour
 
     public void SetLeftRight(float middle, float delta, float maxVal, float overshooting){
         float width = box.rect.width;
-        Debug.Log("Width of the outer box: " + width);
         float leftBorder; 
         float rightBorder;
         if (delta > 0)
@@ -25,7 +24,6 @@ public class RelativeBoxUI : MonoBehaviour
             leftBorder = Mathf.Max((middle + delta)/ maxVal * width, -width * overshooting); // left undershooting limit -0.17
             rightBorder = -(maxVal - middle) / maxVal * width;
         }
-        Debug.Log("Left: " + leftBorder + ", right: " + rightBorder);
         indicator.offsetMin = new Vector2(leftBorder,0);
         indicator.offsetMax = new Vector2(rightBorder,0);
 

@@ -157,7 +157,6 @@ public class NextTurnScript : MonoBehaviour
         // update visuals of grass tile
         if (GameManager.Instance.Map[i, j].type == 1 || GameManager.Instance.Map[i, j].type == 2)
         {
-            Debug.Log("tilex: " + i + ", y: " + j + ", resource: " + GameManager.Instance.Map[i, j].resourceAmount );
             GameManager.Instance.mapInstance.mapMatrix[i, j].GetComponent<MapTileGeneration>().RecalculateGrassDensity(GameManager.Instance.Map[i, j].resourceAmount);
         }
         
