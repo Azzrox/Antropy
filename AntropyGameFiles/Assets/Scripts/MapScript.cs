@@ -28,6 +28,16 @@ public class MapScript : MonoBehaviour
     mapMatrix = new TileScript[GameManager.Instance.rows, GameManager.Instance.columns];
   }
 
+  void Start()
+    {
+    //SpawnTiles(3,4);
+      SpawnRandomMap();
+      SpawnTerrainMap();    
+      UpdateGrass();
+      Debug.Log("Random Map created");
+
+    }
+
   /// <summary>
   /// Random Map creation with no seed
   /// </summary>
@@ -52,6 +62,7 @@ public class MapScript : MonoBehaviour
     }
     GameObject.Find("AssignAnts").GetComponent<Canvas>().enabled = false;
     GameObject.Find("Anthill").GetComponent<Canvas>().enabled = false;
+    
   }
 
   /// <summary>
@@ -142,56 +153,14 @@ public class MapScript : MonoBehaviour
     GameManager.Instance.Map[i,j].explored = false;
     GameManager.Instance.Map[i,j].assignedAnts = 0;
     GameManager.Instance.Map[i,j].maxAssignedAnts = GameManager.Instance.maxAntsAnthillTile;
+    GameManager.Instance.Map[i,j].constructionState = 6; // highway
+    GameManager.Instance.Map[i,j].foodTransportCost = GameManager.Instance.transportCostVector[GameManager.Instance.Map[i,j].constructionState];
+    GameManager.Instance.Map[i,j].fertilityState = 2; // no grow
+    GameManager.Instance.Map[i,j].regrowResource = GameManager.Instance.regrowRateVector[GameManager.Instance.Map[i,j].fertilityState];
     
     newTile.XPos = i; 
     newTile.ZPos = j;
     
-    //position of the spawn
-    newTile.transform.position = new Vector3(i, 0, j);
-
-    //save the script in the matrix
-    mapMatrix[i, j] = newTile;
-  }
-
-  /// <summary>
-  /// Creates a Random Resource Tile
-  /// </summary>
-  /// <param name="i"></param>
-  /// <param name="j"></param>
-  /// <param name="distance_anthill">Eucledian Distance</param>
-  void RandomResourceTile(int i, int j, int distance_anthill) 
-  {
-
-    //weights
-    int tileType = Random.Range(0, 3);
-    if(Random.Range(0,11) > 7) 
-    {
-      tileType = 3;
-    }
-
-    var tileEntry = Instantiate(tilePrefabs[tileType], this.transform) as Transform;
-    TileScript newTile = tileEntry.GetComponent<TileScript>();
-
-    GameManager.Instance.Map[i,j].type = tileType;
-    GameManager.Instance.Map[i,j].tileName = (TileName(tileType) + ": [" + i + "," + j + "]");
-    GameManager.Instance.Map[i,j].distanceAntHill = distance_anthill;
-    GameManager.Instance.Map[i,j].explored = false;
-    GameManager.Instance.Map[i,j].visible = false;
-    GameManager.Instance.Map[i,j].explored = false;
-    GameManager.Instance.Map[i,j].assignedAnts = 0;
-
-    newTile.XPos = i;
-    newTile.ZPos = j;
-
-    //Random Amount of resources on the tile
-    if (tileType == 1 || tileType == 2)
-    {
-      GameManager.Instance.Map[i,j].resourceAmount = Random.Range(50,300);
-      GameManager.Instance.Map[i,j].resourceMaxAmount = 300;
-
-
-    }
-
     //position of the spawn
     newTile.transform.position = new Vector3(i, 0, j);
 
@@ -226,6 +195,8 @@ public class MapScript : MonoBehaviour
     GameManager.Instance.Map[i,j].maxAssignedAnts = GameManager.Instance.maxAntsResourceTile;
 
     
+    
+
     newTile.XPos = i;
     newTile.ZPos = j;
 
@@ -233,6 +204,8 @@ public class MapScript : MonoBehaviour
     if (tileType == 6 || tileType == 7)
     {
       GameManager.Instance.Map[i,j].resourceMaxAmount = 300;
+      GameManager.Instance.Map[i,j].constructionState = 3; // normal (1 foodTransportCost)
+      GameManager.Instance.Map[i,j].fertilityState = 5; // normal soil (20)
       for (int k = 0; k < i+j; k++)
       {
         GameManager.Instance.Map[i,j].resourceMaxAmount = (int)( GameManager.Instance.Map[i,j].resourceMaxAmount * (1 + GameManager.Instance.resourceWeight));
@@ -242,7 +215,19 @@ public class MapScript : MonoBehaviour
       {
         GameManager.Instance.Map[i,j].resourceAmount = (int)(GameManager.Instance.soilWeight *  GameManager.Instance.Map[i,j].resourceAmount);
       }
+    } else if (tileType == 5) // rock
+    {
+      GameManager.Instance.Map[i,j].constructionState = 1; // hard to cross (10 foodTransportCost)
+      GameManager.Instance.Map[i,j].fertilityState = 2; // no regrow
     }
+    else if (tileType == 8) // water
+    { 
+      GameManager.Instance.Map[i,j].constructionState = 0; // not passable (99 foodTransportCost)
+      GameManager.Instance.Map[i,j].fertilityState = 2; // no regrow
+    }
+
+    GameManager.Instance.Map[i,j].foodTransportCost = GameManager.Instance.transportCostVector[GameManager.Instance.Map[i,j].constructionState];
+    GameManager.Instance.Map[i,j].regrowResource = GameManager.Instance.regrowRateVector[GameManager.Instance.Map[i,j].fertilityState];
 
     //position of the spawn
     newTile.transform.position = new Vector3(i, 0, j);
@@ -393,6 +378,28 @@ public class MapScript : MonoBehaviour
     if (GameManager.Instance.Map[posX, posZ].occupiedByPlayer)
     {
       mapMatrix[posX, posZ].spawnOwnedFlagOnTile();
+    }
+  }
+
+
+  public void UpdateGrass()
+  {
+    //yield return new WaitForSeconds(0.01f);
+    //Insert Map Turn
+    //change the tile object
+    //GameManager.Instance.income = 0 - GameManager.Instance.Upkeep();
+    for (int i = 0; i < GameManager.Instance.rows; i++)
+    {
+      for (int j = 0; j < GameManager.Instance.columns; j++)
+      {
+       
+        // update visuals of grass tile
+        if (GameManager.Instance.Map[i, j].type == 1 || GameManager.Instance.Map[i, j].type == 2)
+        {
+            GameManager.Instance.mapInstance.mapMatrix[i, j].GetComponent<MapTileGeneration>().RecalculateGrassDensity(GameManager.Instance.Map[i, j].resourceAmount);
+        }
+      
+      }
     }
   }
 

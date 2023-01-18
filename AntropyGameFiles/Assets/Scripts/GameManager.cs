@@ -26,7 +26,13 @@ public class GameManager : MonoBehaviour
       public float distanceAntHill;
       public bool explored; 
       public bool visible;
-      // to be added -> fertility (0 - desert, 7 - really fertile (ant paradise))
+      // regrowResource can also be negative
+      public int regrowResource;
+      public int fertilityState;
+      // fertility (0 - desert, 1 - steppe, 2 -  lean soil, 3 - normal soil, 4 - humus-rich soil, 5 - ant garden, 6 - ant paradise)
+      public int constructionState;
+      // (0 - not passable (water), 1 - hard-to-cross (rock), 2 - rough, 3 - normal plain land, 4 - ant path, 5 - ant street, 6 - ant highway )
+      public float foodTransportCost;
     }
 
     public Tile[,] Map;
@@ -62,6 +68,11 @@ public class GameManager : MonoBehaviour
     /// Income rate of food, tileIncome - Upkeep()
     /// </summary>
     public int income;
+
+    /// <summary>
+    /// new ants
+    /// </summary>
+    public int growth;
     
     [Header("Current Turn and Goal state")]
     /// <summary>
@@ -127,11 +138,13 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public int currentWeather;
 
-    
+    [Header("Fertility and transportation")]
+    public int[] regrowRateVector;
+    public float[] transportCostVector;
 
 
    
-
+    [Header("Hatchery and Anthill")]
     /// <summary>
     /// Current player hatchery level
     /// </summary>
@@ -296,6 +309,14 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
         // optional: load last gameplay (if saved)
         //LoadLastGame();
+
+        // Fertility and transportation setups
+        // fertility (0 - desert, 1 - steppe, 2 -  sandy soil, 3 - drained soil, 4 - modest soil, 5 - normal soil, 6 - humus-rich soil, 7 - ant garden, 8 - ant paradise)
+        regrowRateVector = new int[] {-10, -5, 0, 5, 10, 20, 35, 55, 80};
+        
+        // construction states: (0 - not passable (water), 1 - hard-to-cross (rock), 2 - rough, 3 - normal plain land, 4 - ant path, 5 - ant street, 6 - ant highway )
+        transportCostVector = new float[] {99, 10, 5, 1, 0.5f, 0.1f, 0.01f};
+
         
         Map = new Tile[rows, columns];
         Debug.Log("Map created: " + Map[1,0].type + " before mapinstance is initialized");
@@ -398,11 +419,13 @@ public class GameManager : MonoBehaviour
     {
 
       
+
+      
       //Anthill values
       hatcheryLevel = 0;
       storageLevel = 0;
       
-      income -= Upkeep();
+      UpdateIncomeGrowth();
       hatcheryCost =             new int[] {200,  400, 600,   800,  1600, 3200, 4800, 5400, 5800, 6500, 7000 };
       storageCapacityAmount =    new int[] {350,  500, 1000,  1500, 2000, 2500, 3000, 3500, 4000, 5000, 7000 };
       storageCost =              new int[] {100,  200, 400,   600,  1200, 1800, 2400, 3000, 3600, 4200, 4800 };
@@ -469,11 +492,23 @@ public class GameManager : MonoBehaviour
       income = Harvest() - Upkeep();
     }
 
+    public void UpdateGrowth()
+    {
+      growth = Juniors();
+    }
+
+    public void UpdateIncomeGrowth()
+    {
+      UpdateIncome();
+      UpdateGrowth();
+    }
+
     public int Juniors()
     {
       // use nurse ants == free ants
-      //freeAnts * c ;
-      return (int)Mathf.Ceil((float)totalAnts * antPopGrowthPerTurn);
+      return (int) Mathf.Ceil(freeAnts * 3 * antPopGrowthPerTurn);
+      // old: 
+      //return (int)Mathf.Ceil((float)totalAnts * antPopGrowthPerTurn);
 
     }
 

@@ -54,7 +54,7 @@ public class AntCounter : MonoBehaviour
           GameManager.Instance.Map[posX, posZ].occupiedByPlayer = true;
           GameManager.Instance.freeAnts -= 1;
           // update economic data
-          GameManager.Instance.UpdateIncome();
+          GameManager.Instance.UpdateIncomeGrowth();
           // update UI
           UpdateAntText();
           GameManager.Instance.miniBarInfoInstance.MiniBarInfoUpdate();
@@ -78,7 +78,7 @@ public class AntCounter : MonoBehaviour
           GameManager.Instance.Map[posX, posZ].occupiedByPlayer = false;
         }
         // update economic data
-        GameManager.Instance.UpdateIncome();
+        GameManager.Instance.UpdateIncomeGrowth();
         // update UI
         UpdateAntText();
         GameManager.Instance.miniBarInfoInstance.MiniBarInfoUpdate();
@@ -91,6 +91,8 @@ public class AntCounter : MonoBehaviour
     {
         //GetComponentInParent<GameObject>().SetActive(false);
         gameObject.GetComponent<Canvas>().enabled = false;
+        GameObject highlight = GameObject.Find("HighlightTile");
+        highlight.GetComponent<MeshRenderer>().enabled = false;
     }
     public void SetSelectedTile(int ix, int iz)
     {
@@ -120,7 +122,7 @@ public class AntCounter : MonoBehaviour
 
     public void UpdateAntText()
     {
-    freeAnts.text = "Free Ants: " + GameManager.Instance.freeAnts;
+    freeAnts.text = "Nursing Ants: " + GameManager.Instance.freeAnts;
     if (GameManager.Instance.Map[posX, posZ].assignedAnts == 1)
       { 
           assignedAntsText.text = GameManager.Instance.Map[posX, posZ].assignedAnts + "/"  + GameManager.Instance.Map[posX, posZ].maxAssignedAnts + " ants";

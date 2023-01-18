@@ -14,14 +14,7 @@ public class GameManagerUI : MonoBehaviour
       mapInstance = GameObject.Find("MapTiles").GetComponent<MapScript>();
     }
 
-    void Start()
-    {
-    //SpawnTiles(3,4);
-      mapInstance.SpawnRandomMap();
-      mapInstance.SpawnTerrainMap();    
-      Debug.Log("Random Map created");
-
-    }
+    
 
     // Update is called once per frame
     void Update()

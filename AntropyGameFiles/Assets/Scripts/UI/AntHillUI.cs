@@ -93,7 +93,7 @@ public class AntHillUI : MonoBehaviour
           costHatcheryText.text = "Cost: " + GameManager.Instance.hatcheryCost[GameManager.Instance.hatcheryLevel];
           
         }
-        GameManager.Instance.UpdateIncome();
+        GameManager.Instance.UpdateIncomeGrowth();
        
         GameManager.Instance.miniBarInfoInstance.MiniBarInfoUpdate();
       }
@@ -128,7 +128,7 @@ public class AntHillUI : MonoBehaviour
         {
           costStorageText.text = "Cost: " + GameManager.Instance.storageCost[GameManager.Instance.storageLevel];
         }
-        GameManager.Instance.UpdateIncome();
+        GameManager.Instance.UpdateIncomeGrowth();
         GameManager.Instance.miniBarInfoInstance.MiniBarInfoUpdate();
       }
       else

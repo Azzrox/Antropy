@@ -36,20 +36,22 @@ public class NextTurnScript : MonoBehaviour
     {
       Debug.Log("Turn: " + GameManager.Instance.currentTurnCount);
       AntTurn();
+      ExploreTurn();
       MapTurn();
       WeatherTurn();
       EventTurn();
       SeasonTurn();
       MessageTurn();
-      ExploreTurn();
       GameManager.Instance.currentTurnCount++;
       TurnInfoUpdate();
+      
       checker = false;
 
       //Update the infobars
-      GameManager.Instance.UpdateIncome();
+      GameManager.Instance.UpdateIncomeGrowth();
       GameManager.Instance.miniBarInfoInstance.MiniBarInfoUpdate();
       antCounter.UpdateAntText();
+
     }
     else 
     {
@@ -128,6 +130,7 @@ public class NextTurnScript : MonoBehaviour
     int new_pop =  GameManager.Instance.Juniors();
     GameManager.Instance.freeAnts += new_pop;
     GameManager.Instance.totalAnts += new_pop;
+    GameManager.Instance.UpdateGrowth();
     
     // ------------------ WINNING / LOSING condition and message triggers --------------------
     //Check if we reached the prototype goal
@@ -149,8 +152,7 @@ public class NextTurnScript : MonoBehaviour
     {
       for (int j = 0; j < GameManager.Instance.columns; j++)
       {
-
-        GameManager.Instance.Map[i,j].resourceAmount = (int) Mathf.Clamp(GameManager.Instance.Map[i,j].resourceAmount + GameManager.Instance.tileRegrowAmount, 0, GameManager.Instance.Map[i,j].resourceMaxAmount);
+        GameManager.Instance.Map[i,j].resourceAmount = (int) Mathf.Clamp(GameManager.Instance.Map[i,j].resourceAmount + GameManager.Instance.Map[i,j].regrowResource, 0, GameManager.Instance.Map[i,j].resourceMaxAmount);
       
         // update visuals of grass tile
         if (GameManager.Instance.Map[i, j].type == 1 || GameManager.Instance.Map[i, j].type == 2)
@@ -166,7 +168,7 @@ public class NextTurnScript : MonoBehaviour
 
   void ExploreTurn()
   {
-    TileScript[,] gameMap = gameManager.mapInstance.GameMap;
+    //TileScript[,] gameMap = gameManager.mapInstance.GameMap;
     int[,] adder = new int[,] { { -1, 0 }, { -1, -1 }, { -1, 1 }, { 1, 0 }, { 1, -1 }, { 1, 1 }, { 0, -1 }, { 0, 1 } };
     for (int i = 0; i < GameManager.Instance.rows; i++)
     {

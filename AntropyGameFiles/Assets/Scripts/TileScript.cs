@@ -73,7 +73,12 @@ public class TileScript : MonoBehaviour
         AntCounter antCounter = uiAssignAnts.GetComponent<AntCounter>();
         antCounter.SetSelectedTile(XPos, ZPos);
         antCounter.UpdateAntText();
+        GameObject highlight = GameObject.Find("HighlightTile");
+        highlight.transform.position = new Vector3(XPos, 0, ZPos);
+        highlight.GetComponent<MeshRenderer>().enabled = true;
 
+
+        //Why is here an update of MiniBarInfoUpdate necessary?
         GameObject uiMiniBarInfo = GameObject.Find("MiniBarInfo");
         uiMiniBarInfo.GetComponent<MiniBarInfoUI>().MiniBarInfoUpdate();
       }

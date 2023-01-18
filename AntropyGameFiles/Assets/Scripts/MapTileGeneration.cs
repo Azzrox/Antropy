@@ -38,7 +38,7 @@ public class MapTileGeneration : MonoBehaviour
     [SerializeField] private Gradient colorGradient;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
