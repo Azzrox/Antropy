@@ -39,6 +39,9 @@ public class GameManager : MonoBehaviour
     [Header("Map properties")]
     public int rows;
     public int columns;
+
+    public int anthillX;
+    public int anthillY;
    
     public string playerName;
     [Header("Current population data")]
@@ -319,6 +322,10 @@ public class GameManager : MonoBehaviour
 
         
         Map = new Tile[rows, columns];
+
+        anthillX = columns / 2;
+        anthillY = rows / 2;
+
         Debug.Log("Map created: " + Map[1,0].type + " before mapinstance is initialized");
 
         mapInstance = GameObject.Find("MapTiles").GetComponent<MapScript>();
