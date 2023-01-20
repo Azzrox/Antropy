@@ -30,7 +30,6 @@ public class MapScript : MonoBehaviour
 
   void Start()
     {
-    //SpawnTiles(3,4);
       SpawnRandomMap();
       SpawnTerrainMap();    
       UpdateGrass();
@@ -43,16 +42,18 @@ public class MapScript : MonoBehaviour
   /// </summary>
   public void SpawnRandomMap()
   {
+    
     for (int i = 0; i < GameManager.Instance.rows; i++)
     {
       int distance_anthill = 0;
       for (int j = 0; j < GameManager.Instance.columns; j++)
       {
-        if(i == 0 && j == 0) 
+        
+        if(i == GameManager.Instance.anthillX && j == GameManager.Instance.anthillY) 
         {
           CreateAnthillTile(i, j);
         }
-        else 
+        else
         {
           WeightResourceTile(i, j, distance_anthill, GameManager.Instance.rows + GameManager.Instance.columns);
           //RandomResourceTile(i, j, distance_anthill);
@@ -65,54 +66,132 @@ public class MapScript : MonoBehaviour
     
   }
 
-  /// <summary>
-  /// Map creation with added terrains
-  /// </summary>
-  public void SpawnTerrainMap()
-  {
-    int[,] adder = new int[,] {{-1, 0}, {0, -1}, {0, 1}, {1, 0}};
-    for (int i = 0; i < GameManager.Instance.rows; i++)
-    {
-      for (int j = 0; j < GameManager.Instance.columns; j++)
+    /// <summary>
+    /// Map creation with added terrains
+    /// </summary>
+    /*
+      public void SpawnTerrainMap()
       {
-        
-        int sameFound = 0;
-        for (int k = 0; k < adder.Length/2; k++)
+        int[,] adder = new int[,] {{-1, 0}, {0, -1}, {0, 1}, {1, 0}};
+        for (int i = 0; i < GameManager.Instance.rows; i++)
         {
-          if (i + adder[k, 0] < GameManager.Instance.rows && i + adder[k, 0] >= 0 && j + adder[k, 1] < GameManager.Instance.columns && j + adder[k, 1] >= 0)
-            if (GameManager.Instance.Map[i, j].type == GameManager.Instance.Map[i + adder[k, 0], j + adder[k, 1]].type)
+          for (int j = 0; j < GameManager.Instance.columns; j++)
+          {
+
+            int sameFound = 0;
+            for (int k = 0; k < adder.Length/2; k++)
             {
-              sameFound = 1;
+              if (i + adder[k, 0] < GameManager.Instance.rows && i + adder[k, 0] >= 0 && j + adder[k, 1] < GameManager.Instance.columns && j + adder[k, 1] >= 0)
+                if (GameManager.Instance.Map[i, j].type == GameManager.Instance.Map[i + adder[k, 0], j + adder[k, 1]].type)
+                {
+                  sameFound = 1;
+                }
             }
-        }
-        if(sameFound == 0 && (j != 0 || i != 0)) 
-        { 
-          if(j + 1 > GameManager.Instance.columns - 1) 
-          {
-            //ExchangeTilePrefab(mapMatrix[i, j], mapMatrix[i, j - 1].TileType);
-            ExchangeTilePrefab(i,j,GameManager.Instance.Map[i, j - 1].type);
+            if(sameFound == 0 && (j != 0 || i != 0)) 
+            { 
+              if(j + 1 > GameManager.Instance.columns - 1) 
+              {
+                //ExchangeTilePrefab(mapMatrix[i, j], mapMatrix[i, j - 1].TileType);
+                ExchangeTilePrefab(i,j,GameManager.Instance.Map[i, j - 1].type);
+              }
+              else 
+              {
+                //ExchangeTilePrefab(mapMatrix[i, j], mapMatrix[i, j + 1].TileType);
+                ExchangeTilePrefab(i,j,GameManager.Instance.Map[i, j + 1].type);
+              }
+            }
+            if (i < 3 && j < 3 && (j != 0 || i != 0))
+            {
+              //ExchangeTilePrefab(mapMatrix[i, j], 1);
+              ExchangeTilePrefab(i,j,1);
+              //SetExplored(mapMatrix[i, j], true);
+              SetExplored(i,j, true);
+              //SetVisible(mapMatrix[i, j], true);
+              SetVisible(i,j, true);
+            }
           }
-          else 
-          {
-            //ExchangeTilePrefab(mapMatrix[i, j], mapMatrix[i, j + 1].TileType);
-            ExchangeTilePrefab(i,j,GameManager.Instance.Map[i, j + 1].type);
-          }
-        }
-        if (i < 3 && j < 3 && (j != 0 || i != 0))
-        {
-          //ExchangeTilePrefab(mapMatrix[i, j], 1);
-          ExchangeTilePrefab(i,j,1);
-          //SetExplored(mapMatrix[i, j], true);
-          SetExplored(i,j, true);
-          //SetVisible(mapMatrix[i, j], true);
-          SetVisible(i,j, true);
         }
       }
+     */
+    public void SpawnTerrainMap()
+    {
+        int[,] adder = new int[,] { { -1, 0 }, { 0, -1 }, { 0, 1 }, { 1, 0 } };
+
+        List<Vector2> anthillRadius = new List<Vector2>();
+        for(int i = -1; i < 2; i++)
+        {
+            for(int j = -1; j < 2; j++)
+            {
+                if (i == 0 && j == 0)
+                    continue;
+                
+                anthillRadius.Add(new Vector2(i, j));
+                
+            }
+        }
+
+        anthillRadius.Add(new Vector2(2, 0));
+        anthillRadius.Add(new Vector2(0, 2));
+        anthillRadius.Add(new Vector2(0, -2));
+        anthillRadius.Add(new Vector2(-2, 0));
+
+        for (int i = 0; i < GameManager.Instance.rows; i++)
+    {
+        for (int j = 0; j < GameManager.Instance.columns; j++)
+        {
+
+            int sameFound = 0;
+            for (int k = 0; k < adder.Length / 2; k++)
+            {
+                if (i + adder[k, 0] < GameManager.Instance.rows && i + adder[k, 0] >= 0 && j + adder[k, 1] < GameManager.Instance.columns && j + adder[k, 1] >= 0)
+                    if (GameManager.Instance.Map[i, j].type == GameManager.Instance.Map[i + adder[k, 0], j + adder[k, 1]].type)
+                    {
+                        sameFound = 1;
+                    }
+            }
+            if (sameFound == 0 && (j != GameManager.Instance.anthillY || i != GameManager.Instance.anthillX))
+            {
+                if (j + 1 > GameManager.Instance.columns - 1)
+                {
+                    //ExchangeTilePrefab(mapMatrix[i, j], mapMatrix[i, j - 1].TileType);
+                    ExchangeTilePrefab(i, j, GameManager.Instance.Map[i, j - 1].type);
+                }
+                else
+                {
+                    //ExchangeTilePrefab(mapMatrix[i, j], mapMatrix[i, j + 1].TileType);
+                    ExchangeTilePrefab(i, j, GameManager.Instance.Map[i, j + 1].type);
+                }
+            }
+            
+            /*if (j != GameManager.Instance.anthillX || i != GameManager.Instance.anthillY)
+            {
+                //ExchangeTilePrefab(mapMatrix[i, j], 1);
+                ExchangeTilePrefab(i, j, 1);
+                //SetExplored(mapMatrix[i, j], true);
+                SetExplored(i, j, true);
+                //SetVisible(mapMatrix[i, j], true);
+                SetVisible(i, j, true);
+            }*/
+        }
     }
-  }
 
+        initAnthillRadius(anthillRadius);
+}
 
-  public void SetExplored(int posX, int posZ, bool explored)
+void initAnthillRadius(List<Vector2> anthillRadius)
+{
+        foreach(Vector2 point in anthillRadius)
+        {
+            //ExchangeTilePrefab(mapMatrix[i, j], 1);
+            ExchangeTilePrefab((int)System.Math.Round(point.x + GameManager.Instance.anthillX), (int)System.Math.Round(point.y + GameManager.Instance.anthillY), 1);
+            //SetExplored(mapMatrix[i, j], true);
+            SetExplored((int)System.Math.Round(point.x + GameManager.Instance.anthillX), (int)System.Math.Round(point.y + GameManager.Instance.anthillY), true);
+            //SetVisible(mapMatrix[i, j], true);
+            SetVisible((int)System.Math.Round(point.x + GameManager.Instance.anthillX), (int)System.Math.Round(point.y + GameManager.Instance.anthillY), true);
+        }
+}
+
+public void SetExplored(int posX, int posZ, bool explored)
   {
     GameManager.Instance.Map[posX, posZ].explored = explored;
     if (explored == true)
@@ -150,7 +229,7 @@ public class MapScript : MonoBehaviour
     GameManager.Instance.Map[i,j].distanceAntHill = -1;
     GameManager.Instance.Map[i,j].explored = false;
     GameManager.Instance.Map[i,j].visible = false;
-    GameManager.Instance.Map[i,j].explored = false;
+    GameManager.Instance.Map[i,j].explored = true;
     GameManager.Instance.Map[i,j].assignedAnts = 0;
     GameManager.Instance.Map[i,j].maxAssignedAnts = GameManager.Instance.maxAntsAnthillTile;
     GameManager.Instance.Map[i,j].constructionState = 6; // highway
