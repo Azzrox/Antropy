@@ -18,11 +18,14 @@ public class AntCounter : MonoBehaviour
   public Button minusButton;
   public Button confirmButton;
   public Button minusMinusButton;
+  public Slider antSlider;
 
   public TextMeshProUGUI freeAnts;
   public TextMeshProUGUI assignedAntsText;
   public TextMeshProUGUI resources;
   public TextMeshProUGUI tileName;
+  public TextMeshProUGUI regrowText;
+  public TextMeshProUGUI transportCostText;
   
   public GameObject antPrefab;
   
@@ -36,6 +39,8 @@ public class AntCounter : MonoBehaviour
   void Start()
   {
     plusButton.onClick.AddListener(IncreaseAnts);
+    antSlider.onValueChanged.AddListener(delegate {UpdateAnts(); });
+
     minusButton.onClick.AddListener(DecreaseAnts);
     confirmButton.onClick.AddListener(Confirm);
     plusPlusButton.onClick.AddListener(AddAllAnts);
@@ -57,6 +62,7 @@ public class AntCounter : MonoBehaviour
           GameManager.Instance.UpdateIncomeGrowth();
           // update UI
           UpdateAntText();
+          UpdateSlider();
           GameManager.Instance.miniBarInfoInstance.MiniBarInfoUpdate();
           
           //Spawn the Ant sprite (only one due to limitations, "starts to lag at some point with larger maps)
@@ -81,10 +87,33 @@ public class AntCounter : MonoBehaviour
         GameManager.Instance.UpdateIncomeGrowth();
         // update UI
         UpdateAntText();
+        UpdateSlider();
         GameManager.Instance.miniBarInfoInstance.MiniBarInfoUpdate();
 
         if (!GameManager.Instance.Map[posX, posZ].partOfAnthill) { RemoveAnt(); }
       }
+    }
+
+    void UpdateAnts()
+    {
+      Debug.Log("Slider moved!, x|y: " + posX + "|" + posZ);
+      int oldAnt = GameManager.Instance.Map[posX,posZ].assignedAnts;
+      int antDelta = oldAnt - (int)antSlider.value;
+      GameManager.Instance.freeAnts += antDelta;
+      GameManager.Instance.Map[posX, posZ].assignedAnts = (int) antSlider.value;
+      if (GameManager.Instance.Map[posX, posZ].assignedAnts == 0)
+      {
+        GameManager.Instance.Map[posX, posZ].occupiedByPlayer = false;
+      } else
+      {
+        GameManager.Instance.Map[posX, posZ].occupiedByPlayer = true;
+      }
+      // update economic data
+      GameManager.Instance.UpdateIncomeGrowth();
+      // update UI
+      UpdateAntText();
+      
+      GameManager.Instance.miniBarInfoInstance.MiniBarInfoUpdate();
     }
 
     void Confirm()
@@ -93,18 +122,35 @@ public class AntCounter : MonoBehaviour
         gameObject.GetComponent<Canvas>().enabled = false;
         GameObject highlight = GameObject.Find("HighlightTile");
         highlight.GetComponent<MeshRenderer>().enabled = false;
+        GameManager.Instance.WeightedDistanceToHill();
+        Debug.Log("Anthill is dominated: " + GameManager.Instance.Map[posX, posZ].dominatedByPlayer + ", occupied: " + GameManager.Instance.Map[posX, posZ].occupiedByPlayer);
     }
     public void SetSelectedTile(int ix, int iz)
     {
         // could be replaced by ix, iy to get values from matrix
         posX = ix;
         posZ = iz;
+        UpdateSlider();
+
+    }
+
+    public void UpdateSlider()
+    {
+      // set slider values
+        // BUG: setting maxValue of slider triggers the UpdateAnts function 
+        //Debug.Log("BEFORE: " +  antSlider.value + "assigned ants: " +  GameManager.Instance.Map[posX, posZ].assignedAnts +  ", x: "  + posX + ", y: " + posZ );
+
+        antSlider.SetValueWithoutNotify(GameManager.Instance.Map[posX, posZ].assignedAnts);
+        antSlider.maxValue = Mathf.Min(GameManager.Instance.Map[posX, posZ].maxAssignedAnts, GameManager.Instance.freeAnts + GameManager.Instance.Map[posX, posZ].assignedAnts);
+        antSlider.SetValueWithoutNotify(GameManager.Instance.Map[posX, posZ].assignedAnts);        
+        //Debug.Log("AFTER: " +  antSlider.value + "assigned ants: " +  GameManager.Instance.Map[posX, posZ].assignedAnts +  ", x: "  + posX + ", y: " + posZ );
+
     }
 
     void AddAllAnts() 
     {
       //This is a very ugly fix for the prototype, rework this
-      for (int i = 0; i < GameManager.Instance.maxAntsResourceTile; i++)
+      for (int i = 0; i < GameManager.Instance.Map[posX, posZ].maxAssignedAnts; i++)
       {
         IncreaseAnts();
       }
@@ -113,7 +159,7 @@ public class AntCounter : MonoBehaviour
     void RemoveAllAnts()
     {
       //This is a very ugly fix for the prototype, rework this
-      for (int i = 0; i < GameManager.Instance.maxAntsResourceTile; i++)
+      for (int i = 0; i < GameManager.Instance.Map[posX, posZ].maxAssignedAnts; i++)
       {
         DecreaseAnts();
       }
@@ -135,6 +181,9 @@ public class AntCounter : MonoBehaviour
           resources.text = "Resources: " + GameManager.Instance.Map[posX, posZ].resourceAmount;
           tileName.text = GameManager.Instance.TileName(GameManager.Instance.Map[posX, posZ].type) + "[" + posX + "," + posZ + "]";
       }
+
+    regrowText.text = "Expected regrow: " + GameManager.Instance.Map[posX, posZ].regrowResource;
+    transportCostText.text = "Transport cost: " + GameManager.Instance.Map[posX, posZ].foodTransportCost + ", dis: " + GameManager.Instance.Map[posX, posZ].distanceAntHill;
     }
 
     void SpawnAnt() 

@@ -323,8 +323,8 @@ public class GameManager : MonoBehaviour
         
         Map = new Tile[rows, columns];
 
-        anthillX = columns / 2;
-        anthillY = rows / 2;
+        anthillX = (int) Mathf.Round(columns / 2);
+        anthillY = (int) Mathf.Round(rows / 2);
 
         Debug.Log("Map created: " + Map[1,0].type + " before mapinstance is initialized");
 
@@ -462,6 +462,93 @@ public class GameManager : MonoBehaviour
             }
         }
         return distances.Min();
+    }
+
+    public void WeightedDistanceToHill()
+    {
+      // start from anthill and reach out to all tiles
+      // intialize weights
+      float[,] weights = new float[rows, columns];
+      for(int i = 0; i < rows; i++)
+      {
+        for (int j = 0; j < columns; j++)
+        {
+          weights[i,j] = 100000f;
+        }
+      }
+      int X = anthillX;
+      int Y = anthillY;
+      weights[X,Y] = 0;
+      // go left
+      for (int j = Y; j>= 0; j--)
+      {
+        int i = X;
+        // check neighbors
+        if (i < rows - 1)
+        {weights[i + 1, j] = Mathf.Min(weights[i, j] +  GameManager.Instance.Map[i + 1, j].foodTransportCost,  weights[i + 1, j]);}
+        if (i >0)
+        {weights[i - 1, j]  = Mathf.Min(weights[i, j] +  GameManager.Instance.Map[i - 1, j].foodTransportCost,  weights[i - 1, j]);}
+        if (j < columns - 1)
+        {weights[i, j + 1] = Mathf.Min(weights[i, j] +  GameManager.Instance.Map[i, j + 1].foodTransportCost,  weights[i, j + 1]);}
+        if (j > 0)
+        {weights[i, j - 1] = Mathf.Min(weights[i, j] +  GameManager.Instance.Map[i, j - 1].foodTransportCost,  weights[i, j - 1]);}
+
+      }
+      Debug.Log("neighborhood: " + weights[X,Y] + " up: " + weights[X+1,Y] + ", down: " + weights[X-1, Y]);
+      Debug.Log("neighborhood: " + weights[X,Y] + " right: " + weights[X,Y+1] + ", left: " + weights[X, Y-1]);
+      for (int j = Y + 1; j < columns; j++)
+      {
+        int i = X;
+        if (i < rows - 1)
+        {weights[i + 1, j] = Mathf.Min(weights[i, j] +  GameManager.Instance.Map[i + 1, j].foodTransportCost,  weights[i + 1, j]);}
+        if (i >0)
+        {weights[i - 1, j]  = Mathf.Min(weights[i, j] +  GameManager.Instance.Map[i - 1, j].foodTransportCost,  weights[i - 1, j]);}
+        if (j < columns - 1)
+        {weights[i, j + 1] = Mathf.Min(weights[i, j] +  GameManager.Instance.Map[i, j + 1].foodTransportCost,  weights[i, j + 1]);}
+        if (j > 0)
+        {weights[i, j - 1] = Mathf.Min(weights[i, j] +  GameManager.Instance.Map[i, j - 1].foodTransportCost,  weights[i, j - 1]);}
+      }
+      for (int i = X + 1; i < rows; i++)
+      {
+        for (int j = 0; j < columns; j++)
+        {
+          if (i < rows - 1)
+          {weights[i + 1, j] = Mathf.Min(weights[i, j] +  GameManager.Instance.Map[i + 1, j].foodTransportCost,  weights[i + 1, j]);}
+          if (i >0)
+          {weights[i - 1, j]  = Mathf.Min(weights[i, j] +  GameManager.Instance.Map[i - 1, j].foodTransportCost,  weights[i - 1, j]);}
+          if (j < columns - 1)
+          {weights[i, j + 1] = Mathf.Min(weights[i, j] +  GameManager.Instance.Map[i, j + 1].foodTransportCost,  weights[i, j + 1]);}
+          if (j > 0)
+          {weights[i, j - 1] = Mathf.Min(weights[i, j] +  GameManager.Instance.Map[i, j - 1].foodTransportCost,  weights[i, j - 1]);}
+        }
+      }
+      for (int i = X - 1; i >= 0; i--)
+      {
+        for (int j = 0; j < columns; j++)
+        {
+          if (i < rows - 1)
+          {weights[i + 1, j] = Mathf.Min(weights[i, j] +  GameManager.Instance.Map[i + 1, j].foodTransportCost,  weights[i + 1, j]);}
+          if (i >0)
+          {weights[i - 1, j]  = Mathf.Min(weights[i, j] +  GameManager.Instance.Map[i - 1, j].foodTransportCost,  weights[i - 1, j]);}
+          if (j < columns - 1)
+          {weights[i, j + 1] = Mathf.Min(weights[i, j] +  GameManager.Instance.Map[i, j + 1].foodTransportCost,  weights[i, j + 1]);}
+          if (j > 0)
+          {weights[i, j - 1] = Mathf.Min(weights[i, j] +  GameManager.Instance.Map[i, j - 1].foodTransportCost,  weights[i, j - 1]);}
+        }
+      }
+
+      for(int i = 0; i < rows; i++)
+      {
+        for (int j = 0; j < columns; j++)
+        {
+          float weight =  100000f;
+          if (i > 0){weight = Mathf.Min(weight, weights[i-1,j]);}
+          if (i < rows - 1){weight = Mathf.Min(weight, weights[i+1,j]);}
+          if (j > 0){weight = Mathf.Min(weight, weights[i,j-1]);}
+          if (j < columns - 1){weight = Mathf.Min(weight, weights[i,j+1]);}
+          GameManager.Instance.Map[i,j].distanceAntHill = weight;
+        }
+      }
     }
 
     int Harvest()

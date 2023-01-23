@@ -283,8 +283,8 @@ public void SetExplored(int posX, int posZ, bool explored)
     if (tileType == 6 || tileType == 7)
     {
       GameManager.Instance.Map[i,j].resourceMaxAmount = 300;
-      GameManager.Instance.Map[i,j].constructionState = 3; // normal (1 foodTransportCost)
-      GameManager.Instance.Map[i,j].fertilityState = 5; // normal soil (20)
+      SetGrassLand(i,j);
+      
       for (int k = 0; k < i+j; k++)
       {
         GameManager.Instance.Map[i,j].resourceMaxAmount = (int)( GameManager.Instance.Map[i,j].resourceMaxAmount * (1 + GameManager.Instance.resourceWeight));
@@ -296,23 +296,41 @@ public void SetExplored(int posX, int posZ, bool explored)
       }
     } else if (tileType == 5) // rock
     {
-      GameManager.Instance.Map[i,j].constructionState = 1; // hard to cross (10 foodTransportCost)
-      GameManager.Instance.Map[i,j].fertilityState = 2; // no regrow
+      SetRock(i,j);
     }
     else if (tileType == 8) // water
     { 
-      GameManager.Instance.Map[i,j].constructionState = 0; // not passable (99 foodTransportCost)
-      GameManager.Instance.Map[i,j].fertilityState = 2; // no regrow
+      SetWater(i,j);
     }
 
-    GameManager.Instance.Map[i,j].foodTransportCost = GameManager.Instance.transportCostVector[GameManager.Instance.Map[i,j].constructionState];
-    GameManager.Instance.Map[i,j].regrowResource = GameManager.Instance.regrowRateVector[GameManager.Instance.Map[i,j].fertilityState];
+    AssignFertilityRoad(i, j);
 
     //position of the spawn
     newTile.transform.position = new Vector3(i, 0, j);
 
     //save the script in the matrix
     mapMatrix[i, j] = newTile;
+  }
+  void AssignFertilityRoad(int i, int j)
+  {
+    GameManager.Instance.Map[i,j].foodTransportCost = GameManager.Instance.transportCostVector[GameManager.Instance.Map[i,j].constructionState];
+    GameManager.Instance.Map[i,j].regrowResource = GameManager.Instance.regrowRateVector[GameManager.Instance.Map[i,j].fertilityState];
+  }
+
+  void SetRock(int i, int j)
+  {
+    GameManager.Instance.Map[i,j].constructionState = 1; // hard to cross (10 foodTransportCost)
+    GameManager.Instance.Map[i,j].fertilityState = 2; // no regrow
+  }
+  void SetWater(int i, int j)
+  {
+    GameManager.Instance.Map[i,j].constructionState = 0; // not passable (99 foodTransportCost)
+    GameManager.Instance.Map[i,j].fertilityState = 2; // no regrow
+  }
+  void SetGrassLand(int i, int j)
+  {
+    GameManager.Instance.Map[i,j].constructionState = 3; // normal (1 foodTransportCost)
+    GameManager.Instance.Map[i,j].fertilityState = 5; // normal soil (20)
   }
 
   /// <summary>
@@ -420,6 +438,7 @@ public void SetExplored(int posX, int posZ, bool explored)
     //Resources on the Tile only soil and grass can have resources
     if (newTileType == 1 || newTileType == 2) 
     {
+      SetGrassLand(posX,posZ);
       GameManager.Instance.Map[posX, posZ].resourceMaxAmount = 250;
       for (int k = 0; k < posX + posZ; k++)
       {
@@ -435,7 +454,17 @@ public void SetExplored(int posX, int posZ, bool explored)
     {
       GameManager.Instance.Map[posX, posZ].resourceMaxAmount = 0;
       GameManager.Instance.Map[posX, posZ].resourceAmount = 0;
+      if(newTileType == 0 || newTileType == 5) // Rock
+      {
+        SetRock(posX,posZ);
+      }
+      else if(newTileType == 3 || newTileType == 8)
+      {
+        SetWater(posX,posZ);
+      }
+      
     }
+    AssignFertilityRoad(posX, posZ);
     
     
   }
