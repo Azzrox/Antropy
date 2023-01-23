@@ -49,12 +49,17 @@ public class MapCameraScript : MonoBehaviour
 
   private void Start()
   {
-    xMin = 209f;
-    xMax = 257f;
+    xMin = 208f;
+    xMax = xMin + GameManager.Instance.columns;
     yMin = 93.77895f;
     yMax = 93.77895f;
-    zMin = 0;
-    zMax = 47f;
+    zMin = -2;
+    zMax = zMin + GameManager.Instance.rows;
+
+    transform.position = new Vector3(
+    Mathf.Clamp(xMin + GameManager.Instance.anthillX, xMin, xMax),
+    Mathf.Clamp(93, yMin, yMax),
+    Mathf.Clamp(zMin + GameManager.Instance.anthillY, zMin, zMax));
   }
 
   void Update()
@@ -73,4 +78,5 @@ public class MapCameraScript : MonoBehaviour
     Mathf.Clamp(transform.position.y, yMin, yMax),
     Mathf.Clamp(transform.position.z, zMin, zMax));
   }
+
  }

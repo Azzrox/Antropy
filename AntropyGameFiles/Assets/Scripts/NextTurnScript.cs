@@ -100,14 +100,15 @@ public class NextTurnScript : MonoBehaviour
             GameManager.Instance.mapInstance.mapMatrix[i, j].spawnOwnedFlagOnTile();
           }
 
-          }         
-          if (GameManager.Instance.Map[i,j].dominatedByPlayer && GameManager.Instance.Map[i,j].assignedAnts != GameManager.Instance.Map[i,j].maxAssignedAnts){
-            GameManager.Instance.Map[i,j].dominatedByPlayer = false;
-            GameManager.Instance.currentGoalProgress -= 1;
-            GameManager.Instance.mapInstance.mapMatrix[i, j].deleteFlagOnTile();
-        // update visuals of grass tile
-          }                                           
-        }
+        }         
+        if (GameManager.Instance.Map[i,j].dominatedByPlayer && GameManager.Instance.Map[i,j].assignedAnts != GameManager.Instance.Map[i,j].maxAssignedAnts){
+          GameManager.Instance.Map[i,j].dominatedByPlayer = false;
+          GameManager.Instance.currentGoalProgress -= 1;
+          GameManager.Instance.mapInstance.mapMatrix[i, j].deleteFlagOnTile();
+          Debug.Log("Delete flag on tile: " + i + "|"  + j);
+      // update visuals of grass tile
+        }                                           
+      }
        
     }
     /*

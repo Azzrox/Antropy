@@ -54,7 +54,7 @@ public class TileScript : MonoBehaviour
     else
     {
       Debug.Log("in click mode");
-      if (xPos == 0 && zPos == 0)
+      if (xPos == GameManager.Instance.anthillX && zPos == GameManager.Instance.anthillY)
       {
         GameObject anthillUI = GameObject.Find("Anthill");
         anthillUI.GetComponent<Canvas>().enabled = true;
