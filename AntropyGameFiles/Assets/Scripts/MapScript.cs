@@ -221,7 +221,10 @@ public void SetExplored(int posX, int posZ, bool explored)
   void CreateAnthillTile(int i, int j) 
   {
     int tileType = 4;
-    var tileEntry = Instantiate(tilePrefabs[tileType], this.transform) as Transform;
+    var tileEntry = Instantiate(tilePrefabs[tileType],
+        new Vector3(i, 0, j), //position of the spawn
+        Quaternion.identity, 
+        this.transform) as Transform;
     TileScript newTile = tileEntry.GetComponent<TileScript>();
     
     GameManager.Instance.Map[i,j].type = tileType;
@@ -239,9 +242,6 @@ public void SetExplored(int posX, int posZ, bool explored)
     
     newTile.XPos = i; 
     newTile.ZPos = j;
-    
-    //position of the spawn
-    newTile.transform.position = new Vector3(i, 0, j);
 
     //save the script in the matrix
     mapMatrix[i, j] = newTile;
@@ -259,7 +259,10 @@ public void SetExplored(int posX, int posZ, bool explored)
       //tileType = 1; //Also needs to be in for normal map
     }
 
-    var tileEntry = Instantiate(tilePrefabs[tileType], this.transform) as Transform;
+    var tileEntry = Instantiate(tilePrefabs[tileType],
+        new Vector3(i, 0, j), //position of the spawn
+        Quaternion.identity,
+        this.transform) as Transform;
     TileScript newTile = tileEntry.GetComponent<TileScript>();
 
     GameManager.Instance.Map[i,j].type = tileType;
@@ -304,9 +307,6 @@ public void SetExplored(int posX, int posZ, bool explored)
     }
 
     AssignFertilityRoad(i, j);
-
-    //position of the spawn
-    newTile.transform.position = new Vector3(i, 0, j);
 
     //save the script in the matrix
     mapMatrix[i, j] = newTile;
@@ -471,12 +471,10 @@ public void SetExplored(int posX, int posZ, bool explored)
 
   public void UpdatePrefab(int posX, int posZ, int tileType)
   {
+    var position = mapMatrix[posX, posZ].transform.position; // all tiles are stored in mapMatrix
 
-    var tileEntry = Instantiate(tilePrefabs[tileType], GameObject.Find("MapTiles").transform) as Transform;
+    var tileEntry = Instantiate(tilePrefabs[tileType], position, Quaternion.identity, GameObject.Find("MapTiles").transform) as Transform;
     
-    tileEntry.position = mapMatrix[posX, posZ].transform.position; // all tiles are stored in mapMatrix
-    
-
     TileScript newTile = tileEntry.GetComponent<TileScript>();
     newTile.xPos = posX;
     newTile.zPos = posZ;
