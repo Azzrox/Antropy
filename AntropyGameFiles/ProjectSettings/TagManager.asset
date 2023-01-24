@@ -8,6 +8,7 @@ TagManager:
   - TunnelsL1
   - Ant
   - WeatherEffect
+  - Road
   layers:
   - Default
   - TransparentFX

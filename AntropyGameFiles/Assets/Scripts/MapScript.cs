@@ -21,6 +21,8 @@ public class MapScript : MonoBehaviour
   /// </summary>
   public List<Transform> tilePrefabs = new List<Transform>();
 
+  public List<GameObject> roadPrefabs = new List<GameObject>();
+
 
   private void Awake()
   {
@@ -509,5 +511,14 @@ public void SetExplored(int posX, int posZ, bool explored)
     }
   }
 
+
+    public void UpgradeRoadPrefab(int posX, int posZ, int level)
+    {
+        //Remove Grass from the middle
+
+        //Delete old road
+
+        //instantiate new road
+    }
 
 }

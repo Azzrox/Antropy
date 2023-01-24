@@ -6,8 +6,9 @@ using UnityEngine;
 
 public class AntPathing : MonoBehaviour
 {
-    
+
     public UnityEngine.Vector3 spawnpoint;
+    public int[] coordinates = { 0, 0 };
     UnityEngine.Vector3 waypoint;
 
     Rigidbody rg;
