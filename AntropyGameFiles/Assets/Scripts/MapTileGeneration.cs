@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter))]
@@ -35,7 +36,7 @@ public class MapTileGeneration : MonoBehaviour
 
     [Header("Colors")]
 
-    [SerializeField] private Gradient colorGradient;
+    [SerializeField] private Color[] fertilityColors;
 
     // Start is called before the first frame update
     void Awake()
@@ -156,20 +157,9 @@ public class MapTileGeneration : MonoBehaviour
         {
             if (tyleType == TyleType.water) { Instantiate(decorationPrefab, new Vector3(originX, transform.position.y - 0.08f, originZ), Quaternion.identity, gameObject.transform); }
         }
-        Gradient gradient = colorGradient;
+        //Gradient gradient = colorGradient;
 
-        //color the vertices
-        for (int i = 0, z = 0; z <= resolution; z++)
-        {
-            for (int x = 0; x <= resolution; x++)
-            {
-                float grade = vertices[i].y / (maxTerrainHeight - minTerrainHeight);
-                colors[i] = gradient.Evaluate(grade);
-
-                i++;
-            }
-        }
-
+        UpdateFertilityColor(0);
 
         triangles = new int[resolution * resolution * 6];
 
@@ -195,6 +185,7 @@ public class MapTileGeneration : MonoBehaviour
             vert++;
         }
 
+
     }
 
     void UpdateMesh()
@@ -212,7 +203,7 @@ public class MapTileGeneration : MonoBehaviour
     public void RecalculateGrassDensity(float ressources)
     {
 
-        int totalDecoration = (resolution - 1) * (resolution - 1);
+        int totalDecoration = decorations.Length;
         int neededDecoration = Mathf.FloorToInt(ressources / ressourcesPerGrass);
         neededDecoration = Mathf.Min(neededDecoration, totalDecoration);
 
@@ -248,4 +239,50 @@ public class MapTileGeneration : MonoBehaviour
         //}
     }
 
+    public void RemoveDecorationForRoads()
+    {
+        float roadwidth = 0.12f;
+        //foreach (GameObject grassPrefab in decorations)
+        //{
+        //    if (Mathf.Abs(grassPrefab.transform.localPosition.x - 0.5f) < roadwidth &&
+        //        Mathf.Abs(grassPrefab.transform.localPosition.z - 0.5f) < roadwidth)
+        //    {
+        //        Destroy(grassPrefab);
+        //    }
+        //}
+
+        var destroyDecorations = Array.FindAll(decorations, ob => (Mathf.Abs(ob.transform.localPosition.x - 0.5f) < roadwidth ||
+                                                                Mathf.Abs(ob.transform.localPosition.z - 0.5f) < roadwidth));
+        var keepDecorations = Array.FindAll(decorations, ob => (Mathf.Abs(ob.transform.localPosition.x - 0.5f) >= roadwidth &&
+                                                                Mathf.Abs(ob.transform.localPosition.z - 0.5f) >= roadwidth));
+
+        for (int i = 0; i < destroyDecorations.Length; i++) 
+        {
+            DestroyImmediate(destroyDecorations[i]);
+        }
+
+        decorations = keepDecorations;
+    }
+
+    private Color RandomizeColor(int fertilityLevel)
+    {
+        float hue, saturation, val;
+        Color.RGBToHSV(fertilityColors[fertilityLevel], out hue, out saturation, out val);
+        saturation += (UnityEngine.Random.value - 0.5f) * 0.3f;
+        val += (UnityEngine.Random.value - 0.5f) * 0.3f;
+
+        return Color.HSVToRGB(hue, saturation, val);
+    }
+
+    public void UpdateFertilityColor(int fertilityLevel)
+    {
+        if (fertilityLevel <= fertilityColors.Length)
+        {
+            for (int i = 0; i < colors.Length; i++)
+            {
+                colors[i] = RandomizeColor(fertilityLevel);
+            }
+        }
+        mesh.colors = colors;
+    }
 }

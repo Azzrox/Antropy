@@ -21,6 +21,8 @@ public class MapScript : MonoBehaviour
   /// </summary>
   public List<Transform> tilePrefabs = new List<Transform>();
 
+  public List<GameObject> roadPrefabs = new List<GameObject>();
+
 
   private void Awake()
   {
@@ -509,5 +511,38 @@ public void SetExplored(int posX, int posZ, bool explored)
     }
   }
 
+
+    public void UpgradeRoadPrefab(int posX, int posZ, int level)
+    {
+        var mapTile = GameManager.Instance.mapInstance.mapMatrix[posX, posZ].gameObject;
+        //Remove Grass from the middle
+        if (level == 0)
+        {
+            GameManager.Instance.mapInstance.mapMatrix[posX, posZ].GetComponent<MapTileGeneration>().RemoveDecorationForRoads();
+        }
+        else if (level > 0) 
+        {
+            //Delete old road
+            foreach (Transform child in mapTile.transform)
+            {
+                if (child.CompareTag("road"))
+                {
+                    Destroy(child.gameObject);
+                    break;
+                }
+            }
+        }
+
+        //instantiate new road
+        var position = mapTile.transform.position;
+        position += Vector3.up * 0.05f;
+
+        var road = GameObject.Instantiate(roadPrefabs[level], position, Quaternion.identity, mapTile.transform);
+    }
+
+    public void UpgradeFertilityColor(int posX, int posZ, int level)
+    {
+        GameManager.Instance.mapInstance.mapMatrix[posX, posZ].GetComponent<MapTileGeneration>().UpdateFertilityColor(level);
+    }
 
 }
