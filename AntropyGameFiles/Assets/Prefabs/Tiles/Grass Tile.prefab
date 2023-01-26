@@ -105,35 +105,10 @@ MonoBehaviour:
   stoneDensity: 0
   size: 0.5
   decorationPrefab: {fileID: 6671550061291770464, guid: 874d6c5c0221e2e498ba81b63cafd860, type: 3}
-  colorGradient:
-    serializedVersion: 2
-    key0: {r: 0.08276963, g: 0.4245283, b: 0.08844515, a: 1}
-    key1: {r: 0.097858064, g: 0.735849, b: 0.06016371, a: 1}
-    key2: {r: 0, g: 0, b: 0, a: 0}
-    key3: {r: 0, g: 0, b: 0, a: 0}
-    key4: {r: 0, g: 0, b: 0, a: 0}
-    key5: {r: 0, g: 0, b: 0, a: 0}
-    key6: {r: 0, g: 0, b: 0, a: 0}
-    key7: {r: 0, g: 0, b: 0, a: 0}
-    ctime0: 0
-    ctime1: 65342
-    ctime2: 0
-    ctime3: 0
-    ctime4: 0
-    ctime5: 0
-    ctime6: 0
-    ctime7: 0
-    atime0: 0
-    atime1: 65535
-    atime2: 0
-    atime3: 0
-    atime4: 0
-    atime5: 0
-    atime6: 0
-    atime7: 0
-    m_Mode: 0
-    m_NumColorKeys: 2
-    m_NumAlphaKeys: 2
+  fertilityColors:
+  - {r: 0.6258739, g: 0.7075472, b: 0.17799924, a: 0}
+  - {r: 0.38614663, g: 0.6132076, b: 0.12534113, a: 0}
+  - {r: 0.08479762, g: 0.46226418, b: 0, a: 0}
 --- !u!114 &8319956492405307339
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -13,6 +13,8 @@ public class AntCounter : MonoBehaviour
   private int posZ;
 
   private GameObject antCollection;
+  private List<GameObject> antlist = new List<GameObject>();
+
   public Button plusButton;
   public Button plusPlusButton;
   public Button minusButton;
@@ -51,6 +53,7 @@ public class AntCounter : MonoBehaviour
 
     void IncreaseAnts()
     {
+        
         //int freeAnts = GameManager.Instance.freeAnts;
         if (GameManager.Instance.freeAnts > 0 && GameManager.Instance.Map[posX, posZ].assignedAnts < GameManager.Instance.Map[posX, posZ].maxAssignedAnts)
         {
@@ -66,12 +69,30 @@ public class AntCounter : MonoBehaviour
           GameManager.Instance.miniBarInfoInstance.MiniBarInfoUpdate();
           
           //Spawn the Ant sprite (only one due to limitations, "starts to lag at some point with larger maps)
-          if (!GameManager.Instance.Map[posX, posZ].partOfAnthill && GameManager.Instance.Map[posX, posZ].assignedAnts == 0) { SpawnAnt(); }
+          if (!GameManager.Instance.Map[posX, posZ].partOfAnthill && GameManager.Instance.Map[posX, posZ].assignedAnts == 1) { SpawnAnt(); }
+          else if (!GameManager.Instance.Map[posX, posZ].partOfAnthill && GameManager.Instance.Map[posX, posZ].assignedAnts > 1) { AdjustAntSize((float)GameManager.Instance.Map[posX, posZ].assignedAnts); }
 
+          
+
+            //Debug.Log("partOfAnthill: " + GameManager.Instance.Map[posX, posZ].partOfAnthill + "assignedAnts: " + GameManager.Instance.Map[posX, posZ].assignedAnts);
         }
     
   } 
 
+    void AdjustAntSize(float size)
+    {
+        GameObject targetAnt = antlist.Find(element => (element.GetComponent<AntPathing>().coordinates[0] == posX) && (element.GetComponent<AntPathing>().coordinates[1] == posZ));
+
+        if (targetAnt != null) {
+            var scale = targetAnt.transform.localScale;
+            size = Mathf.Sqrt(size);
+            scale.Set(size, size, size);
+            targetAnt.transform.localScale = scale;
+            Debug.Log("new Size: " + size);
+        }
+        else { Debug.Log("Could not find the ant!"); }
+        
+    }
     void DecreaseAnts()
     {
       if (GameManager.Instance.Map[posX, posZ].assignedAnts > 0)
@@ -90,7 +111,8 @@ public class AntCounter : MonoBehaviour
         UpdateSlider();
         GameManager.Instance.miniBarInfoInstance.MiniBarInfoUpdate();
 
-        if (!GameManager.Instance.Map[posX, posZ].partOfAnthill) { RemoveAnt(); }
+        if (!GameManager.Instance.Map[posX, posZ].partOfAnthill && GameManager.Instance.Map[posX, posZ].assignedAnts == 0) { RemoveAnt(); }
+        else if (!GameManager.Instance.Map[posX, posZ].partOfAnthill && GameManager.Instance.Map[posX, posZ].assignedAnts > 0) { AdjustAntSize((float)GameManager.Instance.Map[posX, posZ].assignedAnts); }
       }
     }
 
@@ -189,17 +211,17 @@ public class AntCounter : MonoBehaviour
     void SpawnAnt() 
     {
         GameObject ant = Instantiate<GameObject>(antPrefab, new Vector3(posX + 0.5f, 0.2f, posZ + 0.5f), Quaternion.identity, antCollection.transform) ;
+        ant.GetComponent<AntPathing>().coordinates = new int[] {posX, posZ};
+        antlist.Add(ant);
+
     }
 
     void RemoveAnt() 
     {
-        GameObject[] allAnts = GameObject.FindGameObjectsWithTag("Ant");
-        
         // some ants might fall outside that area?
-        Vector3 where = new Vector3(posX + 0.5f, 0.2f, posZ + 0.5f);
-        if (allAnts.Length > 0)
+        if (antlist.Count > 0)
         {
-            GameObject squashThis = Array.Find(allAnts, element => element.GetComponent<AntPathing>().spawnpoint == where);
+            GameObject squashThis = antlist.Find(element => element.GetComponent<AntPathing>().coordinates == new int[] {posX, posZ});
             Destroy(squashThis);
         }
     }
