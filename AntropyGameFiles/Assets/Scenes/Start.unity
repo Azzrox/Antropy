@@ -905,6 +905,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rows: 10
   columns: 10
+  anthillX: 0
+  anthillY: 0
   playerName: 
   totalAnts: 100
   freeAnts: 100
@@ -912,8 +914,8 @@ MonoBehaviour:
   currentMaximumPopulationCapacity: 0
   resources: 0
   maxResourceStorage: 0
-  currentUpkeep: 0
   income: 0
+  growth: 0
   currentTurnCount: 0
   currentGoalProgress: 0
   foodPerAnt: 0
@@ -927,6 +929,8 @@ MonoBehaviour:
   weatherRegrowMultiplier: 0
   currentSeason: 0
   currentWeather: 0
+  regrowRateVector: 
+  transportCostVector: []
   hatcheryLevel: 0
   storageLevel: 0
   hatcheryMaxLevel: 0
@@ -1910,7 +1914,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &2015171650
 MonoBehaviour:
   m_ObjectHideFlags: 0
