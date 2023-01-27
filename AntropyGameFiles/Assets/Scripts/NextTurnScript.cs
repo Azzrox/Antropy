@@ -187,7 +187,7 @@ public class NextTurnScript : MonoBehaviour
           }
         }
         //check if the growth if we reached a threshhold to update the tile mesh
-        GameManager.Instance.mapInstance.TileErosionCheck(i,j); // TODO: think about where to set TileErosion (ExchangeTilePrefab) function!
+        //GameManager.Instance.mapInstance.TileErosionCheck(i,j); // TODO: think about where to set TileErosion (ExchangeTilePrefab) function!
       }
     }
   }

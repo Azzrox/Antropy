@@ -12,6 +12,9 @@ EditorBuildSettings:
     path: Assets/Scenes/PrototypeStartScreen.unity
     guid: 1ed314d56febafe46a22654e7ab31e2b
   - enabled: 1
+    path: Assets/Scenes/Prototype_v3 1.unity
+    guid: 7dfdeac15f2a0b14eb9454efc8e869c6
+  - enabled: 1
     path: Assets/Scenes/Prototype_vDzem.unity
     guid: 42e718d282502944fb747bd7d825d880
   - enabled: 1

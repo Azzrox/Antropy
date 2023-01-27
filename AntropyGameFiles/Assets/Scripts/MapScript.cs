@@ -35,6 +35,8 @@ public class MapScript : MonoBehaviour
       SpawnRandomMap();
       SpawnTerrainMap();    
       UpdateGrass();
+      GameManager.Instance.WeightedDistanceToHill();
+
       Debug.Log("Random Map created");
 
     }
@@ -317,6 +319,10 @@ public void SetExplored(int posX, int posZ, bool explored)
   {
     GameManager.Instance.Map[i,j].foodTransportCost = GameManager.Instance.transportCostVector[GameManager.Instance.Map[i,j].constructionState];
     GameManager.Instance.Map[i,j].regrowResource = GameManager.Instance.regrowRateVector[GameManager.Instance.Map[i,j].fertilityState];
+    if(GameManager.Instance.Map[i,j].type == 1 || GameManager.Instance.Map[i,j].type == 2)
+    {
+      UpgradeFertilityColor(i,j,GameManager.Instance.Map[i,j].fertilityState);
+    }
   }
 
   void SetRock(int i, int j)
@@ -331,7 +337,7 @@ public void SetExplored(int posX, int posZ, bool explored)
   }
   void SetGrassLand(int i, int j)
   {
-    GameManager.Instance.Map[i,j].constructionState = 3; // normal (1 foodTransportCost)
+    GameManager.Instance.Map[i,j].constructionState = 3; // normal (2 foodTransportCost)
     GameManager.Instance.Map[i,j].fertilityState = 5; // normal soil (20)
   }
 
@@ -404,7 +410,16 @@ public void SetExplored(int posX, int posZ, bool explored)
       {
         //update to soil
         int newType = 2;
-        ExchangeTilePrefab(posX, posZ, newType);
+
+        
+
+
+        //ExchangeTilePrefab(posX, posZ, newType);
+        GameManager.Instance.Map[posX, posZ].type = newType;
+        GameManager.Instance.Map[posX,posZ].tileName = (TileName(newType) + ": [" + posX + "," + posZ + "]");
+        UpdatePrefab(posX, posZ, newType);
+        UpdatePrefabAppearance(posX, posZ);
+
       }
     }
     else if (GameManager.Instance.Map[posX, posZ].type == 2)
@@ -413,9 +428,29 @@ public void SetExplored(int posX, int posZ, bool explored)
       {
         //update to grass
         int newType = 1;
-        ExchangeTilePrefab(posX, posZ, newType);
+        //ExchangeTilePrefab(posX, posZ, newType);
+        GameManager.Instance.Map[posX, posZ].type = newType;
+        GameManager.Instance.Map[posX,posZ].tileName = (TileName(newType) + ": [" + posX + "," + posZ + "]");
+        UpdatePrefab(posX, posZ, newType);
+        UpdatePrefabAppearance(posX, posZ);
+
       }
     }
+
+    if ((GameManager.Instance.Map[posX, posZ].type == 1 || GameManager.Instance.Map[posX, posZ].type == 2) && GameManager.Instance.Map[posX, posZ].resourceAmount < 100)
+    {
+      // decrease fertility
+      float pThreshold = (0.2f + GameManager.Instance.Map[posX, posZ].fertilityState * 0.15f) * (100 - GameManager.Instance.Map[posX, posZ].resourceAmount)/100;
+      float randNumber = Random.value;
+      Debug.Log("rand Number: " + randNumber + ", prob: " + pThreshold);
+      if (Random.value < pThreshold)
+      {
+        GameManager.Instance.Map[posX, posZ].fertilityState = Mathf.Max(0, GameManager.Instance.Map[posX, posZ].fertilityState - 1);
+
+        AssignFertilityRoad(posX, posZ);
+        UpdatePrefabAppearance(posX, posZ);
+      }
+    }  
   }
 
 
@@ -424,18 +459,14 @@ public void SetExplored(int posX, int posZ, bool explored)
   /// </summary>
   /// <param name="tile"></param>
   /// <param name="newTileType"></param>
+  // NOTE: Only used at map creation!
   public void ExchangeTilePrefab(int posX, int posZ, int newTileType) 
   {
     GameManager.Instance.Map[posX, posZ].type = newTileType;
     GameManager.Instance.Map[posX,posZ].tileName = (TileName(newTileType) + ": [" + posX + "," + posZ + "]");
-
-    // flag should be already there
-
-    // exchange prefab at tile!!!
-    // TODO!
+ 
+ 
     UpdatePrefab(posX, posZ, newTileType);
-    
-    
 
     //Resources on the Tile only soil and grass can have resources
     if (newTileType == 1 || newTileType == 2) 
@@ -467,8 +498,10 @@ public void SetExplored(int posX, int posZ, bool explored)
       
     }
     AssignFertilityRoad(posX, posZ);
+    UpdatePrefabAppearance(posX, posZ);
     
-    
+   
+
   }
 
   public void UpdatePrefab(int posX, int posZ, int tileType)
@@ -483,9 +516,26 @@ public void SetExplored(int posX, int posZ, bool explored)
     Destroy(mapMatrix[posX, posZ].gameObject);
 
     mapMatrix[posX, posZ] = newTile;
-    if (GameManager.Instance.Map[posX, posZ].occupiedByPlayer)
-    {
-      mapMatrix[posX, posZ].spawnOwnedFlagOnTile();
+    
+
+  }
+
+  public void UpdatePrefabAppearance(int posX, int posZ)
+  {
+    if(GameManager.Instance.Map[posX, posZ].type == 1 || GameManager.Instance.Map[posX, posZ].type == 2)
+    { 
+        if (GameManager.Instance.Map[posX, posZ].dominatedByPlayer)
+      {
+        mapMatrix[posX, posZ].spawnOwnedFlagOnTile();
+      }
+      if (GameManager.Instance.Map[posX, posZ].constructionState > 3)
+      {
+        mapMatrix[posX, posZ].spawnRoadOnTile(GameManager.Instance.Map[posX, posZ].constructionState - 4);
+      }
+       
+      GameManager.Instance.mapInstance.mapMatrix[posX, posZ].GetComponent<MapTileGeneration>().RecalculateGrassDensity(GameManager.Instance.Map[posX, posZ].resourceAmount);
+
+      UpgradeFertilityColor(posX, posZ, GameManager.Instance.Map[posX, posZ].fertilityState);
     }
   }
 

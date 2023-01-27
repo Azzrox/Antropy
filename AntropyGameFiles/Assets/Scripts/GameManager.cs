@@ -145,6 +145,9 @@ public class GameManager : MonoBehaviour
     public int[] regrowRateVector;
     public float[] transportCostVector;
 
+    public int[] fertilityUpgradeCost;
+    public int[] transportUpgradeCost;
+
 
    
     [Header("Hatchery and Anthill")]
@@ -316,9 +319,10 @@ public class GameManager : MonoBehaviour
         // Fertility and transportation setups
         // fertility (0 - desert, 1 - steppe, 2 -  sandy soil, 3 - drained soil, 4 - modest soil, 5 - normal soil, 6 - humus-rich soil, 7 - ant garden, 8 - ant paradise)
         regrowRateVector = new int[] {-10, -5, 0, 5, 10, 20, 35, 55, 80};
-        
+        fertilityUpgradeCost = new int[] {10, 15, 20, 25, 50, 75, 100, 125};
         // construction states: (0 - not passable (water), 1 - hard-to-cross (rock), 2 - rough, 3 - normal plain land, 4 - ant path, 5 - ant street, 6 - ant highway )
-        transportCostVector = new float[] {99, 10, 5, 1, 0.5f, 0.1f, 0.01f};
+        transportCostVector = new float[] {99, 10, 5, 2, 1, 0.5f, 0.1f};
+        transportUpgradeCost = new int[] {1000, 100, 50, 50 , 50, 50};
 
         
         Map = new Tile[rows, columns];
@@ -419,6 +423,28 @@ public class GameManager : MonoBehaviour
       return type_name;
     }
 
+    public Dictionary<int, string> FertilityNames = new Dictionary<int, string>()
+    {{0, "Desert"},
+     {1, "Steppe"},
+     {2, "Sandy Soil"},
+     {3, "Drained Soil"},
+     {4, "Modest Soil"},
+     {5, "Normal Soil"},
+     {6, "Humus-rich Soil"},
+     {7, "Ant Garden"},
+     {8, "Ant Paradise"}
+    };
+
+    public Dictionary<int, string> StreetNames = new Dictionary<int, string>()
+    {{0, "not passable"},
+     {1, "hard to cross"},
+     {2, "rough land"},
+     {3, "normal plain land"},
+     {4, "ant path"},
+     {5, "ant street"},
+     {6, "ant highway"}
+    };
+    
 
 
     // Start is called before the first frame update

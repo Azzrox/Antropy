@@ -38,7 +38,7 @@ public class SceneScript : MonoBehaviour
 
     public void NewGame(){
         // generate map if no map was loaded
-        SceneManager.LoadScene("Prototype_v3");
+        SceneManager.LoadScene("Prototype_v3 1");
     }
 
     public void QuitGame(){
@@ -53,7 +53,7 @@ public class SceneScript : MonoBehaviour
         SceneManager.LoadScene("AntHill");
     }
     public void OpenMap(){
-        SceneManager.LoadScene("Prototype_v3");
+        SceneManager.LoadScene("Prototype_v3 1");
     }
 
     public void OpenMenu(){

@@ -20,17 +20,22 @@ public class AntCounter : MonoBehaviour
   public Button minusButton;
   public Button confirmButton;
   public Button minusMinusButton;
+  public Button buildRoad;
+  public Button UpdateFertilityButton;
   public Slider antSlider;
 
   public TextMeshProUGUI freeAnts;
   public TextMeshProUGUI assignedAntsText;
   public TextMeshProUGUI resources;
   public TextMeshProUGUI tileName;
+  public TextMeshProUGUI fertilityText;
+  public TextMeshProUGUI fertilityUpgradeCost;
+  public TextMeshProUGUI streetText;
+  public TextMeshProUGUI streetUpgradeCost;
   public TextMeshProUGUI regrowText;
   public TextMeshProUGUI transportCostText;
   
   public GameObject antPrefab;
-  
 
   private void Awake()
   {
@@ -45,6 +50,8 @@ public class AntCounter : MonoBehaviour
 
     minusButton.onClick.AddListener(DecreaseAnts);
     confirmButton.onClick.AddListener(Confirm);
+    buildRoad.onClick.AddListener(UpdateRoad);
+    UpdateFertilityButton.onClick.AddListener(UpdateFertility);
     plusPlusButton.onClick.AddListener(AddAllAnts);
     minusMinusButton.onClick.AddListener(RemoveAllAnts);
     antCollection = new GameObject();
@@ -144,9 +151,64 @@ public class AntCounter : MonoBehaviour
         gameObject.GetComponent<Canvas>().enabled = false;
         GameObject highlight = GameObject.Find("HighlightTile");
         highlight.GetComponent<MeshRenderer>().enabled = false;
-        GameManager.Instance.WeightedDistanceToHill();
-        Debug.Log("Anthill is dominated: " + GameManager.Instance.Map[posX, posZ].dominatedByPlayer + ", occupied: " + GameManager.Instance.Map[posX, posZ].occupiedByPlayer);
+        Debug.Log("Anthill is dominated?: " + GameManager.Instance.Map[posX, posZ].dominatedByPlayer + ", occupied?: " + GameManager.Instance.Map[posX, posZ].occupiedByPlayer);
     }
+
+    void UpdateRoad()
+    {
+      if (GameManager.Instance.Map[posX, posZ].constructionState < GameManager.Instance.transportCostVector.Length)
+      {
+        if (GameManager.Instance.transportUpgradeCost[GameManager.Instance.Map[posX,posZ].constructionState] <= GameManager.Instance.resources)
+        {
+          
+          GameManager.Instance.resources -= GameManager.Instance.transportUpgradeCost[GameManager.Instance.Map[posX,posZ].constructionState];
+          GameManager.Instance.Map[posX,posZ].constructionState += 1;
+          GameManager.Instance.Map[posX, posZ].foodTransportCost = GameManager.Instance.transportCostVector[GameManager.Instance.Map[posX, posZ].constructionState];
+          
+          GameManager.Instance.WeightedDistanceToHill();
+          GameManager.Instance.UpdateIncomeGrowth();
+          GameManager.Instance.miniBarInfoInstance.MiniBarInfoUpdate();
+          UpdateAntText();
+
+          UpdateRoadTile();
+          
+
+
+     
+        }
+        else
+        {
+           Debug.Log("Not Enough Resources to upgrade Transportation " + GameManager.Instance.resources + "/" + GameManager.Instance.transportUpgradeCost[GameManager.Instance.Map[posX,posZ].constructionState]);
+        }
+      }
+    }
+
+    void UpdateFertility()
+    { 
+      if (GameManager.Instance.Map[posX, posZ].fertilityState < GameManager.Instance.fertilityUpgradeCost.Length)
+      {
+        if (GameManager.Instance.fertilityUpgradeCost[GameManager.Instance.Map[posX,posZ].fertilityState] <= GameManager.Instance.resources)
+        {
+          
+          GameManager.Instance.resources -= GameManager.Instance.fertilityUpgradeCost[GameManager.Instance.Map[posX,posZ].fertilityState];
+          GameManager.Instance.Map[posX,posZ].fertilityState += 1;
+          GameManager.Instance.Map[posX, posZ].regrowResource = GameManager.Instance.regrowRateVector[GameManager.Instance.Map[posX, posZ].fertilityState];
+          
+          GameManager.Instance.UpdateIncomeGrowth();
+          GameManager.Instance.miniBarInfoInstance.MiniBarInfoUpdate();
+          UpdateAntText();
+
+          UpdateRoadTile();
+          GameManager.Instance.mapInstance.UpgradeFertilityColor(posX, posZ, GameManager.Instance.Map[posX, posZ].fertilityState);
+        
+        }
+        else
+        {
+           Debug.Log("Not Enough Resources to upgrade Fertility " + GameManager.Instance.resources + "/" + GameManager.Instance.fertilityUpgradeCost[GameManager.Instance.Map[posX,posZ].fertilityState]);
+        }
+      }
+    }
+
     public void SetSelectedTile(int ix, int iz)
     {
         // could be replaced by ix, iy to get values from matrix
@@ -189,21 +251,24 @@ public class AntCounter : MonoBehaviour
 
 
     public void UpdateAntText()
-    {
-    freeAnts.text = "Nursing Ants: " + GameManager.Instance.freeAnts;
-    if (GameManager.Instance.Map[posX, posZ].assignedAnts == 1)
-      { 
-          assignedAntsText.text = GameManager.Instance.Map[posX, posZ].assignedAnts + "/"  + GameManager.Instance.Map[posX, posZ].maxAssignedAnts + " ants";
-          resources.text = "Resources: " + GameManager.Instance.Map[posX, posZ].resourceAmount;
-          tileName.text = GameManager.Instance.TileName(GameManager.Instance.Map[posX, posZ].type) + "[" + posX + "," + posZ + "]"; 
-      } 
-      else
-      {
-          assignedAntsText.text = GameManager.Instance.Map[posX, posZ].assignedAnts + "/" + GameManager.Instance.Map[posX, posZ].maxAssignedAnts + " ants";
-          resources.text = "Resources: " + GameManager.Instance.Map[posX, posZ].resourceAmount;
-          tileName.text = GameManager.Instance.TileName(GameManager.Instance.Map[posX, posZ].type) + "[" + posX + "," + posZ + "]";
-      }
+    { 
+    resources.text = "Resources: " + GameManager.Instance.Map[posX, posZ].resourceAmount;
+    tileName.text = GameManager.Instance.TileName(GameManager.Instance.Map[posX, posZ].type) + "[" + posX + "," + posZ + "]";
+    fertilityText.text = GameManager.Instance.FertilityNames[GameManager.Instance.Map[posX, posZ].fertilityState];
+    if (GameManager.Instance.Map[posX, posZ].fertilityState < GameManager.Instance.fertilityUpgradeCost.Length){
+      fertilityUpgradeCost.text = "Cost: " + GameManager.Instance.fertilityUpgradeCost[GameManager.Instance.Map[posX, posZ].fertilityState];
+    } else{
+    fertilityUpgradeCost.text = "Max";}
 
+    streetText.text = GameManager.Instance.StreetNames[GameManager.Instance.Map[posX, posZ].constructionState] + " | " + GameManager.Instance.Map[posX, posZ].constructionState;
+    if (GameManager.Instance.Map[posX, posZ].constructionState < GameManager.Instance.transportUpgradeCost.Length) {
+      streetUpgradeCost.text = "Cost: " + GameManager.Instance.transportUpgradeCost[GameManager.Instance.Map[posX, posZ].constructionState];
+    } else
+    {streetUpgradeCost.text = "Max";}
+    
+    freeAnts.text = "Nursing Ants: " + GameManager.Instance.freeAnts;  
+    assignedAntsText.text = GameManager.Instance.Map[posX, posZ].assignedAnts + "/" + GameManager.Instance.Map[posX, posZ].maxAssignedAnts + " ants";
+    
     regrowText.text = "Expected regrow: " + GameManager.Instance.Map[posX, posZ].regrowResource;
     transportCostText.text = "Transport cost: " + GameManager.Instance.Map[posX, posZ].foodTransportCost + ", dis: " + GameManager.Instance.Map[posX, posZ].distanceAntHill;
     }
@@ -224,5 +289,12 @@ public class AntCounter : MonoBehaviour
             GameObject squashThis = antlist.Find(element => element.GetComponent<AntPathing>().coordinates == new int[] {posX, posZ});
             Destroy(squashThis);
         }
+    }
+
+    void UpdateRoadTile()
+    {
+      if (GameManager.Instance.Map[posX, posZ].constructionState > 3){
+        GameManager.Instance.mapInstance.mapMatrix[posX,posZ].spawnRoadOnTile(GameManager.Instance.Map[posX, posZ].constructionState - 4);
+      }
     }
 }

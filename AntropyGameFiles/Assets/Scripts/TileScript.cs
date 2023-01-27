@@ -24,18 +24,17 @@ public class TileScript : MonoBehaviour
   /// </summary>
   GameObject flag;
 
+  GameObject road;
+
   /// <summary>
   /// Flag Prefab for Owned Tiles
   /// </summary>
   public GameObject redFlagPrefab;
+  public GameObject[] roadPrefab;
 
-  GameManager gameManagerInstance;
   private MouseListenerUI uiListener;
 
-  private void Awake()
-  {
-    gameManagerInstance = GameObject.Find("Game Manager").GetComponent<GameManager>();
-  }
+
   private void Start()
   {
     uiListener = GameObject.Find("NextTurnCanvas").GetComponent<MouseListenerUI>();
@@ -93,6 +92,10 @@ public class TileScript : MonoBehaviour
   /// </summary>
   public void spawnOwnedFlagOnTile()
   {
+    if(flag != null) 
+    {
+      Destroy(flag);
+    }
     flag = Instantiate<GameObject>(redFlagPrefab, new Vector3(xPos + 0.5f, 0.2f, zPos + 0.5f), Quaternion.identity, transform);
   }
 
@@ -105,6 +108,21 @@ public class TileScript : MonoBehaviour
     {
       Destroy(flag);
     }
+  }
+
+  public void spawnRoadOnTile(int level)
+  {
+    if (road != null)
+    {Destroy(road);}
+    if (level >= 0 && level < roadPrefab.Length){
+      GameManager.Instance.mapInstance.mapMatrix[xPos, zPos].GetComponent<MapTileGeneration>().RemoveDecorationForRoads();
+      road = Instantiate<GameObject>(roadPrefab[level], new Vector3(xPos,0.02f - level/100, zPos), Quaternion.identity, transform);
+    }
+  }
+
+  public void deleteRoad()
+  {if (road != null)
+    {Destroy(road);}
   }
 
   /// <summary>

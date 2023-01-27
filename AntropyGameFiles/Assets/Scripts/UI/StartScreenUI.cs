@@ -15,6 +15,6 @@ public class StartScreenUI : MonoBehaviour
 
   void StartNewGame() 
   {
-    SceneManager.LoadScene("Prototype_v3", LoadSceneMode.Single);
+    SceneManager.LoadScene("Prototype_v3 1", LoadSceneMode.Single);
   }
 }

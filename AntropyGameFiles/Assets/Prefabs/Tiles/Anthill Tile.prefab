@@ -114,6 +114,10 @@ MonoBehaviour:
   xPos: 0
   zPos: 0
   redFlagPrefab: {fileID: 3931712470879122387, guid: c6c1cec0329b2724fbf33392a16f1493, type: 3}
+  roadPrefab:
+  - {fileID: 2132126721549656084, guid: e7c890c89bb889d4db9907d4eab83188, type: 3}
+  - {fileID: 2132126721549656084, guid: 4a9d044dba82da2439aeb0fc499d0115, type: 3}
+  - {fileID: 1829782413212097693, guid: f188de0e2a5dd404eb5416e22add74db, type: 3}
 --- !u!64 &2262348178425823199
 MeshCollider:
   m_ObjectHideFlags: 0
