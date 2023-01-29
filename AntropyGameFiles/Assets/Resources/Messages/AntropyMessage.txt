@@ -1,0 +1,24 @@
+0;L0;Your royalty, my name is Lyra, your dutiful ant manager. I will bring you the reports of our current status and inform you about our |g resource storage | and |b population capacity | .; Lyra
+0;L1;Currently we have |b %0 ants | that await your orders. Feel free to assign them to tiles for |g harvesting | or leave them in the anthill as |b nurse ants for hatchery | .; Lyra
+0;L2; At the moment we have |g %1 resources | - so we may overcome the next |p week | with the current population. What are your orders?; Lyra
+0;C0; Dear majesty, I am Cedric, your devoted ant analyst. It is my duty to inform you about the necessary preparations we have to take to overcome the winter.; Cedric
+0;C1; We expect the need of |g thousands of resources | and |b hundreds of ants | in our anthill to have a good chance to overcome the winter.; Cedric
+0;C2; You never know what the seasons may bring, we expect unforeseen weather events. let's hope for the best and prepare for the cold.; Cedric
+1;positiveIncome; Update from the grass lands: we have |g collected  %3 | resources, the |r upkeep | took |r%4 | resources. |g Storing %7 | in our anthill.; Lyra
+1;negativeIncome; Update from the grass lands: we have |g collected  %3 | resources, the |r upkeep | took |r%4 | resources  |g Taking %7 | from our anthill.; Lyra
+1;antGrowth; Our |b working force | grew by %5 ants due to nursing; Lyra
+1;starvation; Our |b working force | decreased by %5 ants due to starvation; Lyra
+1;stagnation; Our |b working force | is stagnant and has not increased; Lyra
+1;overpopulation; Our |b working force | decreased by %5 ants due to overpopulation; Lyra
+2;seasonChange; Dear majesty, %8 has arrived and only %6 weeks left to collect goods and breed ants in our anthill.; Cedric
+2;winterPrediction; Dear majesty, autumn has arrived and only %6 weeks left to collect goods and breed ants in our anthill. Our predictions are %9 Well let's just hope the winter is mild.; Cedric
+2;goal_reached; Dear majesty, we are good on track, %6 weeks to go before we expect the cold to come in our land. Note, that we expect less harvest in the autumn, whereas summer may bring increased resources to the grass tiles.; Cedric
+2;goal_missed; Dear majesty, only y weeks to prepare for winter and we are way behind our targets which are %1 resources in our storage and an ant population of %0 ants. And even then it's not sure that we can overcome the winter!; Cedric
+3;depletion; Your royalty, we got reports of depleted lands, to many ants are harvesting the same tile. Soon the grass is gone and the fertile soil will be carried away by the winds.; Lyra
+3;negativeIncome; Your royalty, our resource storage is shrinking, we need to bring more harvest home.; Lyra
+3;overpopulation; Your royalty, the capacity of our anthill has come to an end. We need to invest in expansion to build larger ant quarters otherwise the spent upkeep will multiply.; Lyra
+3;stagnation; Your royalty, no new working ants could be hatched. Our population is stagnating. You need to send harvesting ants home for nursing to get more offspring.; Lyra
+3;antDistance; Your royalty, our brave working ants from remote lands reported to have lost more than half of their harvest on their way back to the anhill. Your excellence might consider improving our tranportation network by building ant roads.; Lyra.
+3;fullStorage; Your royalty, some harvesting ants couldn't store the collected resources due to our full storage chambers. Before wasting more resources it would be wise to increase the storage capacity of our anthill.; Lyra
+3;lowFertility; Your royalty, our innovative working ants harvested poor lands which does not grow so many resources. We could invest in a higher fertility on those lands.; Lyra
+3;starvation; Your royalty, we are starving if we do not bring more harvest home next week. We thought you would protect us and bring us through the winter. If there is no food we will abandon you.; Lyra

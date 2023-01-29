@@ -5,6 +5,9 @@ using System.IO;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine.SceneManagement;
+using System;
+using Newtonsoft.Json;
+using static GameManager;
 
 public class GameManager : MonoBehaviour
 {
@@ -296,7 +299,8 @@ public class GameManager : MonoBehaviour
     public WeatherScript weatherInstance;
     public MiniBarInfoUI miniBarInfoInstance;
     public NextTurnScript nextTurnInstance;
-
+    public MessageScript messageSystemInstance;
+  
     // Creates an instance that is present in all other classes
     public static GameManager Instance;
 
@@ -337,6 +341,8 @@ public class GameManager : MonoBehaviour
         weatherInstance = GameObject.Find("Weather").GetComponent<WeatherScript>();
         miniBarInfoInstance = GameObject.Find("MiniBarInfo").GetComponent<MiniBarInfoUI>();
         nextTurnInstance = GameObject.Find("NextTurnCanvas").GetComponent<NextTurnScript>();
+        messageSystemInstance = GetComponent<MessageScript>();
+        messageSystemInstance.EnableMessageSystem();
   }
 
   [System.Serializable]
@@ -467,6 +473,9 @@ public class GameManager : MonoBehaviour
       hatcheryMaxLevel = populationCapacityAmount.Length;
       storageMaxLevel = storageCapacityAmount.Length;
       miniBarInfoInstance.MiniBarInfoUpdate();
+
+      //TEST DELETE LATER 
+      messageSystemInstance.startTutorialSequence(0);
     }
 
     // Update is called once per frame
@@ -577,7 +586,7 @@ public class GameManager : MonoBehaviour
       }
     }
 
-    int Harvest()
+    public int Harvest()
     {
       int income = 0;
       for(int i = 0; i < rows; i++){
@@ -680,4 +689,6 @@ public class GameManager : MonoBehaviour
         totalDeaths = value;
       }
     }
+
+  
 }
