@@ -1,76 +1,191 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
-using System.Linq;
-using Unity.VisualScripting;
-using UnityEngine.SceneManagement;
 using System;
 using Newtonsoft.Json;
-using static GameManager;
-using UnityEditor;
+using TMPro;
+using System.Collections;
+using UnityEngine.UI;
 
 public class MessageScript : MonoBehaviour
 {
   private GameManager gameManager;
-
+  public Button confirmButton;
+  public TextMeshProUGUI title;
+  public TextMeshProUGUI text;
+  public GameObject portrait;
   public MessageSystem MessageSystemDataInstance;
+  public List<Image>portraits;
+  private int tutorialIndex = 0;
+  public Queue<Message> currentGeneralMessageQueue;
+  public Queue<EventMessages> currentEventMessageQueue;
+  public Queue<Message> currentSeasonMessageQueue;
+  public Queue<Message> currentWarningMessageQueue;
 
   private void Awake()
   {
     gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
+    confirmButton.onClick.AddListener(PlayNextTutorialMessage);
   }
-  
+
+  private void Start()
+  {
+    if (gameManager.tutorialEnabled) 
+    {
+      PlayNextTutorialMessage();
+    }
+    else 
+    {
+      this.gameObject.SetActive(false);
+    }
+  }
+
+  /// <summary>
+  /// Enable Message System 
+  /// </summary>
+  public void EnableMessageSystem()
+  {
+    CreateJsonFromTxt();
+    LoadMessagesFromJson();
+  }
+
+  /// <summary>
+  /// Needs to be called after each turn, to update the message queues
+  /// </summary>
+  public void PrepareRoundMessages() 
+  {
+    currentGeneralMessageQueue =  getGeneralMessages();
+    currentWarningMessageQueue = getWarningMessages();
+    currentSeasonMessageQueue = getWeatherSeasonMessages();
+    confirmButton.onClick.AddListener(PlayNextMessage);
+    PlayNextMessage();
+    this.gameObject.SetActive(true);
+  }
+
+  /// <summary>
+  /// Plays the next tutorial message
+  /// </summary>
+  public void PlayNextTutorialMessage() 
+  {
+    Debug.Log("Count List Tutorial: " + MessageSystemDataInstance.tutorialMessages.Count);
+    if(tutorialIndex < MessageSystemDataInstance.tutorialMessages.Count) 
+    {
+      this.gameObject.SetActive(true);
+      TutorialMessages currentMessage = startTutorialSequence(tutorialIndex);
+      //Prototype, until we have portraits
+      portrait.GetComponent<Image>().color = (currentMessage.speaker.Equals("Lyra")) ? Color.blue : Color.yellow;
+      //portrait.GetComponent<Image>().sprite = (currentMessage.speaker.Equals("Lyra"))? portraits[0].sprite : portraits[1].sprite;
+      title.text = "Tutorial Message";
+      text.text = currentMessage.messageText;
+      Debug.Log(currentMessage.messageText);
+      //..
+      //play voice recording
+      //message.voiceRecording.Play();
+      tutorialIndex++;
+    }
+    else 
+    {
+      this.gameObject.SetActive(false);
+    }
+  }
+
+  /// <summary>
+  /// Function that Plays the next Round Message
+  /// </summary>
+  private void PlayNextMessage()
+  {
+    if (currentGeneralMessageQueue.Count > 0)
+    {
+      portrait.GetComponent<Image>().color = Color.green;
+      //portrait.GetComponent<Image>().sprite = portraits[0].sprite;
+      title.text = "General Message";
+      text.text = currentGeneralMessageQueue.Peek().messageText;
+      this.gameObject.SetActive(true);
+      currentGeneralMessageQueue.Dequeue();
+    }
+    else if(currentSeasonMessageQueue.Count > 0) 
+    {
+      portrait.GetComponent<Image>().color = Color.green;
+      //portrait.GetComponent<Image>().sprite = portraits[0].sprite;
+      title.text = "Season Message";
+      text.text = currentSeasonMessageQueue.Peek().messageText;
+      this.gameObject.SetActive(true);
+      currentSeasonMessageQueue.Dequeue();
+    }
+    else if (currentWarningMessageQueue.Count > 0)
+    {
+      portrait.GetComponent<Image>().color = Color.green;
+      //portrait.GetComponent<Image>().sprite = portraits[0].sprite;
+      title.text = "Warning Message";
+      text.text = currentWarningMessageQueue.Peek().messageText;
+      this.gameObject.SetActive(true);
+      currentWarningMessageQueue.Dequeue();
+    }
+    else if (currentEventMessageQueue.Count > 0)
+    {
+      portrait.GetComponent<Image>().color = Color.green;
+      //portrait.GetComponent<Image>().sprite = portraits[0].sprite;
+      title.text = "Event Message";
+      text.text = currentEventMessageQueue.Peek().messageText;
+      this.gameObject.SetActive(true);
+      currentEventMessageQueue.Dequeue();
+    }
+    else
+    {
+      this.gameObject.SetActive(false);
+    }
+  }
+
   //TODO Implementation with the rest of the weather
-  public string TurnsUntilWinter()
+  private string TurnsUntilWinter()
   {
     return "";
   }
 
   //TODO Implementation missing
-  public string TurnsUntilStarving()
+  private string TurnsUntilStarving()
   {
     return "";
   }
 
   //TODO Implementation missing
-  public bool checkWeeklyGoal()
+  private bool checkWeeklyGoal()
   {
     return false;
   }
 
   //TODO Implementation missing
-  public bool checkTilesFertility()
+  private bool checkTilesFertility()
   {
     return false;
   }
 
-  public bool checkAntTileDistance()
-  {
-    return false;
-  }
-
-  //TODO Implementation missing
-  public bool checkTileDepletion()
+  private bool checkAntTileDistance()
   {
     return false;
   }
 
   //TODO Implementation missing
-  public string predictWeather()
+  private bool checkTileDepletion()
+  {
+    return false;
+  }
+
+  //TODO Implementation missing
+  private string predictWeather()
   {
     //(confident | uncertain | indicate nothing good)
     return "";
   }
 
   //TODO Implementation missing
-  public bool checkSeasonChange()
+  private bool checkSeasonChange()
   {
     return false;
   }
 
   //TODO Implementation missing
-  public bool checkWinterPrediction()
+  private bool checkWinterPrediction()
   {
     return false;
   }
@@ -85,13 +200,13 @@ public class MessageScript : MonoBehaviour
     public List<EventMessages> eventMessages { get; set; }
   }
 
-
   [Serializable]
   public class Message
   {
     public string eventName;
     public string messageText;
     public string speaker;
+    public Image portrait;
   }
 
   [Serializable]
@@ -133,7 +248,7 @@ public class MessageScript : MonoBehaviour
     return returnArray;
   }
 
-  public List<String> returnMessageFileString(TextAsset textAsset)
+  private List<String> returnMessageFileString(TextAsset textAsset)
   {
     return new List<String>(textAsset.text.Split('\n'));
   }
@@ -156,6 +271,7 @@ public class MessageScript : MonoBehaviour
         tutorialMessage.eventName = indexString[1];
         tutorialMessage.messageText = indexString[2];
         tutorialMessage.speaker = indexString[3];
+        ////tutorialMessage.picture = Resources.Load<Image>("Messages/SourceNameHere"); ;
         //tutorialMessage.voiceRecording = Resources.Load<AudioSource>("Messages/SourceNameHere"); ;
         //..
         tutorialMessages.Add(tutorialMessage);
@@ -207,7 +323,7 @@ public class MessageScript : MonoBehaviour
     File.WriteAllText(Application.persistentDataPath + "/messagefile.json", json);
   }
 
-  public void LoadMessagesFromJson()
+  private void LoadMessagesFromJson()
   {
     string path = Application.persistentDataPath + "/messagefile.json";
     if (File.Exists(path))
@@ -216,25 +332,19 @@ public class MessageScript : MonoBehaviour
     }
   }
 
-  public void EnableMessageSystem() 
-  {
-    CreateJsonFromTxt();
-    LoadMessagesFromJson();
-  }
-
-  public string manipulateMessageString(string MessageString)
+  private string manipulateMessageString(string MessageString)
   {
     return applyColourEncoding(applyVariableDecoding(MessageString));
   }
 
-  string applyVariableDecoding(string MessageString)
+  private string applyVariableDecoding(string MessageString)
   {
     string adaptedString = "";
     for (int i = 0; i < MessageString.Length; i++)
     {
       if (MessageString[i] == '%')
       {
-        if(MessageString[i + 2].ToString().Equals(""))
+        if(MessageString[i + 2].ToString().Equals(" "))
         {
           adaptedString += returnDencodedVariable(Convert.ToInt32(MessageString[i + 1].ToString()));
         }
@@ -267,7 +377,7 @@ public class MessageScript : MonoBehaviour
   /// prediction Winter           %9 ;
   /// add new Line "\n"           %10 ;
   /// </summary>
-  string returnDencodedVariable(int encoding)
+  private string returnDencodedVariable(int encoding)
   {
     string encodingString = "";
     switch (encoding)
@@ -331,7 +441,7 @@ public class MessageScript : MonoBehaviour
   /// </summary>
   /// <param name="MessageString"></param>
   /// <returns></returns>
-  string applyColourEncoding(string MessageString)
+  private string applyColourEncoding(string MessageString)
   {
     string adaptedString = "";
     for (int i = 0, j = 0; i < MessageString.Length; i++)
@@ -350,7 +460,7 @@ public class MessageScript : MonoBehaviour
     return adaptedString;
   }
 
-  string pickDecodecColourStart(string colour)
+  private string pickDecodecColourStart(string colour)
   {
     string colourPick = "";
     if (colour.Equals("b"))
@@ -367,12 +477,12 @@ public class MessageScript : MonoBehaviour
     }
     else if (colour.Equals("p"))
     {
-      colourPick = "<color=magenta>";
+      colourPick = "<color=yellow>";
     }
     return colourPick;
   }
 
-  public List<string> getTutorialMessages(string tutorialIndex)
+  private List<string> getTutorialMessages(string tutorialIndex)
   {
     List<string> formatedMessages = new List<string>();
     foreach (var item in MessageSystemDataInstance.tutorialMessages)
@@ -384,7 +494,7 @@ public class MessageScript : MonoBehaviour
     }
     return formatedMessages;
   }
-  public TutorialMessages getTutorialMessage(string tutorialIndex)
+  private TutorialMessages getTutorialMessage(string tutorialIndex)
   {
     TutorialMessages message = new TutorialMessages();
     foreach (var item in MessageSystemDataInstance.tutorialMessages)
@@ -400,7 +510,7 @@ public class MessageScript : MonoBehaviour
     return message;
   }
 
-  public void startTutorialSequence(int sequenceIndex) 
+  public TutorialMessages startTutorialSequence(int sequenceIndex) 
   {
     TutorialMessages message = new TutorialMessages();
     switch (sequenceIndex)
@@ -433,110 +543,166 @@ public class MessageScript : MonoBehaviour
         Debug.Log("Not implemented Tutorial Message");
         break;
     }
-
-    Debug.Log(message.messageText);
-    //..
-
-    //play voice recording
-    //message.voiceRecording.Play();
+    return message;
   }
 
-  public List<string> getGeneralMessages()
+  private Queue<Message> getGeneralMessages()
   {
-    List<string> formatedMessages = new List<string>();
+    Queue<Message> messages = new Queue<Message>();
+    
     foreach (var item in MessageSystemDataInstance.generalMessages)
     {
+      Message currentMessage = new Message();
       if (item.eventName.Equals("positiveIncome") && gameManager.income > 0)
       {
-        formatedMessages.Add(manipulateMessageString(item.messageText));
+        currentMessage.eventName = item.eventName;
+        currentMessage.messageText = manipulateMessageString(item.messageText);
+        //currentMessage.portrait = insertPortraitHere;
+        messages.Enqueue(currentMessage);
       }
       else if (item.eventName.Equals("negativeIncome") && gameManager.income < 0)
       {
-        formatedMessages.Add(manipulateMessageString(item.messageText));
+        currentMessage.eventName = item.eventName;
+        currentMessage.messageText = manipulateMessageString(item.messageText);
+        //currentMessage.portrait = insertPortraitHere;
+        messages.Enqueue(currentMessage);
       }
       else if (item.eventName.Equals("antGrowth") && gameManager.growth > 0)
       {
-        formatedMessages.Add(manipulateMessageString(item.messageText));
+        currentMessage.eventName = item.eventName;
+        currentMessage.messageText = manipulateMessageString(item.messageText);
+        //currentMessage.portrait = insertPortraitHere;
+        messages.Enqueue(currentMessage);
       }
       else if (item.eventName.Equals("stagnation") && gameManager.freeAnts == 0)
       {
-        formatedMessages.Add(manipulateMessageString(item.messageText));
+        currentMessage.eventName = item.eventName;
+        currentMessage.messageText = manipulateMessageString(item.messageText);
+        //currentMessage.portrait = insertPortraitHere;
+        messages.Enqueue(currentMessage);
       }
       else if (item.eventName.Equals("starvation") && gameManager.resources == 0 && gameManager.income < 0)
       {
-        formatedMessages.Add(manipulateMessageString(item.messageText));
+        currentMessage.eventName = item.eventName;
+        currentMessage.messageText = manipulateMessageString(item.messageText);
+        //currentMessage.portrait = insertPortraitHere;
+        messages.Enqueue(currentMessage);
       }
       else if (item.eventName.Equals("overpopulation") && gameManager.totalAnts > gameManager.currentMaximumPopulationCapacity)
       {
-        formatedMessages.Add(manipulateMessageString(item.messageText));
+        currentMessage.eventName = item.eventName;
+        currentMessage.messageText = manipulateMessageString(item.messageText);
+        //currentMessage.portrait = insertPortraitHere;
+        messages.Enqueue(currentMessage);
       }
+      Debug.Log("Message Content: " + currentMessage.messageText);
     }
-    return formatedMessages;
+    Debug.Log("Message list: " + messages.Count);
+    return messages;
   }
 
-  public List<string> getWarningMessages()
+  private Queue<Message> getWarningMessages()
   {
-    List<string> formatedMessages = new List<string>();
+    Queue<Message> messages = new Queue<Message>();
     foreach (var item in MessageSystemDataInstance.warningMessages)
     {
+      Message currentMessage = new Message();
       if (item.eventName.Equals("depletion") && checkTileDepletion())
       {
-        formatedMessages.Add(manipulateMessageString(item.messageText));
+        currentMessage.eventName = item.eventName;
+        currentMessage.messageText = manipulateMessageString(item.messageText);
+        //currentMessage.portrait = insertPortraitHere;
+        messages.Enqueue(currentMessage);
       }
       else if (item.eventName.Equals("negativeIncome") && gameManager.income < 0)
       {
-        formatedMessages.Add(manipulateMessageString(item.messageText));
+        currentMessage.eventName = item.eventName;
+        currentMessage.messageText = manipulateMessageString(item.messageText);
+        //currentMessage.portrait = insertPortraitHere;
+        messages.Enqueue(currentMessage);
       }
       else if (item.eventName.Equals("overpopulation") && gameManager.totalAnts > gameManager.currentMaximumPopulationCapacity)
       {
-        formatedMessages.Add(manipulateMessageString(item.messageText));
+        currentMessage.eventName = item.eventName;
+        currentMessage.messageText = manipulateMessageString(item.messageText);
+        //currentMessage.portrait = insertPortraitHere;
+        messages.Enqueue(currentMessage);
       }
       else if (item.eventName.Equals("stagnation") && gameManager.freeAnts == 0)
       {
-        formatedMessages.Add(manipulateMessageString(item.messageText));
+        currentMessage.eventName = item.eventName;
+        currentMessage.messageText = manipulateMessageString(item.messageText);
+        //currentMessage.portrait = insertPortraitHere;
+        messages.Enqueue(currentMessage);
       }
       else if (item.eventName.Equals("antDistance") && checkAntTileDistance())
       {
-        formatedMessages.Add(manipulateMessageString(item.messageText));
+        currentMessage.eventName = item.eventName;
+        currentMessage.messageText = manipulateMessageString(item.messageText);
+        //currentMessage.portrait = insertPortraitHere;
+        messages.Enqueue(currentMessage);
       }
       else if (item.eventName.Equals("fullStorage") && gameManager.maxResourceStorage == gameManager.resources)
       {
-        formatedMessages.Add(manipulateMessageString(item.messageText));
+        currentMessage.eventName = item.eventName;
+        currentMessage.messageText = manipulateMessageString(item.messageText);
+        //currentMessage.portrait = insertPortraitHere;
+        messages.Enqueue(currentMessage);
       }
       else if (item.eventName.Equals("lowFertility") && checkTilesFertility())
       {
-        formatedMessages.Add(manipulateMessageString(item.messageText));
+        currentMessage.eventName = item.eventName;
+        currentMessage.messageText = manipulateMessageString(item.messageText);
+        //currentMessage.portrait = insertPortraitHere;
+        messages.Enqueue(currentMessage);
       }
       else if (item.eventName.Equals("starvation") && gameManager.resources == 0 && gameManager.income < 0)
       {
-        formatedMessages.Add(manipulateMessageString(item.messageText));
+        currentMessage.eventName = item.eventName;
+        currentMessage.messageText = manipulateMessageString(item.messageText);
+        //currentMessage.portrait = insertPortraitHere;
+        messages.Enqueue(currentMessage);
       }
     }
-    return formatedMessages;
+    return messages;
   }
 
-  public List<string> getWeatherSeasonMessages()
+  private Queue<Message> getWeatherSeasonMessages()
   {
-    List<string> formatedMessages = new List<string>();
+    Queue<Message> messages = new Queue<Message>();
+    
     foreach (var item in MessageSystemDataInstance.seasonMessages)
     {
+      Message currentMessage = new Message();
       if (item.eventName.Equals("seasonChange") && checkSeasonChange())
       {
-        formatedMessages.Add(manipulateMessageString(item.messageText));
+        currentMessage.eventName = item.eventName;
+        currentMessage.messageText = manipulateMessageString(item.messageText);
+        //currentMessage.portrait = insertPortraitHere;
+        messages.Enqueue(currentMessage);
       }
       else if (item.eventName.Equals("winterPrediction") && checkWinterPrediction())
       {
-        formatedMessages.Add(manipulateMessageString(item.messageText));
+        currentMessage.eventName = item.eventName;
+        currentMessage.messageText = manipulateMessageString(item.messageText);
+        //currentMessage.portrait = insertPortraitHere;
+        messages.Enqueue(currentMessage);
       }
       else if (item.eventName.Equals("goal_reached") && checkWeeklyGoal())
       {
-        formatedMessages.Add(manipulateMessageString(item.messageText));
+        currentMessage.eventName = item.eventName;
+        currentMessage.messageText = manipulateMessageString(item.messageText);
+        //currentMessage.portrait = insertPortraitHere;
+        messages.Enqueue(currentMessage);
       }
       else if (item.eventName.Equals("goal_missed") && !checkWeeklyGoal())
       {
-        formatedMessages.Add(manipulateMessageString(item.messageText));
+        currentMessage.eventName = item.eventName;
+        currentMessage.messageText = manipulateMessageString(item.messageText);
+        //currentMessage.portrait = insertPortraitHere;
+        messages.Enqueue(currentMessage);
       }
     }
-    return formatedMessages;
+    return messages;
   }
 }

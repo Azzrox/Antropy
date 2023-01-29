@@ -300,7 +300,10 @@ public class GameManager : MonoBehaviour
     public MiniBarInfoUI miniBarInfoInstance;
     public NextTurnScript nextTurnInstance;
     public MessageScript messageSystemInstance;
-  
+    
+    //Enables the tutorial
+    public bool tutorialEnabled;
+
     // Creates an instance that is present in all other classes
     public static GameManager Instance;
 
@@ -341,8 +344,9 @@ public class GameManager : MonoBehaviour
         weatherInstance = GameObject.Find("Weather").GetComponent<WeatherScript>();
         miniBarInfoInstance = GameObject.Find("MiniBarInfo").GetComponent<MiniBarInfoUI>();
         nextTurnInstance = GameObject.Find("NextTurnCanvas").GetComponent<NextTurnScript>();
-        messageSystemInstance = GetComponent<MessageScript>();
+        messageSystemInstance = GameObject.Find("MessageSystem").GetComponent<MessageScript>();
         messageSystemInstance.EnableMessageSystem();
+        tutorialEnabled = true;
   }
 
   [System.Serializable]

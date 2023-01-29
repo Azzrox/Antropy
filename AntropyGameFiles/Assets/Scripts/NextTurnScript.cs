@@ -206,16 +206,7 @@ public class NextTurnScript : MonoBehaviour
 
   void MessageTurn() 
   {
-    //Insert Message Turn
-    //List<string> tutMessages = gameManager.messageSystemInstance.getTutorialMessages();
-    List<string> genMessages = gameManager.messageSystemInstance.getGeneralMessages();
-    List<string> weaterSeasonMessages = gameManager.messageSystemInstance.getWeatherSeasonMessages();
-    List<string> warningMessages = gameManager.messageSystemInstance.getWarningMessages();
-
-    foreach (var item in genMessages)
-    {
-      Debug.Log("GeneralMessage: " + item);
-    }
+    gameManager.messageSystemInstance.PrepareRoundMessages(); 
   }
 
   void SeasonTurn() 
