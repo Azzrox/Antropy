@@ -1,10 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System.IO;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine.SceneManagement;
+using UnityEngine;
+
+enum t_season { 
+    SPRING = 0, 
+    SUMMER = 1,
+    FALL = 2,
+    WINTER = 3
+};
 
 public class GameManager : MonoBehaviour
 {
@@ -61,6 +68,13 @@ public class GameManager : MonoBehaviour
     /// Current resources of the player
     /// </summary>
     public int resources;
+
+    public AudioClip summerMusic;
+    public AudioClip autmnMusic;
+    public AudioClip springMusic;
+    public AudioClip winterMusic;
+    public AudioClip mainMenuMusic;
+    
 
     /// <summary>
     /// Max storage the player can fill up
@@ -129,18 +143,21 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public float weatherRegrowMultiplier;
 
-    
-
     /// <summary>
     /// [0]Spring, [1]Summer, [2]Autumn, [3]Winter
     /// </summary>
     public int currentSeason;
 
     /// <summary>
+    /// current audio source that is playing the current audio clip
+    /// </summary>
+    public static AudioSource currentAudioSource = new AudioSource();
+
+    /// <summary>
     /// [0]sun, [1]rain, [2]overcast, [3]fog, [4] snow
     /// </summary>
     public int currentWeather;
-
+     
     [Header("Fertility and transportation")]
     public int[] regrowRateVector;
     public float[] transportCostVector;
@@ -149,7 +166,6 @@ public class GameManager : MonoBehaviour
     public int[] transportUpgradeCost;
 
 
-   
     [Header("Hatchery and Anthill")]
     /// <summary>
     /// Current player hatchery level
@@ -297,6 +313,8 @@ public class GameManager : MonoBehaviour
     public MiniBarInfoUI miniBarInfoInstance;
     public NextTurnScript nextTurnInstance;
 
+    
+
     // Creates an instance that is present in all other classes
     public static GameManager Instance;
 
@@ -323,8 +341,7 @@ public class GameManager : MonoBehaviour
         // construction states: (0 - not passable (water), 1 - hard-to-cross (rock), 2 - rough, 3 - normal plain land, 4 - ant path, 5 - ant street, 6 - ant highway )
         transportCostVector = new float[] {99, 10, 5, 2, 1, 0.5f, 0.1f};
         transportUpgradeCost = new int[] {1000, 100, 50, 50 , 50, 50};
-
-        
+  
         Map = new Tile[rows, columns];
 
         anthillX = (int) Mathf.Round(columns / 2);
@@ -337,7 +354,9 @@ public class GameManager : MonoBehaviour
         weatherInstance = GameObject.Find("Weather").GetComponent<WeatherScript>();
         miniBarInfoInstance = GameObject.Find("MiniBarInfo").GetComponent<MiniBarInfoUI>();
         nextTurnInstance = GameObject.Find("NextTurnCanvas").GetComponent<NextTurnScript>();
-  }
+
+        currentAudioSource = GetComponent<AudioSource>();
+    }
 
   [System.Serializable]
     class SaveData
@@ -450,10 +469,6 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
-      
-
-      
       //Anthill values
       hatcheryLevel = 0;
       storageLevel = 0;
@@ -472,7 +487,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     float DistanceToHill(int pos_x, int pos_y)

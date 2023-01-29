@@ -52,7 +52,32 @@ public class NextTurnScript : MonoBehaviour
       GameManager.Instance.miniBarInfoInstance.MiniBarInfoUpdate();
       antCounter.UpdateAntText();
 
+    if (GameManager.Instance.currentSeason == ((int)t_season.SPRING))
+    {
+        Debug.Log("Playing spring music");
+        GameManager.currentAudioSource.clip = GameManager.Instance.springMusic;
+        GameManager.currentAudioSource.Play();
     }
+    else if (GameManager.Instance.currentSeason == ((int)t_season.FALL))
+    {
+        Debug.Log("Playing fall music");
+        GameManager.currentAudioSource.clip = GameManager.Instance.autmnMusic;
+        GameManager.currentAudioSource.Play();
+    }
+    else if (GameManager.Instance.currentSeason == ((int)t_season.SUMMER))
+    {
+        Debug.Log("Playing summer music");
+        GameManager.currentAudioSource.clip = GameManager.Instance.summerMusic;
+        GameManager.currentAudioSource.Play();
+    }
+    else
+    {
+        Debug.Log("Playing winter music");
+        GameManager.currentAudioSource.clip = GameManager.Instance.winterMusic;
+        GameManager.currentAudioSource.Play();
+    }
+
+        }
     else 
     {
       Debug.Log("Hit Max Turn Count, turn denied");

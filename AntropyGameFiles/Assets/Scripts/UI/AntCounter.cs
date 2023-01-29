@@ -14,7 +14,7 @@ public class AntCounter : MonoBehaviour
 
   private GameObject antCollection;
   private List<GameObject> antlist = new List<GameObject>();
-
+  
   public Button plusButton;
   public Button plusPlusButton;
   public Button minusButton;
@@ -84,7 +84,7 @@ public class AntCounter : MonoBehaviour
             //Debug.Log("partOfAnthill: " + GameManager.Instance.Map[posX, posZ].partOfAnthill + "assignedAnts: " + GameManager.Instance.Map[posX, posZ].assignedAnts);
         }
     
-  } 
+    }
 
     void AdjustAntSize(float size)
     {
