@@ -54,24 +54,27 @@ public class NextTurnScript : MonoBehaviour
 
     if (GameManager.Instance.currentSeason == ((int)t_season.SPRING))
     {
-        GameManager.Instance.currentAudioSource = new AudioSource();
-        GameManager.Instance.currentAudioSource.clip = GameManager.Instance.springMusic;
-        GameManager.Instance.currentAudioSource.Play();
+        Debug.Log("Playing spring music");
+        GameManager.currentAudioSource.clip = GameManager.Instance.springMusic;
+        GameManager.currentAudioSource.Play();
     }
     else if (GameManager.Instance.currentSeason == ((int)t_season.FALL))
     {
-        GameManager.Instance.currentAudioSource.clip = GameManager.Instance.autmnMusic;
-        GameManager.Instance.currentAudioSource.Play();
+        Debug.Log("Playing fall music");
+        GameManager.currentAudioSource.clip = GameManager.Instance.autmnMusic;
+        GameManager.currentAudioSource.Play();
     }
     else if (GameManager.Instance.currentSeason == ((int)t_season.SUMMER))
     {
-        GameManager.Instance.currentAudioSource.clip = GameManager.Instance.summerMusic;
-        GameManager.Instance.currentAudioSource.Play();
+        Debug.Log("Playing summer music");
+        GameManager.currentAudioSource.clip = GameManager.Instance.summerMusic;
+        GameManager.currentAudioSource.Play();
     }
     else
     {
-        GameManager.Instance.currentAudioSource.clip = GameManager.Instance.winterMusic;
-        GameManager.Instance.currentAudioSource.Play();
+        Debug.Log("Playing winter music");
+        GameManager.currentAudioSource.clip = GameManager.Instance.winterMusic;
+        GameManager.currentAudioSource.Play();
     }
 
         }

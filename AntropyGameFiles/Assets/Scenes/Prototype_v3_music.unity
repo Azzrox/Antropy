@@ -775,6 +775,11 @@ MonoBehaviour:
   assignedHillAnts: 
   currentMaximumPopulationCapacity: 70
   resources: 0
+  summerMusic: {fileID: 8300000, guid: 9572b81223dd68943bdeb36f67fb727e, type: 3}
+  autmnMusic: {fileID: 8300000, guid: 37be31a312bd4fe4b96389a376d7faf3, type: 3}
+  springMusic: {fileID: 8300000, guid: a7992452c65054a42b72c942e5041952, type: 3}
+  winterMusic: {fileID: 8300000, guid: 9df16741027e2d14c865e398671f5068, type: 3}
+  mainMenuMusic: {fileID: 8300000, guid: 74f583557d1b1b34ea3faad235ae1b2f, type: 3}
   maxResourceStorage: 150
   income: 0
   growth: 0
@@ -854,7 +859,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 74f583557d1b1b34ea3faad235ae1b2f, type: 3}
+  m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1

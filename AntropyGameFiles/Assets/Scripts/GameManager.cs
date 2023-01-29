@@ -151,7 +151,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// current audio source that is playing the current audio clip
     /// </summary>
-    public AudioSource currentAudioSource;
+    public static AudioSource currentAudioSource = new AudioSource();
 
     /// <summary>
     /// [0]sun, [1]rain, [2]overcast, [3]fog, [4] snow
@@ -355,16 +355,7 @@ public class GameManager : MonoBehaviour
         miniBarInfoInstance = GameObject.Find("MiniBarInfo").GetComponent<MiniBarInfoUI>();
         nextTurnInstance = GameObject.Find("NextTurnCanvas").GetComponent<NextTurnScript>();
 
-        winterMusic = (AudioClip) Resources.Load("Assets/Audio/WinterPossible1");
-        summerMusic = (AudioClip)Resources.Load("Assets/Audio/Summer1");
-        autmnMusic = (AudioClip)Resources.Load("Assets/Audio/Fall1");
-        springMusic = (AudioClip)Resources.Load("Assets/Audio/Spring1");
-        mainMenuMusic = (AudioClip)Resources.Load("Assets/Audio/MainMenu");
-
-        currentAudioSource = new AudioSource();
-        currentAudioSource.clip = mainMenuMusic;
-        currentAudioSource.Play();
-
+        currentAudioSource = GetComponent<AudioSource>();
     }
 
   [System.Serializable]
