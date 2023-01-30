@@ -12,8 +12,9 @@ public class NextTurnScript : MonoBehaviour
   GameObject uiAssignAnts; //= GameObject.Find("AssignAnts");
   AntCounter antCounter;
   bool checker = false;
+    private static int previousSeason;
 
-  private void Awake()
+    private void Awake()
   {
     gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
     uiAssignAnts = GameObject.Find("AssignAnts");
@@ -25,7 +26,8 @@ public class NextTurnScript : MonoBehaviour
     
     TurnInfoUpdate();
     antCounter.UpdateAntText();
-  }
+    previousSeason = GameManager.Instance.currentSeason;
+}
 
   /// <summary>
   /// Turn Sequence, bind this to a button
@@ -52,7 +54,42 @@ public class NextTurnScript : MonoBehaviour
       GameManager.Instance.miniBarInfoInstance.MiniBarInfoUpdate();
       antCounter.UpdateAntText();
 
-    }
+        if (previousSeason == GameManager.Instance.currentSeason)
+        {
+            GameManager.Instance.prototypeGoalCheck();
+            return;
+        }
+        if (GameManager.Instance.currentSeason == ((int)t_season.SPRING))
+        {
+            Debug.Log("Playing spring music");
+            GameManager.currentAudioSource.clip = GameManager.Instance.springMusic;
+            GameManager.currentAudioSource.Play();
+            previousSeason = GameManager.Instance.currentSeason;
+        }
+        else if (GameManager.Instance.currentSeason == ((int)t_season.FALL))
+        {
+            Debug.Log("Playing fall music");
+            GameManager.currentAudioSource.clip = GameManager.Instance.autmnMusic;
+            GameManager.currentAudioSource.Play();
+            previousSeason = GameManager.Instance.currentSeason;
+        }
+        else if (GameManager.Instance.currentSeason == ((int)t_season.SUMMER))
+        {
+            Debug.Log("Playing summer music");
+            GameManager.currentAudioSource.clip = GameManager.Instance.summerMusic;
+            GameManager.currentAudioSource.Play();
+            previousSeason = GameManager.Instance.currentSeason;
+        }
+        else
+        {
+            Debug.Log("Playing winter music");
+            GameManager.currentAudioSource.clip = GameManager.Instance.winterMusic;
+            GameManager.currentAudioSource.Play();
+            previousSeason = GameManager.Instance.currentSeason;
+        }
+
+        GameManager.currentAudioSource.loop = true;
+    }   
     else 
     {
       Debug.Log("Hit Max Turn Count, turn denied");
