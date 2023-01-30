@@ -276,13 +276,13 @@ public class MapTileGeneration : MonoBehaviour
 
     public void UpdateFertilityColor(int fertilityLevel)
     {
-        if (fertilityLevel <= fertilityColors.Length)
+        if (fertilityLevel <= fertilityColors.Length && fertilityColors.Length > 0)
         {
             for (int i = 0; i < colors.Length; i++)
             {
                 colors[i] = RandomizeColor(fertilityLevel);
             }
         }
-        mesh.colors = colors;
+        UpdateMesh();
     }
 }
