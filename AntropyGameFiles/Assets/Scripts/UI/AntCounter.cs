@@ -88,7 +88,7 @@ public class AntCounter : MonoBehaviour
             size = Mathf.Sqrt(size);
             scale.Set(size, size, size);
             targetAnt.transform.localScale = scale;
-            Debug.Log("new Size: " + size);
+            //Debug.Log("new Size: " + size);
         }
         else { Debug.Log("Could not find the ant!"); }
         
@@ -221,7 +221,8 @@ public class AntCounter : MonoBehaviour
         // some ants might fall outside that area?
         if (antlist.Count > 0)
         {
-            GameObject squashThis = antlist.Find(element => element.GetComponent<AntPathing>().coordinates == new int[] {posX, posZ});
+            GameObject squashThis = antlist.Find(element => element.GetComponent<AntPathing>().coordinates[0] == posX && element.GetComponent<AntPathing>().coordinates[1] == posZ);
+            antlist.Remove(squashThis);
             Destroy(squashThis);
         }
     }
