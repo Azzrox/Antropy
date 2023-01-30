@@ -356,6 +356,8 @@ public class GameManager : MonoBehaviour
         nextTurnInstance = GameObject.Find("NextTurnCanvas").GetComponent<NextTurnScript>();
 
         currentAudioSource = GetComponent<AudioSource>();
+        currentAudioSource.clip = mainMenuMusic;
+        currentAudioSource.Play();
     }
 
   [System.Serializable]
