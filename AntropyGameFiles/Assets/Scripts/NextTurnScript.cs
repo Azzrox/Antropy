@@ -43,6 +43,7 @@ public class NextTurnScript : MonoBehaviour
       SeasonTurn();
       MessageTurn();
       GameManager.Instance.currentTurnCount++;
+      gameManager.adjustWeek();
       TurnInfoUpdate();
       
       checker = false;
@@ -107,7 +108,10 @@ public class NextTurnScript : MonoBehaviour
           GameManager.Instance.mapInstance.mapMatrix[i, j].deleteFlagOnTile();
           Debug.Log("Delete flag on tile: " + i + "|"  + j);
       // update visuals of grass tile
-        }                                           
+        }
+
+        //Message checks
+        gameManager.messageSystemInstance.saveTileForMessage(GameManager.Instance.Map[i, j]);
       }
        
     }

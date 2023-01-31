@@ -7,41 +7,61 @@ using TMPro;
 using System.Collections;
 using UnityEngine.UI;
 
+
 public class MessageScript : MonoBehaviour
 {
   private GameManager gameManager;
+
+  //UI
   public Button confirmButton;
   public TextMeshProUGUI title;
+  public TextMeshProUGUI speaker;
   public TextMeshProUGUI text;
   public GameObject portrait;
+  public List<Image> portraits;
+
+  //Message Queues
   public MessageSystem MessageSystemDataInstance;
-  public List<Image>portraits;
-  private int tutorialIndex = 0;
-  public Queue<Message> currentGeneralMessageQueue;
-  public Queue<EventMessages> currentEventMessageQueue;
-  public Queue<Message> currentSeasonMessageQueue;
-  public Queue<Message> currentWarningMessageQueue;
+  public Queue<TutorialMessages> currentTutorialMessageQueue = new Queue<TutorialMessages>();
+  public Queue<Message> currentGeneralMessageQueue = new Queue<Message>();
+  public Queue<EventMessages> currentEventMessageQueue = new Queue<EventMessages>();
+  public Queue<Message> currentSeasonMessageQueue = new Queue<Message>();
+  public Queue<Message> currentWarningMessageQueue = new Queue<Message>();
+  public Queue<GameManager.Tile> fertilityTilesMessage = new Queue<GameManager.Tile>();
+  public Queue<GameManager.Tile> resourcesTilesMessage = new Queue<GameManager.Tile>();
+  public Queue<GameManager.Tile> distanceAntsMessage = new Queue<GameManager.Tile>();
+
+  /// <summary>
+  /// old Week (only needed here)
+  /// </summary>
+  private int oldWeek = 0;
+
+  /// <summary>
+  /// old Season (only needed here)
+  /// </summary>
+  private int oldSeason = 0;
 
   private void Awake()
   {
     gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
-    confirmButton.onClick.AddListener(PlayNextTutorialMessage);
+    confirmButton.onClick.AddListener(PlayNextMessage);
   }
 
   private void Start()
   {
-    if (gameManager.tutorialEnabled) 
+    if (gameManager.tutorialEnabled)
     {
-      PlayNextTutorialMessage();
+      getTutorialMessages();
+      PlayNextMessage();
     }
-    else 
+    else
     {
       this.gameObject.SetActive(false);
     }
   }
 
   /// <summary>
-  /// Enable Message System 
+  /// Enable Message System, creates and loads the json 
   /// </summary>
   public void EnableMessageSystem()
   {
@@ -50,65 +70,49 @@ public class MessageScript : MonoBehaviour
   }
 
   /// <summary>
-  /// Needs to be called after each turn, to update the message queues
+  /// This is the ONLY message function for rounds you need, only call it once each round
   /// </summary>
-  public void PrepareRoundMessages() 
+  public void PrepareRoundMessages()
   {
-    currentGeneralMessageQueue =  getGeneralMessages();
-    currentWarningMessageQueue = getWarningMessages();
-    currentSeasonMessageQueue = getWeatherSeasonMessages();
-    confirmButton.onClick.AddListener(PlayNextMessage);
+    getGeneralMessages();
+    getStrategicMessages();
+    getWarningMessages();
+    getEventMessages();
     PlayNextMessage();
-    this.gameObject.SetActive(true);
   }
 
   /// <summary>
-  /// Plays the next tutorial message
-  /// </summary>
-  public void PlayNextTutorialMessage() 
-  {
-    Debug.Log("Count List Tutorial: " + MessageSystemDataInstance.tutorialMessages.Count);
-    if(tutorialIndex < MessageSystemDataInstance.tutorialMessages.Count) 
-    {
-      this.gameObject.SetActive(true);
-      TutorialMessages currentMessage = startTutorialSequence(tutorialIndex);
-      //Prototype, until we have portraits
-      portrait.GetComponent<Image>().color = (currentMessage.speaker.Equals("Lyra")) ? Color.blue : Color.yellow;
-      //portrait.GetComponent<Image>().sprite = (currentMessage.speaker.Equals("Lyra"))? portraits[0].sprite : portraits[1].sprite;
-      title.text = "Tutorial Message";
-      text.text = currentMessage.messageText;
-      Debug.Log(currentMessage.messageText);
-      //..
-      //play voice recording
-      //message.voiceRecording.Play();
-      tutorialIndex++;
-    }
-    else 
-    {
-      this.gameObject.SetActive(false);
-    }
-  }
-
-  /// <summary>
-  /// Function that Plays the next Round Message
+  /// Function that Plays the next Round Message and displays it in the UI
   /// </summary>
   private void PlayNextMessage()
   {
-    if (currentGeneralMessageQueue.Count > 0)
+    if (currentTutorialMessageQueue.Count > 0) 
+    {
+      portrait.GetComponent<Image>().color = (currentTutorialMessageQueue.Peek().speaker.Equals("Lyra")) ? Color.blue : Color.yellow;
+      //portrait.GetComponent<Image>().sprite = portraits[0].sprite;
+      title.text = "Tutorial Message";
+      text.text = currentTutorialMessageQueue.Peek().messageText;
+      speaker.text = currentTutorialMessageQueue.Peek().speaker;
+      this.gameObject.SetActive(true);
+      currentTutorialMessageQueue.Dequeue();
+    }
+    else if (currentGeneralMessageQueue.Count > 0)
     {
       portrait.GetComponent<Image>().color = Color.green;
       //portrait.GetComponent<Image>().sprite = portraits[0].sprite;
       title.text = "General Message";
       text.text = currentGeneralMessageQueue.Peek().messageText;
+      speaker.text = currentGeneralMessageQueue.Peek().speaker;
       this.gameObject.SetActive(true);
       currentGeneralMessageQueue.Dequeue();
     }
-    else if(currentSeasonMessageQueue.Count > 0) 
+    else if (currentSeasonMessageQueue.Count > 0)
     {
-      portrait.GetComponent<Image>().color = Color.green;
+      portrait.GetComponent<Image>().color = Color.yellow;
       //portrait.GetComponent<Image>().sprite = portraits[0].sprite;
       title.text = "Season Message";
       text.text = currentSeasonMessageQueue.Peek().messageText;
+      speaker.text = currentSeasonMessageQueue.Peek().speaker;
       this.gameObject.SetActive(true);
       currentSeasonMessageQueue.Dequeue();
     }
@@ -118,6 +122,7 @@ public class MessageScript : MonoBehaviour
       //portrait.GetComponent<Image>().sprite = portraits[0].sprite;
       title.text = "Warning Message";
       text.text = currentWarningMessageQueue.Peek().messageText;
+      speaker.text = currentWarningMessageQueue.Peek().speaker;
       this.gameObject.SetActive(true);
       currentWarningMessageQueue.Dequeue();
     }
@@ -127,10 +132,11 @@ public class MessageScript : MonoBehaviour
       //portrait.GetComponent<Image>().sprite = portraits[0].sprite;
       title.text = "Event Message";
       text.text = currentEventMessageQueue.Peek().messageText;
+      speaker.text = currentEventMessageQueue.Peek().speaker;
       this.gameObject.SetActive(true);
       currentEventMessageQueue.Dequeue();
     }
-    else
+    else 
     {
       this.gameObject.SetActive(false);
     }
@@ -139,7 +145,14 @@ public class MessageScript : MonoBehaviour
   //TODO Implementation with the rest of the weather
   private string TurnsUntilWinter()
   {
-    return "";
+    /*
+    string untilWinterCount = "";
+    if(gameManager.currentTurnCount < gameManager.winterStart) 
+    {
+      untilWinterCount += (gameManager.currentTurnCount - gameManager.winterStart).ToString();
+    }
+    */
+    return "(not implemented)";
   }
 
   //TODO Implementation missing
@@ -148,44 +161,142 @@ public class MessageScript : MonoBehaviour
     return "";
   }
 
-  //TODO Implementation missing
+  /// <summary>
+  /// Checks if the weekly goal has been reached
+  /// </summary>
+  /// <returns></returns>
   private bool checkWeeklyGoal()
   {
-    return false;
+    if (gameManager.goalThreshholds[gameManager.currentWeek].Item1 <= gameManager.resources 
+      && gameManager.goalThreshholds[gameManager.currentWeek].Item2 <= gameManager.totalAnts)
+    {
+      return true;
+    }
+    else
+    {
+      return false;
+    }
   }
 
-  //TODO Implementation missing
+  /// <summary>
+  /// Currently only checks if there are tiles that have low fertility.
+  /// Rework if needed to show each individual tile
+  /// </summary>
+  /// <returns></returns>
   private bool checkTilesFertility()
   {
-    return false;
+    
+    if(fertilityTilesMessage.Count > 0) 
+    {
+      fertilityTilesMessage.Clear();
+      return true;
+    }
+    else 
+    {
+      fertilityTilesMessage.Clear();
+      return false;
+    }
   }
 
+  /// <summary>
+  /// Currently only checks if there are tiles that where Ants are assigned over a distance 10.
+  /// Rework if needed to show each individual tile
+  /// </summary>
+  /// <returns></returns>
   private bool checkAntTileDistance()
   {
-    return false;
+    if(distanceAntsMessage.Count > 0) 
+    {
+      distanceAntsMessage.Clear();
+      return true;
+    }
+    else 
+    {
+      distanceAntsMessage.Clear();
+      return false;
+    }
   }
 
-  //TODO Implementation missing
+  /// <summary>
+  /// Currently only checks if there are tiles that have <= 20 resources.
+  /// Rework if needed to show each individual tile
+  /// </summary>
+  /// <returns></returns>
   private bool checkTileDepletion()
   {
-    return false;
+    if(resourcesTilesMessage.Count > 0) 
+    {
+      resourcesTilesMessage.Clear();
+      return true;
+    }
+    else 
+    {
+      resourcesTilesMessage.Clear();
+      return false;
+    }
   }
 
   //TODO Implementation missing
   private string predictWeather()
   {
     //(confident | uncertain | indicate nothing good)
+    //dependend on difficulty (if we really want to do it)
     return "";
   }
 
-  //TODO Implementation missing
+  /// <summary>
+  /// Checks if a new season has been reached, updates oldSeason variable
+  /// </summary>
+  /// <returns></returns>
   private bool checkSeasonChange()
+  {
+    if(oldSeason != gameManager.currentSeason) 
+    {
+      return true;
+    }
+    else 
+    {
+      return false;
+    }
+  }
+
+  /// <summary>
+  /// Checks if a new week has been reached, updates oldWeek variable
+  /// </summary>
+  /// <returns></returns>
+  private bool checkNewWeek()
+  {
+    if (oldWeek != gameManager.currentWeek)
+    {
+      oldWeek = gameManager.currentWeek;
+      return true;
+    }
+    else
+    {
+      return false;
+    }
+  }
+
+  //TODO Implementation missing
+  private bool checkWinterPrediction()
   {
     return false;
   }
 
   //TODO Implementation missing
-  private bool checkWinterPrediction()
+  private bool heavyRainCheck() 
+  {
+    return false;
+  }
+
+  //TODO Implementation missing
+  private bool heavyFogCheck() 
+  {
+    return false;
+  }
+
+  //TODO Implementation missing
+  private bool floodCheck() 
   {
     return false;
   }
@@ -195,7 +306,7 @@ public class MessageScript : MonoBehaviour
   {
     public List<TutorialMessages> tutorialMessages { get; set; }
     public List<Message> generalMessages { get; set; }
-    public List<Message> seasonMessages { get; set; }
+    public List<Message> strategicMessages { get; set; }
     public List<Message> warningMessages { get; set; }
     public List<EventMessages> eventMessages { get; set; }
   }
@@ -212,22 +323,21 @@ public class MessageScript : MonoBehaviour
   [Serializable]
   public class TutorialMessages : Message
   {
-
     public AudioSource voiceRecording;
     //..
   }
 
-  //Not implemented yet
   [Serializable]
   public class EventMessages : Message
   {
-    int fertilityChange;
-    int tilesAffected;
-    int antsLost;
+    //Example Events
+    public int fertilityChange;
+    public int tilesAffected;
+    public int antsLost;
     //..
   }
 
-  List<string> getAllSubStrings(string Message)
+  private List<string> getAllSubStrings(string Message)
   {
     string currentValue = "";
     List<string> returnArray = new List<string>();
@@ -252,13 +362,13 @@ public class MessageScript : MonoBehaviour
   {
     return new List<String>(textAsset.text.Split('\n'));
   }
-  public void CreateJsonFromTxt()
+  private void CreateJsonFromTxt()
   {
     TextAsset textFile = Resources.Load<TextAsset>("Messages/AntropyMessage");
     List<string> TextFileMessages = returnMessageFileString(textFile);
     List<TutorialMessages> tutorialMessages = new List<TutorialMessages>();
     List<Message> generalMessages = new List<Message>();
-    List<Message> seasonMessages = new List<Message>();
+    List<Message> strategicMessages = new List<Message>();
     List<Message> warningMessages = new List<Message>();
     List<EventMessages> eventMessages = new List<EventMessages>();
 
@@ -271,7 +381,7 @@ public class MessageScript : MonoBehaviour
         tutorialMessage.eventName = indexString[1];
         tutorialMessage.messageText = indexString[2];
         tutorialMessage.speaker = indexString[3];
-        ////tutorialMessage.picture = Resources.Load<Image>("Messages/SourceNameHere"); ;
+        //tutorialMessage.picture = Resources.Load<Image>("Messages/SourceNameHere");
         //tutorialMessage.voiceRecording = Resources.Load<AudioSource>("Messages/SourceNameHere"); ;
         //..
         tutorialMessages.Add(tutorialMessage);
@@ -281,14 +391,17 @@ public class MessageScript : MonoBehaviour
         Message generalMessage = new Message();
         generalMessage.eventName = indexString[1];
         generalMessage.messageText = indexString[2];
+        //generalMessage.picture = Resources.Load<Image>("Messages/SourceNameHere");
         generalMessages.Add(generalMessage);
       }
       else if (indexString[0] == "2")
       {
-        Message weatherSeasonMessage = new Message();
+       Message weatherSeasonMessage = new Message();
         weatherSeasonMessage.eventName = indexString[1];
         weatherSeasonMessage.messageText = indexString[2];
-        generalMessages.Add(weatherSeasonMessage);
+        weatherSeasonMessage.speaker = indexString[3];
+        //weatherSeasonMessage.picture = Resources.Load<Image>("Messages/SourceNameHere");
+        strategicMessages.Add(weatherSeasonMessage);
       }
       else if (indexString[0] == "3")
       {
@@ -296,6 +409,7 @@ public class MessageScript : MonoBehaviour
         warningMessage.eventName = indexString[1];
         warningMessage.messageText = indexString[2];
         warningMessage.speaker = indexString[3];
+        //warningMessage.picture = Resources.Load<Image>("Messages/SourceNameHere");
         warningMessages.Add(warningMessage);
       }
       else if (indexString[0] == "4")
@@ -304,8 +418,11 @@ public class MessageScript : MonoBehaviour
         eventMessage.eventName = indexString[1];
         eventMessage.messageText = indexString[2];
         //..
-        //..
-        //..
+        //eventMessage.picture = Resources.Load<Image>("Messages/SourceNameHere");
+        eventMessage.fertilityChange = Convert.ToInt32(indexString[3]);
+        eventMessage.tilesAffected = Convert.ToInt32(indexString[4]);
+        eventMessage.antsLost = Convert.ToInt32(indexString[5]);
+        eventMessage.speaker = indexString[6];
         eventMessages.Add(eventMessage);
       }
     }
@@ -314,7 +431,7 @@ public class MessageScript : MonoBehaviour
     {
       tutorialMessages = tutorialMessages,
       generalMessages = generalMessages,
-      seasonMessages = seasonMessages,
+      strategicMessages = strategicMessages,
       warningMessages = warningMessages,
       eventMessages = eventMessages
     };
@@ -332,11 +449,6 @@ public class MessageScript : MonoBehaviour
     }
   }
 
-  private string manipulateMessageString(string MessageString)
-  {
-    return applyColourEncoding(applyVariableDecoding(MessageString));
-  }
-
   private string applyVariableDecoding(string MessageString)
   {
     string adaptedString = "";
@@ -344,11 +456,11 @@ public class MessageScript : MonoBehaviour
     {
       if (MessageString[i] == '%')
       {
-        if(MessageString[i + 2].ToString().Equals(" "))
+        if (MessageString[i + 2].ToString().Equals(" "))
         {
           adaptedString += returnDencodedVariable(Convert.ToInt32(MessageString[i + 1].ToString()));
         }
-        else 
+        else
         {
           adaptedString += returnDencodedVariable(Convert.ToInt32(MessageString[i + 1].ToString() + MessageString[i + 2].ToString()));
           i++;
@@ -367,7 +479,7 @@ public class MessageScript : MonoBehaviour
   ///Message Encoding
   /// Free Ants                   %0 ;
   /// Current resources           %1 ;
-  /// Time until starving(atm)    %2 ; 
+  /// Time until starving         %2 ; 
   /// Collected this turn         %3 ;
   /// Current upkeep              %4 ;
   /// Population grow/decrease    %5 ;
@@ -375,7 +487,10 @@ public class MessageScript : MonoBehaviour
   /// income Food                 %7 ;
   /// season                      %8 ;
   /// prediction Winter           %9 ;
-  /// add new Line "\n"           %10 ;
+  /// add new Line "\n"           %10;
+  /// ants lost during event      %11;
+  /// affected tiles by event     %12;
+  /// Total Ants                  %13; 
   /// </summary>
   private string returnDencodedVariable(int encoding)
   {
@@ -391,7 +506,7 @@ public class MessageScript : MonoBehaviour
         break;
 
       case 2:
-        encodingString = TurnsUntilStarving();
+        encodingString = TurnsUntilStarving(); //not implemented
         break;
 
       case 3:
@@ -407,7 +522,7 @@ public class MessageScript : MonoBehaviour
         break;
 
       case 6:
-        encodingString = TurnsUntilWinter();
+        encodingString = TurnsUntilWinter(); //not implemented
         break;
 
       case 7:
@@ -426,283 +541,274 @@ public class MessageScript : MonoBehaviour
         encodingString = "\n";
         break;
 
+      //case 11:
+      //  encodingString = gameManager.antsLostEvent.ToString();
+      //  break;
+      //
+      //case 12:
+      //  encodingString = gameManager.affectedTilesEvent;
+      //  break;
+
+      case 13:
+        encodingString = gameManager.totalAnts.ToString();
+        break;
+
       default:
         encodingString = "Not implemented Encoding";
         break;
     }
     return encodingString;
   }
-
+ 
   /// <summary>
-  /// Colour Encoding        S  E
-  /// Blue                   |b | ;
-  /// Green                  |g | ;
-  /// Red                    |r | ;
+  /// Pushes the tutorial messages into the queue
   /// </summary>
-  /// <param name="MessageString"></param>
-  /// <returns></returns>
-  private string applyColourEncoding(string MessageString)
+  private void getTutorialMessages()
   {
-    string adaptedString = "";
-    for (int i = 0, j = 0; i < MessageString.Length; i++)
-    {
-      if (MessageString[i] == '|')
-      {
-        adaptedString += (j == 0) ? pickDecodecColourStart(MessageString[i + 1].ToString()) : "</color>";
-        i++;
-        j = (j > 0) ? 0 : 1;
-      }
-      else
-      {
-        adaptedString += MessageString[i];
-      }
-    }
-    return adaptedString;
-  }
-
-  private string pickDecodecColourStart(string colour)
-  {
-    string colourPick = "";
-    if (colour.Equals("b"))
-    {
-      colourPick = "<color=blue>";
-    }
-    else if (colour.Equals("g"))
-    {
-      colourPick = "<color=green>";
-    }
-    else if (colour.Equals("r"))
-    {
-      colourPick = "<color=red>";
-    }
-    else if (colour.Equals("p"))
-    {
-      colourPick = "<color=yellow>";
-    }
-    return colourPick;
-  }
-
-  private List<string> getTutorialMessages(string tutorialIndex)
-  {
-    List<string> formatedMessages = new List<string>();
     foreach (var item in MessageSystemDataInstance.tutorialMessages)
     {
-      if (item.Equals(tutorialIndex)) 
-      {
-        formatedMessages.Add(manipulateMessageString(item.messageText));
-      }
-    }
-    return formatedMessages;
-  }
-  private TutorialMessages getTutorialMessage(string tutorialIndex)
-  {
-    TutorialMessages message = new TutorialMessages();
-    foreach (var item in MessageSystemDataInstance.tutorialMessages)
-    {
-      if (item.eventName.Equals(tutorialIndex))
-      {
-        message.messageText = manipulateMessageString(item.messageText);
+        TutorialMessages message = new TutorialMessages();
+        message.messageText = applyVariableDecoding(item.messageText);
         message.voiceRecording = item.voiceRecording;
         message.speaker = item.speaker;
-        return message;
-      }
+        currentTutorialMessageQueue.Enqueue(message);
     }
-    return message;
   }
 
-  public TutorialMessages startTutorialSequence(int sequenceIndex) 
+  /// <summary>
+  /// Pushes the general messages into the queue
+  /// </summary>
+  private void getGeneralMessages()
   {
-    TutorialMessages message = new TutorialMessages();
-    switch (sequenceIndex)
-    {
-      case 0:
-        message = getTutorialMessage("L0");
-        break;
-
-      case 1:
-        message = getTutorialMessage("L1");
-        break;
-
-      case 2:
-        message = getTutorialMessage("L2");
-        break;
-
-      case 3:
-        message = getTutorialMessage("C0");
-        break;
-
-      case 4:
-        message = getTutorialMessage("C1");
-        break;
-
-      case 5:
-        message = getTutorialMessage("C2");
-        break;
-
-      default:
-        Debug.Log("Not implemented Tutorial Message");
-        break;
-    }
-    return message;
-  }
-
-  private Queue<Message> getGeneralMessages()
-  {
-    Queue<Message> messages = new Queue<Message>();
-    
     foreach (var item in MessageSystemDataInstance.generalMessages)
     {
       Message currentMessage = new Message();
       if (item.eventName.Equals("positiveIncome") && gameManager.income > 0)
       {
         currentMessage.eventName = item.eventName;
-        currentMessage.messageText = manipulateMessageString(item.messageText);
+        currentMessage.messageText = applyVariableDecoding(item.messageText);
+        currentMessage.speaker = item.speaker;
         //currentMessage.portrait = insertPortraitHere;
-        messages.Enqueue(currentMessage);
+        currentGeneralMessageQueue.Enqueue(currentMessage);
       }
       else if (item.eventName.Equals("negativeIncome") && gameManager.income < 0)
       {
         currentMessage.eventName = item.eventName;
-        currentMessage.messageText = manipulateMessageString(item.messageText);
+        currentMessage.messageText = applyVariableDecoding(item.messageText);
+        currentMessage.speaker = item.speaker;
         //currentMessage.portrait = insertPortraitHere;
-        messages.Enqueue(currentMessage);
+        currentGeneralMessageQueue.Enqueue(currentMessage);
       }
       else if (item.eventName.Equals("antGrowth") && gameManager.growth > 0)
       {
         currentMessage.eventName = item.eventName;
-        currentMessage.messageText = manipulateMessageString(item.messageText);
+        currentMessage.messageText = applyVariableDecoding(item.messageText);
+        currentMessage.speaker = item.speaker;
         //currentMessage.portrait = insertPortraitHere;
-        messages.Enqueue(currentMessage);
+        currentGeneralMessageQueue.Enqueue(currentMessage);
       }
       else if (item.eventName.Equals("stagnation") && gameManager.freeAnts == 0)
       {
         currentMessage.eventName = item.eventName;
-        currentMessage.messageText = manipulateMessageString(item.messageText);
+        currentMessage.messageText = applyVariableDecoding(item.messageText);
+        currentMessage.speaker = item.speaker;
         //currentMessage.portrait = insertPortraitHere;
-        messages.Enqueue(currentMessage);
+        currentGeneralMessageQueue.Enqueue(currentMessage);
       }
       else if (item.eventName.Equals("starvation") && gameManager.resources == 0 && gameManager.income < 0)
       {
         currentMessage.eventName = item.eventName;
-        currentMessage.messageText = manipulateMessageString(item.messageText);
+        currentMessage.messageText = applyVariableDecoding(item.messageText);
+        currentMessage.speaker = item.speaker;
         //currentMessage.portrait = insertPortraitHere;
-        messages.Enqueue(currentMessage);
+        currentGeneralMessageQueue.Enqueue(currentMessage);
       }
       else if (item.eventName.Equals("overpopulation") && gameManager.totalAnts > gameManager.currentMaximumPopulationCapacity)
       {
         currentMessage.eventName = item.eventName;
-        currentMessage.messageText = manipulateMessageString(item.messageText);
+        currentMessage.messageText = applyVariableDecoding(item.messageText);
+        currentMessage.speaker = item.speaker;
         //currentMessage.portrait = insertPortraitHere;
-        messages.Enqueue(currentMessage);
+        currentGeneralMessageQueue.Enqueue(currentMessage);
       }
-      Debug.Log("Message Content: " + currentMessage.messageText);
     }
-    Debug.Log("Message list: " + messages.Count);
-    return messages;
   }
 
-  private Queue<Message> getWarningMessages()
+  /// <summary>
+  /// Pushes the warning messages into the queue
+  /// </summary>
+  private void getWarningMessages()
   {
-    Queue<Message> messages = new Queue<Message>();
     foreach (var item in MessageSystemDataInstance.warningMessages)
     {
       Message currentMessage = new Message();
       if (item.eventName.Equals("depletion") && checkTileDepletion())
       {
         currentMessage.eventName = item.eventName;
-        currentMessage.messageText = manipulateMessageString(item.messageText);
+        currentMessage.messageText = applyVariableDecoding(item.messageText);
+        currentMessage.speaker = item.speaker;
         //currentMessage.portrait = insertPortraitHere;
-        messages.Enqueue(currentMessage);
+        currentWarningMessageQueue.Enqueue(currentMessage);
       }
       else if (item.eventName.Equals("negativeIncome") && gameManager.income < 0)
       {
         currentMessage.eventName = item.eventName;
-        currentMessage.messageText = manipulateMessageString(item.messageText);
+        currentMessage.messageText = applyVariableDecoding(item.messageText);
+        currentMessage.speaker = item.speaker;
         //currentMessage.portrait = insertPortraitHere;
-        messages.Enqueue(currentMessage);
+        currentWarningMessageQueue.Enqueue(currentMessage);
       }
       else if (item.eventName.Equals("overpopulation") && gameManager.totalAnts > gameManager.currentMaximumPopulationCapacity)
       {
         currentMessage.eventName = item.eventName;
-        currentMessage.messageText = manipulateMessageString(item.messageText);
+        currentMessage.messageText = applyVariableDecoding(item.messageText);
+        currentMessage.speaker = item.speaker;
         //currentMessage.portrait = insertPortraitHere;
-        messages.Enqueue(currentMessage);
+        currentWarningMessageQueue.Enqueue(currentMessage);
       }
       else if (item.eventName.Equals("stagnation") && gameManager.freeAnts == 0)
       {
         currentMessage.eventName = item.eventName;
-        currentMessage.messageText = manipulateMessageString(item.messageText);
+        currentMessage.messageText = applyVariableDecoding(item.messageText);
+        currentMessage.speaker = item.speaker;
         //currentMessage.portrait = insertPortraitHere;
-        messages.Enqueue(currentMessage);
+        currentWarningMessageQueue.Enqueue(currentMessage);
       }
       else if (item.eventName.Equals("antDistance") && checkAntTileDistance())
       {
         currentMessage.eventName = item.eventName;
-        currentMessage.messageText = manipulateMessageString(item.messageText);
+        currentMessage.messageText = applyVariableDecoding(item.messageText);
+        currentMessage.speaker = item.speaker;
         //currentMessage.portrait = insertPortraitHere;
-        messages.Enqueue(currentMessage);
+        currentWarningMessageQueue.Enqueue(currentMessage);
       }
       else if (item.eventName.Equals("fullStorage") && gameManager.maxResourceStorage == gameManager.resources)
       {
         currentMessage.eventName = item.eventName;
-        currentMessage.messageText = manipulateMessageString(item.messageText);
+        currentMessage.messageText = applyVariableDecoding(item.messageText);
+        currentMessage.speaker = item.speaker;
         //currentMessage.portrait = insertPortraitHere;
-        messages.Enqueue(currentMessage);
+        currentWarningMessageQueue.Enqueue(currentMessage);
       }
       else if (item.eventName.Equals("lowFertility") && checkTilesFertility())
       {
         currentMessage.eventName = item.eventName;
-        currentMessage.messageText = manipulateMessageString(item.messageText);
+        currentMessage.messageText = applyVariableDecoding(item.messageText);
+        currentMessage.speaker = item.speaker;
         //currentMessage.portrait = insertPortraitHere;
-        messages.Enqueue(currentMessage);
+        currentWarningMessageQueue.Enqueue(currentMessage);
       }
       else if (item.eventName.Equals("starvation") && gameManager.resources == 0 && gameManager.income < 0)
       {
         currentMessage.eventName = item.eventName;
-        currentMessage.messageText = manipulateMessageString(item.messageText);
+        currentMessage.messageText = applyVariableDecoding(item.messageText);
+        currentMessage.speaker = item.speaker;
         //currentMessage.portrait = insertPortraitHere;
-        messages.Enqueue(currentMessage);
+        currentWarningMessageQueue.Enqueue(currentMessage);
       }
     }
-    return messages;
   }
 
-  private Queue<Message> getWeatherSeasonMessages()
+  /// <summary>
+  /// Pushes the strategic messages into the queue
+  /// </summary>
+  private void getStrategicMessages()
   {
-    Queue<Message> messages = new Queue<Message>();
+    //because we have to check 2 messages
+    bool newWeek = checkNewWeek();
     
-    foreach (var item in MessageSystemDataInstance.seasonMessages)
+    foreach (var item in MessageSystemDataInstance.strategicMessages)
     {
       Message currentMessage = new Message();
       if (item.eventName.Equals("seasonChange") && checkSeasonChange())
       {
         currentMessage.eventName = item.eventName;
-        currentMessage.messageText = manipulateMessageString(item.messageText);
+        currentMessage.messageText = applyVariableDecoding(item.messageText);
+        currentMessage.speaker = item.speaker;
         //currentMessage.portrait = insertPortraitHere;
-        messages.Enqueue(currentMessage);
+        currentSeasonMessageQueue.Enqueue(currentMessage);
       }
       else if (item.eventName.Equals("winterPrediction") && checkWinterPrediction())
       {
         currentMessage.eventName = item.eventName;
-        currentMessage.messageText = manipulateMessageString(item.messageText);
+        currentMessage.messageText = applyVariableDecoding(item.messageText);
+        currentMessage.speaker = item.speaker;
         //currentMessage.portrait = insertPortraitHere;
-        messages.Enqueue(currentMessage);
+        currentSeasonMessageQueue.Enqueue(currentMessage);
       }
-      else if (item.eventName.Equals("goal_reached") && checkWeeklyGoal())
+      else if (item.eventName.Equals("goalReached") && newWeek && checkWeeklyGoal())
       {
         currentMessage.eventName = item.eventName;
-        currentMessage.messageText = manipulateMessageString(item.messageText);
+        currentMessage.messageText = applyVariableDecoding(item.messageText);
+        currentMessage.speaker = item.speaker;
         //currentMessage.portrait = insertPortraitHere;
-        messages.Enqueue(currentMessage);
+        currentSeasonMessageQueue.Enqueue(currentMessage);
       }
-      else if (item.eventName.Equals("goal_missed") && !checkWeeklyGoal())
+      else if (item.eventName.Equals("goalMissed") && newWeek && !checkWeeklyGoal())
       {
         currentMessage.eventName = item.eventName;
-        currentMessage.messageText = manipulateMessageString(item.messageText);
+        currentMessage.messageText = applyVariableDecoding(item.messageText);
+        currentMessage.speaker = item.speaker;
         //currentMessage.portrait = insertPortraitHere;
-        messages.Enqueue(currentMessage);
+        currentSeasonMessageQueue.Enqueue(currentMessage);
+      } 
+    }
+  }
+
+  /// <summary>
+  /// Pushes the event messages into the queue
+  /// </summary>
+  private void getEventMessages()
+  {
+    foreach (var item in MessageSystemDataInstance.eventMessages)
+    {
+      EventMessages currentMessage = new EventMessages();
+      
+      if (item.eventName.Equals("heavyRain") && heavyRainCheck())
+      {
+        currentMessage.eventName = item.eventName;
+        currentMessage.messageText = applyVariableDecoding(item.messageText);
+        currentMessage.speaker = item.speaker;
+        //currentMessage.portrait = insertPortraitHere;
+        currentEventMessageQueue.Enqueue(currentMessage);
+      }
+      else if (item.eventName.Equals("heavyFog") && heavyFogCheck())
+      {
+        currentMessage.eventName = item.eventName;
+        currentMessage.messageText = applyVariableDecoding(item.messageText);
+        currentMessage.speaker = item.speaker;
+        //currentMessage.portrait = insertPortraitHere;
+        currentEventMessageQueue.Enqueue(currentMessage);
+      }
+      else if (item.eventName.Equals("flood") && floodCheck())
+      {
+        currentMessage.eventName = item.eventName;
+        currentMessage.messageText = applyVariableDecoding(item.messageText);
+        currentMessage.speaker = item.speaker;
+        //currentMessage.portrait = insertPortraitHere;
+        currentEventMessageQueue.Enqueue(currentMessage);
       }
     }
-    return messages;
+  }
+  /// <summary>
+  /// Saves a tile from the MapTurn in the NextTurnScript in the MessageQueue
+  /// </summary>
+  /// <param name="tile"></param>
+  public void saveTileForMessage(GameManager.Tile tile) 
+  {
+    if(tile.fertilityState < 3) 
+    {
+      fertilityTilesMessage.Enqueue(tile);
+    }
+    
+    if (tile.reservedResources <= 20)
+    {
+      fertilityTilesMessage.Enqueue(tile);
+    }
+
+    if(tile.distanceAntHill > 10 && tile.assignedAnts > 0) 
+    {
+      distanceAntsMessage.Enqueue(tile);
+    }
   }
 }

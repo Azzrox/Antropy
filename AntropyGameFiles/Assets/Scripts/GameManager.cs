@@ -82,11 +82,18 @@ public class GameManager : MonoBehaviour
     
     [Header("Current Turn and Goal state")]
     /// <summary>
-    /// Max allowed turn number
+    /// Turn number
     /// </summary>
     public int currentTurnCount;
 
     public int currentGoalProgress;
+    
+    /// <summary>
+    /// Goal threshold (resources, ants) for each week
+    /// </summary>
+    public (int,int)[] goalThreshholds;
+
+
     [Header("Grow / degrow rates")]
 
     /// <summary>
@@ -131,8 +138,6 @@ public class GameManager : MonoBehaviour
     /// Weather regrow multiplier
     /// </summary>
     public float weatherRegrowMultiplier;
-
-    
 
     /// <summary>
     /// [0]Spring, [1]Summer, [2]Autumn, [3]Winter
@@ -286,7 +291,17 @@ public class GameManager : MonoBehaviour
     /// Current Turn Number
     /// </summary>
     public int maxTurnCount;
-    
+
+    /// <summary>
+    /// Week Length
+    /// </summary>
+    public int weekLength = 7;
+
+    /// <summary>
+    /// Ingame Week, adjusted based on weekLength automatically
+    /// </summary>
+    public int currentWeek;
+
     //PrototypeGoal
     public int goal;
     [Header("Statistics (cummulated data)")]
@@ -302,7 +317,7 @@ public class GameManager : MonoBehaviour
     public MessageScript messageSystemInstance;
     
     //Enables the tutorial
-    public bool tutorialEnabled;
+    public bool tutorialEnabled = false;
 
     // Creates an instance that is present in all other classes
     public static GameManager Instance;
@@ -330,8 +345,11 @@ public class GameManager : MonoBehaviour
         // construction states: (0 - not passable (water), 1 - hard-to-cross (rock), 2 - rough, 3 - normal plain land, 4 - ant path, 5 - ant street, 6 - ant highway )
         transportCostVector = new float[] {99, 10, 5, 2, 1, 0.5f, 0.1f};
         transportUpgradeCost = new int[] {1000, 100, 50, 50 , 50, 50};
-
         
+        //adjust them accordingly, just a test
+        goalThreshholds = new (int, int)[] {(3000,100), (3500, 250), (4000,300), (5000,400), (7000, 700)};
+
+
         Map = new Tile[rows, columns];
 
         anthillX = (int) Mathf.Round(columns / 2);
@@ -346,7 +364,7 @@ public class GameManager : MonoBehaviour
         nextTurnInstance = GameObject.Find("NextTurnCanvas").GetComponent<NextTurnScript>();
         messageSystemInstance = GameObject.Find("MessageSystem").GetComponent<MessageScript>();
         messageSystemInstance.EnableMessageSystem();
-        tutorialEnabled = true;
+        //tutorialEnabled = false;
   }
 
   [System.Serializable]
@@ -477,9 +495,6 @@ public class GameManager : MonoBehaviour
       hatcheryMaxLevel = populationCapacityAmount.Length;
       storageMaxLevel = storageCapacityAmount.Length;
       miniBarInfoInstance.MiniBarInfoUpdate();
-
-      //TEST DELETE LATER 
-      messageSystemInstance.startTutorialSequence(0);
     }
 
     // Update is called once per frame
@@ -664,6 +679,17 @@ public class GameManager : MonoBehaviour
     }
   }
 
+  /// <summary>
+  /// check if a new week has
+  /// </summary>
+  public void adjustWeek() 
+  { 
+    if(currentTurnCount % weekLength == 0) 
+    {
+      currentWeek++;
+    } 
+  }
+
     /// <summary>
     /// Endscore resource counter
     /// </summary>
@@ -693,6 +719,4 @@ public class GameManager : MonoBehaviour
         totalDeaths = value;
       }
     }
-
-  
 }
