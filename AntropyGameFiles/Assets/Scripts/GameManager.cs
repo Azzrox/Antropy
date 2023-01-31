@@ -93,11 +93,18 @@ public class GameManager : MonoBehaviour
     
     [Header("Current Turn and Goal state")]
     /// <summary>
-    /// Max allowed turn number
+    /// Turn number
     /// </summary>
     public int currentTurnCount;
 
     public int currentGoalProgress;
+    
+    /// <summary>
+    /// Goal threshold (resources, ants) for each week
+    /// </summary>
+    public (int,int)[] goalThreshholds;
+
+
     [Header("Grow / degrow rates")]
 
     /// <summary>
@@ -299,10 +306,24 @@ public class GameManager : MonoBehaviour
     /// Current Turn Number
     /// </summary>
     public int maxTurnCount;
-    
+
+    /// <summary>
+    /// Week Length
+    /// </summary>
+    public int weekLength = 7;
+
+    /// <summary>
+    /// Ingame Week, adjusted based on weekLength automatically
+    /// </summary>
+    public int currentWeek;
+
     //PrototypeGoal
     public int goal;
-    [Header("Statistics (cummulated data)")]
+
+    //Enables the tutorial
+    public bool tutorialEnabled = false;
+
+  [Header("Statistics (cummulated data)")]
 
     public int totalResources;
     public int totalDeaths;
@@ -312,7 +333,8 @@ public class GameManager : MonoBehaviour
     public WeatherScript weatherInstance;
     public MiniBarInfoUI miniBarInfoInstance;
     public NextTurnScript nextTurnInstance;
-
+    public MessageScript messageSystemInstance;
+    
     
 
     // Creates an instance that is present in all other classes
@@ -341,7 +363,11 @@ public class GameManager : MonoBehaviour
         // construction states: (0 - not passable (water), 1 - hard-to-cross (rock), 2 - rough, 3 - normal plain land, 4 - ant path, 5 - ant street, 6 - ant highway )
         transportCostVector = new float[] {99, 10, 5, 2, 1, 0.5f, 0.1f};
         transportUpgradeCost = new int[] {1000, 100, 50, 50 , 50, 50};
-  
+        
+        //adjust them accordingly, just a test
+        goalThreshholds = new (int, int)[] {(3000,100), (3500, 250), (4000,300), (5000,400), (7000, 700)};
+
+
         Map = new Tile[rows, columns];
 
         anthillX = (int) Mathf.Round(columns / 2);
@@ -358,7 +384,11 @@ public class GameManager : MonoBehaviour
         currentAudioSource = GetComponent<AudioSource>();
         currentAudioSource.clip = mainMenuMusic;
         currentAudioSource.Play();
-    }
+    
+        messageSystemInstance = GameObject.Find("MessageSystem").GetComponent<MessageScript>();
+        messageSystemInstance.EnableMessageSystem();
+     
+  }
 
   [System.Serializable]
     class SaveData
@@ -594,7 +624,7 @@ public class GameManager : MonoBehaviour
       }
     }
 
-    int Harvest()
+    public int Harvest()
     {
       int income = 0;
       for(int i = 0; i < rows; i++){
@@ -666,6 +696,17 @@ public class GameManager : MonoBehaviour
     {
       SceneManager.LoadScene("PrototypeEndScreen", LoadSceneMode.Additive);
     }
+  }
+
+  /// <summary>
+  /// check if a new week has
+  /// </summary>
+  public void adjustWeek() 
+  { 
+    if(currentTurnCount % weekLength == 0) 
+    {
+      currentWeek++;
+    } 
   }
 
     /// <summary>
