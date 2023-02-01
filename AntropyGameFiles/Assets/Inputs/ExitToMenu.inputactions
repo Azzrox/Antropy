@@ -1,0 +1,34 @@
+{
+    "name": "ExitToMenu",
+    "maps": [
+        {
+            "name": "Menu Exit",
+            "id": "3d485f41-bfd5-4cdb-90f2-b0659bddeb87",
+            "actions": [
+                {
+                    "name": "Button",
+                    "type": "Button",
+                    "id": "6bcc0d10-4aba-4bd0-b31b-e7641a567168",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "e962b92e-507f-4c3d-9913-272fb1d821f4",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Button",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

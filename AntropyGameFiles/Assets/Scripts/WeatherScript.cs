@@ -7,11 +7,13 @@ public class WeatherScript : MonoBehaviour
   /// [0]Spring, [1]Summer, [2]Autumn, [3]Winter
   /// [0]sun, [1]rain, [2]overcast, [3]fog, [4] snow
 
-  private GameManager gameManagerInstance;
 
   private void Awake()
   {
-    gameManagerInstance = GameObject.Find("Game Manager").GetComponent<GameManager>();
+  }
+
+  private void Start(){
+    GameManager.Instance.weatherInstance = this;
   }
     /// <summary>
     /// Updates the current Weather
@@ -25,7 +27,7 @@ public class WeatherScript : MonoBehaviour
           //higher probability of rain and sun
           //Basic Implementation for the Prototype
           int weather = Random.Range(0, 2);
-          gameManagerInstance.currentWeather = weather;
+          GameManager.Instance.currentWeather = weather;
           WeatherEffectsUpdate(currentSeason, weather);
           //WeatherMultiplierUpdate(weather);
           break;
@@ -116,54 +118,30 @@ public class WeatherScript : MonoBehaviour
   {
     if (weather == 0)
     {
-      gameManagerInstance.weatherAcessMultiplier = gameManagerInstance.sunAccess;
-      gameManagerInstance.weatherRegrowMultiplier = gameManagerInstance.sunRegrow;
+      GameManager.Instance.weatherAcessMultiplier = GameManager.Instance.sunAccess;
+      GameManager.Instance.weatherRegrowMultiplier = GameManager.Instance.sunRegrow;
     }
     else if (weather == 1)
     {
-      gameManagerInstance.weatherAcessMultiplier = gameManagerInstance.rainAccess;
-      gameManagerInstance.weatherRegrowMultiplier = gameManagerInstance.rainRegrow;
+      GameManager.Instance.weatherAcessMultiplier = GameManager.Instance.rainAccess;
+      GameManager.Instance.weatherRegrowMultiplier = GameManager.Instance.rainRegrow;
     }
     else if (weather == 2)
     {
-      gameManagerInstance.weatherAcessMultiplier = gameManagerInstance.overcastAccess;
-      gameManagerInstance.weatherRegrowMultiplier = gameManagerInstance.overcastRegrow;
+      GameManager.Instance.weatherAcessMultiplier = GameManager.Instance.overcastAccess;
+      GameManager.Instance.weatherRegrowMultiplier = GameManager.Instance.overcastRegrow;
     }
     else if (weather == 3)
     {
-      gameManagerInstance.weatherAcessMultiplier = gameManagerInstance.fogAccess;
-      gameManagerInstance.weatherRegrowMultiplier = gameManagerInstance.fogRegrow;
+      GameManager.Instance.weatherAcessMultiplier = GameManager.Instance.fogAccess;
+      GameManager.Instance.weatherRegrowMultiplier = GameManager.Instance.fogRegrow;
     }
     else if (weather == 4)
     {
-      gameManagerInstance.weatherAcessMultiplier = gameManagerInstance.snowAccess;
-      gameManagerInstance.weatherRegrowMultiplier = gameManagerInstance.snowRegrow;
+      GameManager.Instance.weatherAcessMultiplier = GameManager.Instance.snowAccess;
+      GameManager.Instance.weatherRegrowMultiplier = GameManager.Instance.snowRegrow;
     }
   }
 
-  /// <summary>
-  /// Returns the type integer to string name
-  /// </summary>
-  /// <param name="weatherType">[0]sun, [1]rain, [2]overcast, [3]fog, [4] snow</param>
-  /// <returns></returns>
-  public string WeatherName(int weatherType) 
-  {
-    switch (weatherType)
-    {
-      case 0:
-        return "Sun";
-      case 1:
-        return "Rain";
-      case 2:
-        return "Overcast";
-      case 3:
-        return "Fog";
-      case 4:
-        return "Snow";
-
-      default:
-        return "InvalidWeather";
-    }
-  }
 
 }

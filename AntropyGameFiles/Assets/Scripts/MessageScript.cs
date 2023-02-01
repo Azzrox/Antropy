@@ -10,7 +10,6 @@ using UnityEngine.UI;
 
 public class MessageScript : MonoBehaviour
 {
-  private GameManager gameManager;
 
   //UI
   public Button confirmButton;
@@ -43,13 +42,14 @@ public class MessageScript : MonoBehaviour
 
   private void Awake()
   {
-    gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
     confirmButton.onClick.AddListener(PlayNextMessage);
   }
 
   private void Start()
   {
-    if (gameManager.tutorialEnabled)
+    GameManager.Instance.messageSystemInstance = this;
+    EnableMessageSystem();
+    if (GameManager.Instance.tutorialEnabled)
     {
       getTutorialMessages();
       PlayNextMessage();
@@ -167,8 +167,8 @@ public class MessageScript : MonoBehaviour
   /// <returns></returns>
   private bool checkWeeklyGoal()
   {
-    if (gameManager.goalThreshholds[gameManager.currentWeek].Item1 <= gameManager.resources 
-      && gameManager.goalThreshholds[gameManager.currentWeek].Item2 <= gameManager.totalAnts)
+    if (GameManager.Instance.goalThreshholds[GameManager.Instance.currentWeek].Item1 <= GameManager.Instance.resources 
+      && GameManager.Instance.goalThreshholds[GameManager.Instance.currentWeek].Item2 <= GameManager.Instance.totalAnts)
     {
       return true;
     }
@@ -250,7 +250,7 @@ public class MessageScript : MonoBehaviour
   /// <returns></returns>
   private bool checkSeasonChange()
   {
-    if(oldSeason != gameManager.currentSeason) 
+    if(oldSeason != GameManager.Instance.currentSeason) 
     {
       return true;
     }
@@ -266,9 +266,9 @@ public class MessageScript : MonoBehaviour
   /// <returns></returns>
   private bool checkNewWeek()
   {
-    if (oldWeek != gameManager.currentWeek)
+    if (oldWeek != GameManager.Instance.currentWeek)
     {
-      oldWeek = gameManager.currentWeek;
+      oldWeek = GameManager.Instance.currentWeek;
       return true;
     }
     else
@@ -498,11 +498,11 @@ public class MessageScript : MonoBehaviour
     switch (encoding)
     {
       case 0:
-        encodingString = gameManager.freeAnts.ToString();
+        encodingString = GameManager.Instance.freeAnts.ToString();
         break;
 
       case 1:
-        encodingString = gameManager.resources.ToString();
+        encodingString = GameManager.Instance.resources.ToString();
         break;
 
       case 2:
@@ -510,15 +510,15 @@ public class MessageScript : MonoBehaviour
         break;
 
       case 3:
-        encodingString = gameManager.Harvest().ToString();
+        encodingString = GameManager.Instance.Harvest().ToString();
         break;
 
       case 4:
-        encodingString = gameManager.Upkeep().ToString();
+        encodingString = GameManager.Instance.Upkeep().ToString();
         break;
 
       case 5:
-        encodingString = gameManager.growth.ToString();
+        encodingString = GameManager.Instance.growth.ToString();
         break;
 
       case 6:
@@ -526,11 +526,11 @@ public class MessageScript : MonoBehaviour
         break;
 
       case 7:
-        encodingString = gameManager.income.ToString();
+        encodingString = GameManager.Instance.income.ToString();
         break;
 
       case 8:
-        encodingString = gameManager.currentSeason.ToString();
+        encodingString = GameManager.Instance.currentSeason.ToString();
         break;
 
       case 9:
@@ -542,15 +542,15 @@ public class MessageScript : MonoBehaviour
         break;
 
       //case 11:
-      //  encodingString = gameManager.antsLostEvent.ToString();
+      //  encodingString = GameManager.Instance.antsLostEvent.ToString();
       //  break;
       //
       //case 12:
-      //  encodingString = gameManager.affectedTilesEvent;
+      //  encodingString = GameManager.Instance.affectedTilesEvent;
       //  break;
 
       case 13:
-        encodingString = gameManager.totalAnts.ToString();
+        encodingString = GameManager.Instance.totalAnts.ToString();
         break;
 
       default:
@@ -583,7 +583,7 @@ public class MessageScript : MonoBehaviour
     foreach (var item in MessageSystemDataInstance.generalMessages)
     {
       Message currentMessage = new Message();
-      if (item.eventName.Equals("positiveIncome") && gameManager.income > 0)
+      if (item.eventName.Equals("positiveIncome") && GameManager.Instance.income > 0)
       {
         currentMessage.eventName = item.eventName;
         currentMessage.messageText = applyVariableDecoding(item.messageText);
@@ -591,7 +591,7 @@ public class MessageScript : MonoBehaviour
         //currentMessage.portrait = insertPortraitHere;
         currentGeneralMessageQueue.Enqueue(currentMessage);
       }
-      else if (item.eventName.Equals("negativeIncome") && gameManager.income < 0)
+      else if (item.eventName.Equals("negativeIncome") && GameManager.Instance.income < 0)
       {
         currentMessage.eventName = item.eventName;
         currentMessage.messageText = applyVariableDecoding(item.messageText);
@@ -599,7 +599,7 @@ public class MessageScript : MonoBehaviour
         //currentMessage.portrait = insertPortraitHere;
         currentGeneralMessageQueue.Enqueue(currentMessage);
       }
-      else if (item.eventName.Equals("antGrowth") && gameManager.growth > 0)
+      else if (item.eventName.Equals("antGrowth") && GameManager.Instance.growth > 0)
       {
         currentMessage.eventName = item.eventName;
         currentMessage.messageText = applyVariableDecoding(item.messageText);
@@ -607,7 +607,7 @@ public class MessageScript : MonoBehaviour
         //currentMessage.portrait = insertPortraitHere;
         currentGeneralMessageQueue.Enqueue(currentMessage);
       }
-      else if (item.eventName.Equals("stagnation") && gameManager.freeAnts == 0)
+      else if (item.eventName.Equals("stagnation") && GameManager.Instance.freeAnts == 0)
       {
         currentMessage.eventName = item.eventName;
         currentMessage.messageText = applyVariableDecoding(item.messageText);
@@ -615,7 +615,7 @@ public class MessageScript : MonoBehaviour
         //currentMessage.portrait = insertPortraitHere;
         currentGeneralMessageQueue.Enqueue(currentMessage);
       }
-      else if (item.eventName.Equals("starvation") && gameManager.resources == 0 && gameManager.income < 0)
+      else if (item.eventName.Equals("starvation") && GameManager.Instance.resources == 0 && GameManager.Instance.income < 0)
       {
         currentMessage.eventName = item.eventName;
         currentMessage.messageText = applyVariableDecoding(item.messageText);
@@ -623,7 +623,7 @@ public class MessageScript : MonoBehaviour
         //currentMessage.portrait = insertPortraitHere;
         currentGeneralMessageQueue.Enqueue(currentMessage);
       }
-      else if (item.eventName.Equals("overpopulation") && gameManager.totalAnts > gameManager.currentMaximumPopulationCapacity)
+      else if (item.eventName.Equals("overpopulation") && GameManager.Instance.totalAnts > GameManager.Instance.currentMaximumPopulationCapacity)
       {
         currentMessage.eventName = item.eventName;
         currentMessage.messageText = applyVariableDecoding(item.messageText);
@@ -650,7 +650,7 @@ public class MessageScript : MonoBehaviour
         //currentMessage.portrait = insertPortraitHere;
         currentWarningMessageQueue.Enqueue(currentMessage);
       }
-      else if (item.eventName.Equals("negativeIncome") && gameManager.income < 0)
+      else if (item.eventName.Equals("negativeIncome") && GameManager.Instance.income < 0)
       {
         currentMessage.eventName = item.eventName;
         currentMessage.messageText = applyVariableDecoding(item.messageText);
@@ -658,7 +658,7 @@ public class MessageScript : MonoBehaviour
         //currentMessage.portrait = insertPortraitHere;
         currentWarningMessageQueue.Enqueue(currentMessage);
       }
-      else if (item.eventName.Equals("overpopulation") && gameManager.totalAnts > gameManager.currentMaximumPopulationCapacity)
+      else if (item.eventName.Equals("overpopulation") && GameManager.Instance.totalAnts > GameManager.Instance.currentMaximumPopulationCapacity)
       {
         currentMessage.eventName = item.eventName;
         currentMessage.messageText = applyVariableDecoding(item.messageText);
@@ -666,7 +666,7 @@ public class MessageScript : MonoBehaviour
         //currentMessage.portrait = insertPortraitHere;
         currentWarningMessageQueue.Enqueue(currentMessage);
       }
-      else if (item.eventName.Equals("stagnation") && gameManager.freeAnts == 0)
+      else if (item.eventName.Equals("stagnation") && GameManager.Instance.freeAnts == 0)
       {
         currentMessage.eventName = item.eventName;
         currentMessage.messageText = applyVariableDecoding(item.messageText);
@@ -682,7 +682,7 @@ public class MessageScript : MonoBehaviour
         //currentMessage.portrait = insertPortraitHere;
         currentWarningMessageQueue.Enqueue(currentMessage);
       }
-      else if (item.eventName.Equals("fullStorage") && gameManager.maxResourceStorage == gameManager.resources)
+      else if (item.eventName.Equals("fullStorage") && GameManager.Instance.maxResourceStorage == GameManager.Instance.resources)
       {
         currentMessage.eventName = item.eventName;
         currentMessage.messageText = applyVariableDecoding(item.messageText);
@@ -698,7 +698,7 @@ public class MessageScript : MonoBehaviour
         //currentMessage.portrait = insertPortraitHere;
         currentWarningMessageQueue.Enqueue(currentMessage);
       }
-      else if (item.eventName.Equals("starvation") && gameManager.resources == 0 && gameManager.income < 0)
+      else if (item.eventName.Equals("starvation") && GameManager.Instance.resources == 0 && GameManager.Instance.income < 0)
       {
         currentMessage.eventName = item.eventName;
         currentMessage.messageText = applyVariableDecoding(item.messageText);
