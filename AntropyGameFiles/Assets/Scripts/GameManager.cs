@@ -69,11 +69,6 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public int resources;
 
-    public AudioClip summerMusic;
-    public AudioClip autmnMusic;
-    public AudioClip springMusic;
-    public AudioClip winterMusic;
-    public AudioClip mainMenuMusic;
     
 
     /// <summary>
@@ -293,12 +288,12 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// threshhold to update to grass
     /// </summary>
-    public int grassThreshhold = 150;
+    public int grassThreshhold = 100;
 
     /// <summary>
     /// threshhold to update to soil
     /// </summary>
-    public int soilThreshold = 50;
+    public int soilThreshold = 80;
 
     [Header("Time and Scope limit")]
     //Turns
@@ -327,6 +322,21 @@ public class GameManager : MonoBehaviour
 
     public int totalResources;
     public int totalDeaths;
+
+    [Header("Settings")]
+    public float musicVolume;
+    public float soundVolume;
+    public bool showAntsMovement;
+    public bool showWeatherEffects;
+    public bool showGrassMovement;
+
+
+    public AudioClip summerMusic;
+    public AudioClip autmnMusic;
+    public AudioClip springMusic;
+    public AudioClip winterMusic;
+    public AudioClip mainMenuMusic;
+
 
     public MapScript mapInstance;
     public MapCameraScript cameraInstance;
@@ -375,18 +385,18 @@ public class GameManager : MonoBehaviour
 
         Debug.Log("Map created: " + Map[1,0].type + " before mapinstance is initialized");
 
-        mapInstance = GameObject.Find("MapTiles").GetComponent<MapScript>();
-        cameraInstance = GameObject.Find("MapControls").GetComponent<MapCameraScript>();
-        weatherInstance = GameObject.Find("Weather").GetComponent<WeatherScript>();
-        miniBarInfoInstance = GameObject.Find("MiniBarInfo").GetComponent<MiniBarInfoUI>();
-        nextTurnInstance = GameObject.Find("NextTurnCanvas").GetComponent<NextTurnScript>();
+        //mapInstance = GameObject.Find("MapTiles").GetComponent<MapScript>();
+        //cameraInstance = GameObject.Find("MapControls").GetComponent<MapCameraScript>();
+        //weatherInstance = GameObject.Find("Weather").GetComponent<WeatherScript>();
+        //miniBarInfoInstance = GameObject.Find("MiniBarInfo").GetComponent<MiniBarInfoUI>();
+        //nextTurnInstance = GameObject.Find("NextTurnCanvas").GetComponent<NextTurnScript>();
 
         currentAudioSource = GetComponent<AudioSource>();
         currentAudioSource.clip = mainMenuMusic;
         currentAudioSource.Play();
     
-        messageSystemInstance = GameObject.Find("MessageSystem").GetComponent<MessageScript>();
-        messageSystemInstance.EnableMessageSystem();
+        //messageSystemInstance = GameObject.Find("MessageSystem").GetComponent<MessageScript>();
+        
      
   }
 
@@ -513,7 +523,7 @@ public class GameManager : MonoBehaviour
 
       hatcheryMaxLevel = populationCapacityAmount.Length;
       storageMaxLevel = storageCapacityAmount.Length;
-      miniBarInfoInstance.MiniBarInfoUpdate();
+      //miniBarInfoInstance.MiniBarInfoUpdate();
     }
 
     // Update is called once per frame

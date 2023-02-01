@@ -5,8 +5,10 @@ using UnityEngine;
 using System;
 //using Unity.VisualScripting;
 using UnityEditor;
+using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 
-public class TileScript : MonoBehaviour
+public class TileScript : MonoBehaviour, IPointerClickHandler
 {
   /// <summary>
   /// Eucledian Distance to the anthill in steps (no diagonal)
@@ -39,19 +41,22 @@ public class TileScript : MonoBehaviour
   {
     uiListener = GameObject.Find("NextTurnCanvas").GetComponent<MouseListenerUI>();
   }
+ 
 
+  
   /// <summary>
   /// Tile UI Activation
   /// </summary>
-  private void OnMouseDown()
+  //private void OnMouseDown()
+  public void OnPointerClick (PointerEventData eventData)
   {
     Debug.Log("CLICKED");
-    if (uiListener.isUIOverride)
-    {
-      Debug.Log("Cancelled OnMouseDown! A UI element has override this object!");
-    }
-    else
-    {
+    //if (uiListener.isUIOverride)
+    //{
+    //  Debug.Log("Cancelled OnMouseDown! A UI element has override this object!");
+    //}
+    //else
+    //{
       Debug.Log("in click mode");
       if (xPos == GameManager.Instance.anthillX && zPos == GameManager.Instance.anthillY)
       {
@@ -82,7 +87,7 @@ public class TileScript : MonoBehaviour
         uiMiniBarInfo.GetComponent<MiniBarInfoUI>().MiniBarInfoUpdate();
       }
       Debug.Log("element clicked" + UnityEngine.Random.Range(0, 40) + " pos: " + XPos + "|" + ZPos);
-    }
+    //}
   }
 
   

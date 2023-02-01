@@ -32,12 +32,14 @@ public class MapScript : MonoBehaviour
 
   void Start()
     {
+      Debug.Log("Random Map created");
+      GameManager.Instance.mapInstance = this;
       SpawnRandomMap();
       SpawnTerrainMap();    
       UpdateGrass();
       GameManager.Instance.WeightedDistanceToHill();
 
-      Debug.Log("Random Map created");
+      
 
     }
 

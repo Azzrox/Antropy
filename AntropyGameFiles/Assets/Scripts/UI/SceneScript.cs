@@ -4,6 +4,8 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -17,6 +19,17 @@ public class SceneScript : MonoBehaviour
     public Button openMenu;
     public Button openSettings;
     public Button openMap; 
+    public Button SettingsOK;
+
+    public Canvas Menu;
+    public Canvas Settings;
+
+    private ExitToMenu exitToMenu;
+    private InputAction menuExit;
+
+    void Awake(){
+        exitToMenu = new ExitToMenu();
+    }
     // Start is called before the first frame update
     void Start()
     {
@@ -24,6 +37,7 @@ public class SceneScript : MonoBehaviour
         quitGame.onClick.AddListener(QuitGame);
         saveGame.onClick.AddListener(SaveGame);
         loadGame.onClick.AddListener(LoadGame);
+        SettingsOK.onClick.AddListener(BackToMenu);
         if(openMenu){openMenu.onClick.AddListener(OpenMenu);}
         openSettings.onClick.AddListener(OpenSettings);
         if(openMap){openMap.onClick.AddListener(OpenMap);}
@@ -49,9 +63,11 @@ public class SceneScript : MonoBehaviour
         #endif 
     }
 
-    public void OpenAntHill(){
-        SceneManager.LoadScene("AntHill");
+    public void BackToMenu(){
+        Settings.enabled = false;
+        Menu.enabled = true;
     }
+
     public void OpenMap(){
         SceneManager.LoadScene("Prototype_v3 1");
     }
@@ -61,7 +77,8 @@ public class SceneScript : MonoBehaviour
     }
 
     public void OpenSettings(){
-        SceneManager.LoadScene("Settings");
+        Settings.enabled = true;
+        Menu.enabled = false;
     }
 
     public void SaveGame(){

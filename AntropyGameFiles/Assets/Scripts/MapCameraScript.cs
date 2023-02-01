@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
+
 
 /// <summary>
 /// Camera Movement Script
@@ -47,6 +50,9 @@ public class MapCameraScript : MonoBehaviour
   /// </summary>
   public float zMax;
 
+  private float inputX;
+  private float inputY;
+  
   private void Start()
   {
     xMin = 208f;
@@ -64,8 +70,8 @@ public class MapCameraScript : MonoBehaviour
 
   void Update()
   {
-    float inputX = Input.GetAxis("Horizontal");
-    float inputY = Input.GetAxis("Vertical");
+    //inputX = Input.GetAxis("Horizontal");
+    //inputY = Input.GetAxis("Vertical");
 
     movement = new Vector3(
     speed.x * inputX,
@@ -78,5 +84,18 @@ public class MapCameraScript : MonoBehaviour
     Mathf.Clamp(transform.position.y, yMin, yMax),
     Mathf.Clamp(transform.position.z, zMin, zMax));
   }
+  
+  private void OnMove(InputValue movementValue)
+  {
+    Debug.Log("moving");
+    Vector2 movementVector = movementValue.Get<Vector2>();
+    inputX = movementVector.x;
+    inputY = movementVector.y;
+  }
 
+  private void OnOpenMenu()
+  {
+    Debug.Log("Escape pressed");
+    SceneManager.LoadScene("Start");
+  }
  }
