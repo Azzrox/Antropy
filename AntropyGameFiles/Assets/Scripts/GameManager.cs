@@ -300,12 +300,17 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Current Turn Number
     /// </summary>
-    public int maxTurnCount;
+    public int maxTurnCount = 120;
 
     /// <summary>
     /// Week Length
     /// </summary>
-    public int weekLength = 7;
+    public int weekLength = 10;
+
+    /// <summary>
+    /// Season Length for each season
+    /// </summary>
+    public int seasonLength = 30;
 
     /// <summary>
     /// Ingame Week, adjusted based on weekLength automatically
@@ -315,8 +320,13 @@ public class GameManager : MonoBehaviour
     //PrototypeGoal
     public int goal;
 
-    //Enables the tutorial
+    [Header("MessageSystem Messages")]
+    //Enables Messages
     public bool tutorialEnabled = false;
+    public bool generalEnabled = false;
+    public bool strategicEnabled = false;
+    public bool warningEnabled = false;
+    public bool EventEnabled = false;
 
   [Header("Statistics (cummulated data)")]
 
@@ -484,7 +494,29 @@ public class GameManager : MonoBehaviour
       return type_name;
     }
 
-    public Dictionary<int, string> FertilityNames = new Dictionary<int, string>()
+  /// <summary>
+  /// Returns the season string
+  /// </summary>
+  /// <param name="season"></param>
+  /// <returns></returns>
+  public string SeasonName(int season)
+  {
+    switch (season)
+    {
+      case 0:
+        return "Spring";
+      case 1:
+        return "Summer";
+      case 2:
+        return "Autumn";
+      case 3:
+        return "Winter";
+      default:
+        return "InvalidSeason";
+    }
+  }
+
+  public Dictionary<int, string> FertilityNames = new Dictionary<int, string>()
     {{0, "Desert"},
      {1, "Steppe"},
      {2, "Sandy Soil"},
@@ -717,6 +749,11 @@ public class GameManager : MonoBehaviour
     {
       currentWeek++;
     } 
+  }
+
+  public void checkSeasonChange() 
+  {
+    currentSeason = Mathf.CeilToInt(currentTurnCount / seasonLength);
   }
 
     /// <summary>

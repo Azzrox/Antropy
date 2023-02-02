@@ -70,7 +70,7 @@ public class MiniBarInfoUI : MonoBehaviour
     goal.text = "Goal: " + GameManager.Instance.currentGoalProgress + "/" + GameManager.Instance.goal+ " Controlled";
 
     //Currently Hardgecoded for Prototype
-    season.text = "Spring / " + WeatherName(GameManager.Instance.currentWeather);
+    season.text = GameManager.Instance.SeasonName(GameManager.Instance.currentSeason) + " / " + WeatherName(GameManager.Instance.currentWeather);
 
     populationFill.SetLeftRight(0, GameManager.Instance.totalAnts, GameManager.Instance.currentMaximumPopulationCapacity,0);
     growthIndicator.SetLeftRight(GameManager.Instance.totalAnts, GameManager.Instance.growth, GameManager.Instance.currentMaximumPopulationCapacity, 0.17f);

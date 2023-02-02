@@ -140,19 +140,47 @@ public class MessageScript : MonoBehaviour
     {
       this.gameObject.SetActive(false);
     }
+
+    //Clears Queues
+    clearDisabledMessages();
+  }
+
+  /// <summary>
+  /// Clears all Messagequeues
+  /// </summary>
+  private void clearDisabledMessages() 
+  {
+    if (!GameManager.Instance.tutorialEnabled)
+    {
+      currentTutorialMessageQueue.Clear();
+    }
+    if (!GameManager.Instance.generalEnabled) 
+    {
+      currentGeneralMessageQueue.Clear();
+    }
+    if (!GameManager.Instance.strategicEnabled)
+    {
+      currentSeasonMessageQueue.Clear();
+    }
+    if (!GameManager.Instance.warningEnabled)
+    {
+      currentWarningMessageQueue.Clear();
+    }
+    if (!GameManager.Instance.EventEnabled)
+    {
+      currentWarningMessageQueue.Clear();
+    }
   }
 
   //TODO Implementation with the rest of the weather
   private string TurnsUntilWinter()
   {
-    /*
-    string untilWinterCount = "";
-    if(gameManager.currentTurnCount < gameManager.winterStart) 
+    if(GameManager.Instance.currentTurnCount < (GameManager.Instance.maxTurnCount - GameManager.Instance.seasonLength)) 
     {
-      untilWinterCount += (gameManager.currentTurnCount - gameManager.winterStart).ToString();
+       return (GameManager.Instance.maxTurnCount - GameManager.Instance.seasonLength - GameManager.Instance.currentTurnCount).ToString();
     }
-    */
-    return "(not implemented)";
+   
+    return "0";
   }
 
   //TODO Implementation missing
@@ -522,7 +550,7 @@ public class MessageScript : MonoBehaviour
         break;
 
       case 6:
-        encodingString = TurnsUntilWinter(); //not implemented
+        encodingString = TurnsUntilWinter();
         break;
 
       case 7:
@@ -530,7 +558,7 @@ public class MessageScript : MonoBehaviour
         break;
 
       case 8:
-        encodingString = GameManager.Instance.currentSeason.ToString();
+        encodingString = GameManager.Instance.SeasonName(GameManager.Instance.currentSeason);
         break;
 
       case 9:

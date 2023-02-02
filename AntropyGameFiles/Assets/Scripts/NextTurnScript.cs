@@ -253,6 +253,7 @@ public class NextTurnScript : MonoBehaviour
   void SeasonTurn() 
   {
     //Insert Season Turn
+    GameManager.Instance.checkSeasonChange();
   }
 
   public void TurnInfoUpdate()
