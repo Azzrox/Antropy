@@ -330,6 +330,8 @@ public class GameManager : MonoBehaviour
     public bool showWeatherEffects;
     public bool showGrassMovement;
 
+    public bool GameRunning;
+
 
     public AudioClip summerMusic;
     public AudioClip autmnMusic;
