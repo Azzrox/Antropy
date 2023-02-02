@@ -16,13 +16,13 @@ public class SceneScript : MonoBehaviour
     public Button quitGame; 
     public Button saveGame; 
     public Button loadGame; 
-    public Button openMenu;
     public Button openSettings;
-    public Button openMap; 
     public Button SettingsOK;
+    public Button backToGame;
 
     public Canvas Menu;
     public Canvas Settings;
+    public Canvas backToMenu;
 
     private ExitToMenu exitToMenu;
     private InputAction menuExit;
@@ -38,9 +38,12 @@ public class SceneScript : MonoBehaviour
         saveGame.onClick.AddListener(SaveGame);
         loadGame.onClick.AddListener(LoadGame);
         SettingsOK.onClick.AddListener(BackToMenu);
-        if(openMenu){openMenu.onClick.AddListener(OpenMenu);}
         openSettings.onClick.AddListener(OpenSettings);
-        if(openMap){openMap.onClick.AddListener(OpenMap);}
+        backToGame.onClick.AddListener(BackToGame);
+        if (GameManager.Instance.GameRunning)
+        {
+            backToMenu.enabled = true;
+        }
 
     }
 
@@ -86,7 +89,10 @@ public class SceneScript : MonoBehaviour
     }
 
     public void LoadGame(){
-        SceneManager.LoadScene("Menu");
+        //SceneManager.LoadScene("Menu");
+    }
+    public void BackToGame(){
+        SceneManager.LoadScene("Prototype_v3 1");
     }
 
 }
