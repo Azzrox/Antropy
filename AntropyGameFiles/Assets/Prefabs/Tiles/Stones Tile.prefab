@@ -104,7 +104,8 @@ MonoBehaviour:
   ressourcesPerGrass: 0
   stoneDensity: 0.03
   size: 0.8
-  decorationPrefab: {fileID: 148512773423715025, guid: a4225c4c84335dd419f44dd874853c12, type: 3}
+  defaultDecorationPrefab: {fileID: 148512773423715025, guid: a4225c4c84335dd419f44dd874853c12, type: 3}
+  staticDecorationPrefab: {fileID: 0}
   fertilityColors:
   - {r: 0.3962264, g: 0.3962264, b: 0.3962264, a: 0}
 --- !u!114 &1955278565170114836

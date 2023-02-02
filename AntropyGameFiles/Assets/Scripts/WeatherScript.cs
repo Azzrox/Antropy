@@ -61,29 +61,31 @@ public class WeatherScript : MonoBehaviour
         bool leaves = false;
         bool lightning = false;
 
-
-        switch (weather)
+        if (GameManager.Instance.showWeatherEffects)
         {
-            case 0: //Sun
-                if (currentSeason != 3) //no leaves in the winter
-                {
-                    leaves = true;
-                }
-                break;
-            case 1: //Rain
-                rain = true;
-                lightning = true;
-                break;
-            case 2: //Overcast
-                break; 
-            case 3: //Fog
-                break;
-            case 4: //Snow
-                snow = true;
-                break;
-            default:
-                Debug.Log("Error with updating weather particle systems");
-                break;
+            switch (weather)
+            {
+                case 0: //Sun
+                    if (currentSeason != 3) //no leaves in the winter
+                    {
+                        leaves = true;
+                    }
+                    break;
+                case 1: //Rain
+                    rain = true;
+                    lightning = true;
+                    break;
+                case 2: //Overcast
+                    break;
+                case 3: //Fog
+                    break;
+                case 4: //Snow
+                    snow = true;
+                    break;
+                default:
+                    Debug.Log("Error with updating weather particle systems");
+                    break;
+            }
         }
 
         foreach (GameObject wEffect in GameObject.FindGameObjectsWithTag("WeatherEffect"))
