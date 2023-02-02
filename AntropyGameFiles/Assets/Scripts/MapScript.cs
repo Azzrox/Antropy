@@ -36,12 +36,18 @@ public class MapScript : MonoBehaviour
       if(!GameManager.Instance.GameRunning)
       {
         Debug.Log("Random Map created");
+        GameManager.Instance.SetInitialValues();
         GameManager.Instance.mapInstance = this;
         SpawnRandomMap();
         SpawnTerrainMap();    
         UpdateGrass();
         GameManager.Instance.WeightedDistanceToHill();
         GameManager.Instance.GameRunning = true;
+        GameManager.Instance.UpdateIncomeGrowth();
+          // update UI
+        
+        GameManager.Instance.miniBarInfoInstance.MiniBarInfoUpdate();
+        GameManager.Instance.nextTurnInstance.TurnInfoUpdate();
       }
       else{
         Debug.Log("TODO: set map values to the ones stored!!");
@@ -90,6 +96,7 @@ public class MapScript : MonoBehaviour
     
   }
   
+
   /// <summary>
   /// Random Map creation with no seed
   /// </summary>
@@ -491,7 +498,6 @@ public void SetExplored(int posX, int posZ, bool explored)
       // decrease fertility
       float pThreshold = (0.2f + GameManager.Instance.Map[posX, posZ].fertilityState * 0.15f) * (100 - GameManager.Instance.Map[posX, posZ].resourceAmount)/100;
       float randNumber = Random.value;
-      Debug.Log("rand Number: " + randNumber + ", prob: " + pThreshold);
       if (Random.value < pThreshold)
       {
         GameManager.Instance.Map[posX, posZ].fertilityState = Mathf.Max(0, GameManager.Instance.Map[posX, posZ].fertilityState - 1);
@@ -581,10 +587,14 @@ public void SetExplored(int posX, int posZ, bool explored)
       {
         mapMatrix[posX, posZ].spawnRoadOnTile(GameManager.Instance.Map[posX, posZ].constructionState - 4);
       }
-      Debug.Log("i,j: " + posX + ", " + posZ + ", " + GameManager.Instance.Map[posX, posZ].resourceAmount);
       GameManager.Instance.mapInstance.mapMatrix[posX, posZ].GetComponent<MapTileGeneration>().RecalculateGrassDensity(GameManager.Instance.Map[posX, posZ].resourceAmount);
 
       UpgradeFertilityColor(posX, posZ, GameManager.Instance.Map[posX, posZ].fertilityState);
+    }
+
+    if (GameManager.Instance.Map[posX, posZ].assignedAnts > 0)
+    {
+      mapMatrix[posX, posZ].AdjustAntSize(GameManager.Instance.Map[posX, posZ].assignedAnts);
     }
   }
 

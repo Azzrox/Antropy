@@ -20,6 +20,12 @@ public class SettingsScript : MonoBehaviour
         weatherEffects.onValueChanged.AddListener(delegate {UpdateWeatherEffects(); });
         grassMovement.onValueChanged.AddListener(delegate {UpdateGrassMovementt(); });
 
+        antsMovement.isOn = GameManager.Instance.showAntsMovement;
+        weatherEffects.isOn = GameManager.Instance.showWeatherEffects;
+        grassMovement.isOn = GameManager.Instance.showGrassMovement;
+        sound.value = GameManager.Instance.soundVolume;
+        music.value = GameManager.Instance.musicVolume;
+
     }
 
     // Update is called once per frame

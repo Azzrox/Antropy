@@ -534,6 +534,22 @@ public class GameManager : MonoBehaviour
 
     }
 
+    public void SetInitialValues(){
+
+      totalAnts = 20;
+      freeAnts = 20;
+      currentMaximumPopulationCapacity = 70;
+      resources = 0;
+      maxResourceStorage = 150;
+      income = 0;
+      growth = 0;
+
+      currentTurnCount = 0;
+      currentGoalProgress = 0;
+      
+
+    }
+
     float DistanceToHill(int pos_x, int pos_y)
     {
         
