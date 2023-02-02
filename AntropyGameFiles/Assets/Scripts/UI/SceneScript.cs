@@ -55,6 +55,7 @@ public class SceneScript : MonoBehaviour
 
     public void NewGame(){
         // generate map if no map was loaded
+        GameManager.Instance.GameRunning = false;
         SceneManager.LoadScene("Prototype_v3 1");
     }
 

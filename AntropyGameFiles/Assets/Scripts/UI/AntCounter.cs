@@ -75,10 +75,9 @@ public class AntCounter : MonoBehaviour
           UpdateSlider();
           GameManager.Instance.miniBarInfoInstance.MiniBarInfoUpdate();
           
+          
           //Spawn the Ant sprite (only one due to limitations, "starts to lag at some point with larger maps)
-          if (!GameManager.Instance.Map[posX, posZ].partOfAnthill && GameManager.Instance.Map[posX, posZ].assignedAnts == 1) { SpawnAnt(); }
-          else if (!GameManager.Instance.Map[posX, posZ].partOfAnthill && GameManager.Instance.Map[posX, posZ].assignedAnts > 1) { AdjustAntSize((float)GameManager.Instance.Map[posX, posZ].assignedAnts); }
-
+          UpdateAntTile();
           
 
             //Debug.Log("partOfAnthill: " + GameManager.Instance.Map[posX, posZ].partOfAnthill + "assignedAnts: " + GameManager.Instance.Map[posX, posZ].assignedAnts);
@@ -86,20 +85,7 @@ public class AntCounter : MonoBehaviour
     
     }
 
-    void AdjustAntSize(float size)
-    {
-        GameObject targetAnt = antlist.Find(element => (element.GetComponent<AntPathing>().coordinates[0] == posX) && (element.GetComponent<AntPathing>().coordinates[1] == posZ));
-
-        if (targetAnt != null) {
-            var scale = targetAnt.transform.localScale;
-            size = Mathf.Sqrt(size);
-            scale.Set(size, size, size);
-            targetAnt.transform.localScale = scale;
-            //Debug.Log("new Size: " + size);
-        }
-        else { Debug.Log("Could not find the ant!"); }
-        
-    }
+   
     void DecreaseAnts()
     {
       if (GameManager.Instance.Map[posX, posZ].assignedAnts > 0)
@@ -118,14 +104,14 @@ public class AntCounter : MonoBehaviour
         UpdateSlider();
         GameManager.Instance.miniBarInfoInstance.MiniBarInfoUpdate();
 
-        if (!GameManager.Instance.Map[posX, posZ].partOfAnthill && GameManager.Instance.Map[posX, posZ].assignedAnts == 0) { RemoveAnt(); }
-        else if (!GameManager.Instance.Map[posX, posZ].partOfAnthill && GameManager.Instance.Map[posX, posZ].assignedAnts > 0) { AdjustAntSize((float)GameManager.Instance.Map[posX, posZ].assignedAnts); }
+        UpdateAntTile();
+
       }
     }
 
+// Triggered by Slider Action
     void UpdateAnts()
     {
-      Debug.Log("Slider moved!, x|y: " + posX + "|" + posZ);
       int oldAnt = GameManager.Instance.Map[posX,posZ].assignedAnts;
       int antDelta = oldAnt - (int)antSlider.value;
       GameManager.Instance.freeAnts += antDelta;
@@ -141,7 +127,8 @@ public class AntCounter : MonoBehaviour
       GameManager.Instance.UpdateIncomeGrowth();
       // update UI
       UpdateAntText();
-      Debug.Log("Now there should be a minibar info update, income should be: " + GameManager.Instance.income);
+      UpdateAntTile();
+
       GameManager.Instance.miniBarInfoInstance.MiniBarInfoUpdate();
     }
 
@@ -151,7 +138,6 @@ public class AntCounter : MonoBehaviour
         gameObject.GetComponent<Canvas>().enabled = false;
         GameObject highlight = GameObject.Find("HighlightTile");
         highlight.GetComponent<MeshRenderer>().enabled = false;
-        Debug.Log("Anthill is dominated?: " + GameManager.Instance.Map[posX, posZ].dominatedByPlayer + ", occupied?: " + GameManager.Instance.Map[posX, posZ].occupiedByPlayer);
     }
 
     void UpdateRoad()
@@ -273,29 +259,22 @@ public class AntCounter : MonoBehaviour
     transportCostText.text = "Transport cost: " + GameManager.Instance.Map[posX, posZ].foodTransportCost + ", dis: " + GameManager.Instance.Map[posX, posZ].distanceAntHill;
     }
 
-    void SpawnAnt() 
-    {
-        GameObject ant = Instantiate<GameObject>(antPrefab, new Vector3(posX + 0.5f, 0.2f, posZ + 0.5f), Quaternion.identity, antCollection.transform) ;
-        ant.GetComponent<AntPathing>().coordinates = new int[] {posX, posZ};
-        antlist.Add(ant);
-
-    }
-
-    void RemoveAnt() 
-    {
-        // some ants might fall outside that area?
-        if (antlist.Count > 0)
-        {
-            GameObject squashThis = antlist.Find(element => element.GetComponent<AntPathing>().coordinates[0] == posX && element.GetComponent<AntPathing>().coordinates[1] == posZ);
-            antlist.Remove(squashThis);
-            Destroy(squashThis);
-        }
-    }
-
     void UpdateRoadTile()
     {
       if (GameManager.Instance.Map[posX, posZ].constructionState > 3){
         GameManager.Instance.mapInstance.mapMatrix[posX,posZ].spawnRoadOnTile(GameManager.Instance.Map[posX, posZ].constructionState - 4);
+      }
+    }
+
+    void UpdateAntTile()
+    {
+      if(GameManager.Instance.Map[posX, posZ].assignedAnts > 0)
+      {
+        GameManager.Instance.mapInstance.mapMatrix[posX, posZ].AdjustAntSize(GameManager.Instance.Map[posX, posZ].assignedAnts);
+      }
+      else
+      {
+        GameManager.Instance.mapInstance.mapMatrix[posX, posZ].RemoveAnt();
       }
     }
 }

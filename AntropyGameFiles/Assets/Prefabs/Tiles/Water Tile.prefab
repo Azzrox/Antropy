@@ -127,6 +127,7 @@ MonoBehaviour:
   - {fileID: 2132126721549656084, guid: e7c890c89bb889d4db9907d4eab83188, type: 3}
   - {fileID: 2132126721549656084, guid: 4a9d044dba82da2439aeb0fc499d0115, type: 3}
   - {fileID: 1829782413212097693, guid: f188de0e2a5dd404eb5416e22add74db, type: 3}
+  antPrefab: {fileID: 1986129713373733640, guid: 9383419d77f3fc6418e71c1139f1abe5, type: 3}
 --- !u!64 &-1105745383808857820
 MeshCollider:
   m_ObjectHideFlags: 0
