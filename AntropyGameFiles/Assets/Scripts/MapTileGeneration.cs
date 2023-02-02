@@ -32,7 +32,8 @@ public class MapTileGeneration : MonoBehaviour
     [SerializeField] private float ressourcesPerGrass;
     [SerializeField] private float stoneDensity;
     [SerializeField] private float size;
-    [SerializeField] private GameObject decorationPrefab;
+    [SerializeField] private GameObject defaultDecorationPrefab;
+    [SerializeField] private GameObject staticDecorationPrefab;
 
     [Header("Colors")]
 
@@ -101,6 +102,17 @@ public class MapTileGeneration : MonoBehaviour
         colors = new Color[vertices.Length];
 
         int n = 0;
+
+        GameObject decorationPrefab = null;
+
+        if (!GameManager.Instance.showGrassMovement && staticDecorationPrefab != null)
+        {
+            decorationPrefab = staticDecorationPrefab;
+        }
+        else if (defaultDecorationPrefab != null)
+        {
+            decorationPrefab = defaultDecorationPrefab;
+        }
 
         //generate the verctives of our mesh
         for (int i = 0, z = 0; z <= resolution; z++)
