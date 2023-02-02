@@ -32,15 +32,64 @@ public class MapScript : MonoBehaviour
 
   void Start()
     {
-      SpawnRandomMap();
-      SpawnTerrainMap();    
-      UpdateGrass();
-      GameManager.Instance.WeightedDistanceToHill();
 
-      Debug.Log("Random Map created");
+      if(!GameManager.Instance.GameRunning)
+      {
+        Debug.Log("Random Map created");
+        GameManager.Instance.mapInstance = this;
+        SpawnRandomMap();
+        SpawnTerrainMap();    
+        UpdateGrass();
+        GameManager.Instance.WeightedDistanceToHill();
+        GameManager.Instance.GameRunning = true;
+      }
+      else{
+        Debug.Log("TODO: set map values to the ones stored!!");
+        GameManager.Instance.mapInstance = this;
+        LoadMap();
+        UpdateGrass();
+      }
+      
+
+      
 
     }
 
+  public void LoadMap(){
+    for (int i = 0; i < GameManager.Instance.rows; i++)
+    {
+      for (int j = 0; j < GameManager.Instance.columns; j++)
+      {
+
+        if(i == GameManager.Instance.anthillX && j == GameManager.Instance.anthillY) 
+        {
+          CreateAnthillTile(i, j);
+        }
+        else
+        {
+
+          var tileEntry = Instantiate(tilePrefabs[GameManager.Instance.Map[i,j].type],
+            new Vector3(i, 0, j), //position of the spawn
+            Quaternion.identity,
+            this.transform) as Transform;
+          TileScript newTile = tileEntry.GetComponent<TileScript>();
+          newTile.XPos = i; 
+          newTile.ZPos = j;
+
+          //save the script in the matrix
+          mapMatrix[i, j] = newTile;
+          UpdatePrefab(i, j, GameManager.Instance.Map[i,j].type);
+          UpdatePrefabAppearance(i,j);
+
+
+        }
+      }
+    }
+    GameObject.Find("AssignAnts").GetComponent<Canvas>().enabled = false;
+    GameObject.Find("Anthill").GetComponent<Canvas>().enabled = false;
+    
+  }
+  
   /// <summary>
   /// Random Map creation with no seed
   /// </summary>
@@ -532,7 +581,7 @@ public void SetExplored(int posX, int posZ, bool explored)
       {
         mapMatrix[posX, posZ].spawnRoadOnTile(GameManager.Instance.Map[posX, posZ].constructionState - 4);
       }
-       
+      Debug.Log("i,j: " + posX + ", " + posZ + ", " + GameManager.Instance.Map[posX, posZ].resourceAmount);
       GameManager.Instance.mapInstance.mapMatrix[posX, posZ].GetComponent<MapTileGeneration>().RecalculateGrassDensity(GameManager.Instance.Map[posX, posZ].resourceAmount);
 
       UpgradeFertilityColor(posX, posZ, GameManager.Instance.Map[posX, posZ].fertilityState);

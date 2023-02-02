@@ -141,7 +141,7 @@ public class AntCounter : MonoBehaviour
       GameManager.Instance.UpdateIncomeGrowth();
       // update UI
       UpdateAntText();
-      
+      Debug.Log("Now there should be a minibar info update, income should be: " + GameManager.Instance.income);
       GameManager.Instance.miniBarInfoInstance.MiniBarInfoUpdate();
     }
 

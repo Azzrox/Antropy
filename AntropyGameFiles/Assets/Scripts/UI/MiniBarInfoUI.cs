@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+[DefaultExecutionOrder(100)]
 public class MiniBarInfoUI : MonoBehaviour
 {
   public TextMeshProUGUI resourcesValue;
@@ -24,9 +25,41 @@ public class MiniBarInfoUI : MonoBehaviour
   {
    
   }
+  private void Start() {
+    MiniBarInfoUpdate();
+    Debug.Log("add miniBarInfoInstance to GameManager");
+    GameManager.Instance.miniBarInfoInstance = this;
+  }
+
+  
+  /// <summary>
+  /// Returns the type integer to string name
+  /// </summary>
+  /// <param name="weatherType">[0]sun, [1]rain, [2]overcast, [3]fog, [4] snow</param>
+  /// <returns></returns>
+  public string WeatherName(int weatherType) 
+  {
+    switch (weatherType)
+    {
+      case 0:
+        return "Sun";
+      case 1:
+        return "Rain";
+      case 2:
+        return "Overcast";
+      case 3:
+        return "Fog";
+      case 4:
+        return "Snow";
+
+      default:
+        return "InvalidWeather";
+    }
+  }
 
   public void MiniBarInfoUpdate()
   {
+    Debug.Log("Function: update of minibar Info: " + GameManager.Instance.income);
     int income = GameManager.Instance.income;
     string incomeString = income < 0 ? " (<color=red>" + income + "</color>)/" : " (+" + income + ")/";
     resourcesValue.text = GameManager.Instance.resources + incomeString + GameManager.Instance.maxResourceStorage;
@@ -37,7 +70,7 @@ public class MiniBarInfoUI : MonoBehaviour
     goal.text = "Goal: " + GameManager.Instance.currentGoalProgress + "/" + GameManager.Instance.goal+ " Controlled";
 
     //Currently Hardgecoded for Prototype
-    season.text = "Spring / " + GameManager.Instance.weatherInstance.WeatherName(GameManager.Instance.currentWeather);
+    season.text = "Spring / " + WeatherName(GameManager.Instance.currentWeather);
 
     populationFill.SetLeftRight(0, GameManager.Instance.totalAnts, GameManager.Instance.currentMaximumPopulationCapacity,0);
     growthIndicator.SetLeftRight(GameManager.Instance.totalAnts, GameManager.Instance.growth, GameManager.Instance.currentMaximumPopulationCapacity, 0.17f);
