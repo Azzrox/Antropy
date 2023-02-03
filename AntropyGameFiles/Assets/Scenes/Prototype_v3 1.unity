@@ -737,6 +737,63 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1001 &1312735272
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3323433647365685762, guid: 6e761743bfe785e4b9e9e78bd8ca24fb, type: 3}
+      propertyPath: m_RootOrder
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 3323433647365685762, guid: 6e761743bfe785e4b9e9e78bd8ca24fb, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 559.15845
+      objectReference: {fileID: 0}
+    - target: {fileID: 3323433647365685762, guid: 6e761743bfe785e4b9e9e78bd8ca24fb, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 254.31595
+      objectReference: {fileID: 0}
+    - target: {fileID: 3323433647365685762, guid: 6e761743bfe785e4b9e9e78bd8ca24fb, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -1.0397251
+      objectReference: {fileID: 0}
+    - target: {fileID: 3323433647365685762, guid: 6e761743bfe785e4b9e9e78bd8ca24fb, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3323433647365685762, guid: 6e761743bfe785e4b9e9e78bd8ca24fb, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3323433647365685762, guid: 6e761743bfe785e4b9e9e78bd8ca24fb, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3323433647365685762, guid: 6e761743bfe785e4b9e9e78bd8ca24fb, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3323433647365685762, guid: 6e761743bfe785e4b9e9e78bd8ca24fb, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3323433647365685762, guid: 6e761743bfe785e4b9e9e78bd8ca24fb, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3323433647365685762, guid: 6e761743bfe785e4b9e9e78bd8ca24fb, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3323433647365685773, guid: 6e761743bfe785e4b9e9e78bd8ca24fb, type: 3}
+      propertyPath: m_Name
+      value: WinterCountdownSystem
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 6e761743bfe785e4b9e9e78bd8ca24fb, type: 3}
 --- !u!1 &1347541970
 GameObject:
   m_ObjectHideFlags: 0
@@ -886,20 +943,17 @@ MonoBehaviour:
   assignedHillAnts: 
   currentMaximumPopulationCapacity: 70
   resources: 0
-  summerMusic: {fileID: 0}
-  autmnMusic: {fileID: 0}
-  springMusic: {fileID: 0}
-  winterMusic: {fileID: 0}
-  mainMenuMusic: {fileID: 0}
   maxResourceStorage: 150
   income: 0
   growth: 0
   currentTurnCount: 0
   currentGoalProgress: 0
+  winterFoodUse: 0
   foodPerAnt: 5
   antPopGrowthPerTurn: 0.3
   antOverPopulationDeathRate: 2
   antDeathLackofResourcesRate: 0
+  antWinterDeathRate: 0
   distanceGatheringReductionRate: 0.06931472
   resourceGatherRate: 10
   tileRegrowAmount: 20
@@ -936,11 +990,18 @@ MonoBehaviour:
   soilWeight: 0.3
   grassThreshhold: 150
   soilThreshold: 100
-  maxTurnCount: 100
-  weekLength: 7
+  maxTurnCount: 120
+  weekLength: 10
+  seasonLength: 30
   currentWeek: 0
   goal: 80
-  tutorialEnabled: 0
+  gameOverWinter: 0
+  tutorialEnabled: 1
+  generalEnabled: 1
+  strategicEnabled: 1
+  warningEnabled: 1
+  eventEnabled: 1
+  winterEnabled: 1
   totalResources: 0
   totalDeaths: 0
   musicVolume: 0
@@ -948,17 +1009,19 @@ MonoBehaviour:
   showAntsMovement: 0
   showWeatherEffects: 0
   showGrassMovement: 0
-  summerMusic: {fileID: 8300000, guid: 9572b81223dd68943bdeb36f67fb727e, type: 3}
-  autmnMusic: {fileID: 8300000, guid: 37be31a312bd4fe4b96389a376d7faf3, type: 3}
-  springMusic: {fileID: 8300000, guid: a7992452c65054a42b72c942e5041952, type: 3}
-  winterMusic: {fileID: 8300000, guid: 9df16741027e2d14c865e398671f5068, type: 3}
-  mainMenuMusic: {fileID: 8300000, guid: 74f583557d1b1b34ea3faad235ae1b2f, type: 3}
+  GameRunning: 0
+  summerMusic: {fileID: 0}
+  autmnMusic: {fileID: 0}
+  springMusic: {fileID: 0}
+  winterMusic: {fileID: 0}
+  mainMenuMusic: {fileID: 0}
   mapInstance: {fileID: 0}
   cameraInstance: {fileID: 0}
   weatherInstance: {fileID: 0}
   miniBarInfoInstance: {fileID: 0}
   nextTurnInstance: {fileID: 0}
   messageSystemInstance: {fileID: 0}
+  winterCountDownInstance: {fileID: 0}
 --- !u!4 &1398438779
 Transform:
   m_ObjectHideFlags: 0
@@ -1399,7 +1462,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 13
+  m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1908274543
 PrefabInstance:

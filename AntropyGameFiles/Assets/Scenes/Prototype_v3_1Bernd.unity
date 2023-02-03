@@ -489,7 +489,7 @@ GameObject:
   - component: {fileID: 1185153866}
   - component: {fileID: 1185153865}
   m_Layer: 5
-  m_Name: Button
+  m_Name: NextTurnButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -885,17 +885,18 @@ MonoBehaviour:
   freeAnts: 20
   assignedHillAnts: 
   currentMaximumPopulationCapacity: 70
-  resources: 50000
-  maxResourceStorage: 50000
+  resources: 5000
+  maxResourceStorage: 5000
   income: 0
   growth: 0
-  currentTurnCount: 89
+  currentTurnCount: 90
   currentGoalProgress: 0
   winterFoodUse: 0
   foodPerAnt: 5
   antPopGrowthPerTurn: 0.3
   antOverPopulationDeathRate: 2
-  antDeathLackofResourcesRate: 0
+  antDeathLackofResourcesRate: 2
+  antWinterDeathRate: 4
   distanceGatheringReductionRate: 0.06931472
   resourceGatherRate: 10
   tileRegrowAmount: 20
@@ -937,18 +938,21 @@ MonoBehaviour:
   seasonLength: 30
   currentWeek: 0
   goal: 80
+  gameOverWinter: 0
   tutorialEnabled: 0
   generalEnabled: 0
   strategicEnabled: 0
   warningEnabled: 0
-  EventEnabled: 0
+  eventEnabled: 0
+  winterEnabled: 1
   totalResources: 0
   totalDeaths: 0
   musicVolume: 0
   soundVolume: 0
-  showAntsMovement: 0
-  showWeatherEffects: 0
-  showGrassMovement: 0
+  showAntsMovement: 1
+  showWeatherEffects: 1
+  showGrassMovement: 1
+  GameRunning: 0
   summerMusic: {fileID: 8300000, guid: 9572b81223dd68943bdeb36f67fb727e, type: 3}
   autmnMusic: {fileID: 8300000, guid: 37be31a312bd4fe4b96389a376d7faf3, type: 3}
   springMusic: {fileID: 8300000, guid: a7992452c65054a42b72c942e5041952, type: 3}
@@ -960,6 +964,7 @@ MonoBehaviour:
   miniBarInfoInstance: {fileID: 0}
   nextTurnInstance: {fileID: 0}
   messageSystemInstance: {fileID: 0}
+  winterCountDownInstance: {fileID: 0}
 --- !u!4 &1398438779
 Transform:
   m_ObjectHideFlags: 0
@@ -1741,6 +1746,63 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f1c633493d7de13428e8237db353197e, type: 3}
+--- !u!1001 &3323433647739371546
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3323433647365685762, guid: 6e761743bfe785e4b9e9e78bd8ca24fb, type: 3}
+      propertyPath: m_RootOrder
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 3323433647365685762, guid: 6e761743bfe785e4b9e9e78bd8ca24fb, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 559.15845
+      objectReference: {fileID: 0}
+    - target: {fileID: 3323433647365685762, guid: 6e761743bfe785e4b9e9e78bd8ca24fb, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 254.31595
+      objectReference: {fileID: 0}
+    - target: {fileID: 3323433647365685762, guid: 6e761743bfe785e4b9e9e78bd8ca24fb, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -1.0397251
+      objectReference: {fileID: 0}
+    - target: {fileID: 3323433647365685762, guid: 6e761743bfe785e4b9e9e78bd8ca24fb, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3323433647365685762, guid: 6e761743bfe785e4b9e9e78bd8ca24fb, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3323433647365685762, guid: 6e761743bfe785e4b9e9e78bd8ca24fb, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3323433647365685762, guid: 6e761743bfe785e4b9e9e78bd8ca24fb, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3323433647365685762, guid: 6e761743bfe785e4b9e9e78bd8ca24fb, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3323433647365685762, guid: 6e761743bfe785e4b9e9e78bd8ca24fb, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3323433647365685762, guid: 6e761743bfe785e4b9e9e78bd8ca24fb, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3323433647365685773, guid: 6e761743bfe785e4b9e9e78bd8ca24fb, type: 3}
+      propertyPath: m_Name
+      value: WinterCountdownSystem
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 6e761743bfe785e4b9e9e78bd8ca24fb, type: 3}
 --- !u!1001 &4874741453103455377
 PrefabInstance:
   m_ObjectHideFlags: 0

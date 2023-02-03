@@ -25,3 +25,4 @@
 4;heavyRain;Your majesty, heavy rain and flash floods have cost %11 lives of your loyal subjects.; 0; 0; 20; Lyra
 4;heavyFog;Your majesty, thick fog has covered our lands, %11 of you loyal subjects disappeared.; 0; 0; 10; Lyra
 4;flood;Your majesty, immense rainfall have flooded serveral regions of our lands, %11 of you loyal subjects have drowned. %10 Tiles affected: %10 %12; 0; 20; 50; Lyra
+5;winterStart;Your majesty, %8 is here, we need to brace ourselves for what is here! %10 We need to survive.; Cedric;
