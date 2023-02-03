@@ -10,7 +10,7 @@ public class NextTurnScript : MonoBehaviour
   //UI Update
   GameObject uiAssignAnts; //= GameObject.Find("AssignAnts");
   AntCounter antCounter;
-  bool checker = false;
+
     private static int previousSeason;
 
     private void Awake()
@@ -36,20 +36,25 @@ public class NextTurnScript : MonoBehaviour
     if(GameManager.Instance.currentTurnCount < GameManager.Instance.maxTurnCount) 
     {
       Debug.Log("Turn: " + GameManager.Instance.currentTurnCount);
-      AntTurn();
-      ExploreTurn();
-      MapTurn();
-      WeatherTurn();
-      EventTurn();
-      SeasonTurn();
-      MessageTurn();
-      GameManager.Instance.currentTurnCount++;
-      GameManager.Instance.adjustWeek();
-      TurnInfoUpdate();
-      
-      checker = false;
+      if(GameManager.Instance.currentSeason != 3) 
+      {
+        AntTurn();
+        ExploreTurn();
+        MapTurn();
+        WeatherTurn();
+        EventTurn();
+        SeasonTurn();
+        MessageTurn();
+        GameManager.Instance.currentTurnCount++;
+      }
+      else 
+      {
+        winterTurnSequence();
+      }
 
       //Update the infobars
+      GameManager.Instance.adjustWeek();
+      TurnInfoUpdate();
       GameManager.Instance.UpdateIncomeGrowth();
       GameManager.Instance.miniBarInfoInstance.MiniBarInfoUpdate();
       antCounter.UpdateAntText();
@@ -296,6 +301,49 @@ public class NextTurnScript : MonoBehaviour
     }
     return (int)resource;
   }
+
+  void winterTurnSequence() 
+  {
+    GameManager.Instance.messageSystemInstance.disableMessageSystem();
+    for (int i = GameManager.Instance.currentTurnCount; i <= GameManager.Instance.maxTurnCount; i++)
+    {
+      Debug.Log("Winter Iteration: " + i);
+      
+      //Update the infobars
+      GameManager.Instance.adjustWeek();
+      TurnInfoUpdate();
+      GameManager.Instance.UpdateIncomeGrowth();
+      GameManager.Instance.miniBarInfoInstance.MiniBarInfoUpdate();
+      antCounter.UpdateAntText();
+      winterTurn();
+    }
+  }
+
+  public static IEnumerator WaitForUnscaledSeconds(float time)
+  {
+    float ttl = 0;
+    while (time > ttl)
+    {
+      ttl += Time.unscaledDeltaTime;
+      yield return null;
+    }
+  }
+
+    /// <summary>
+    /// Automated Winter Turn Sequence (Stops for X seconds each turn)
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator winterTurn() 
+  {
+    AntTurn();
+    WeatherTurn();
+    EventTurn();
+    MessageTurn();
+
+    GameManager.Instance.currentTurnCount++;
+    yield return new WaitForSecondsRealtime(3);
+  }
+
 
 
 }

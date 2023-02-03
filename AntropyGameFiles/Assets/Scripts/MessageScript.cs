@@ -172,6 +172,21 @@ public class MessageScript : MonoBehaviour
     }
   }
 
+  public void ShowWinterMessages() 
+  { 
+    
+  }
+
+  public void disableMessageSystem() 
+  {
+    clearDisabledMessages();
+    GameManager.Instance.tutorialEnabled = false;
+    GameManager.Instance.generalEnabled = false;
+    GameManager.Instance.strategicEnabled = false;
+    GameManager.Instance.warningEnabled = false;
+    GameManager.Instance.EventEnabled = false;
+  }
+
   //TODO Implementation with the rest of the weather
   private string TurnsUntilWinter()
   {

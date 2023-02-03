@@ -99,6 +99,10 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public (int,int)[] goalThreshholds;
 
+    [Header("Difficulty Settings")]
+    public int winterFoodUse;
+    //public int weatherPrediction;
+
 
     [Header("Grow / degrow rates")]
 
@@ -772,6 +776,14 @@ public class GameManager : MonoBehaviour
   public void checkSeasonChange() 
   {
     currentSeason = Mathf.CeilToInt(currentTurnCount / seasonLength);
+  }
+
+  /// <summary>
+  /// Prepare The Winter Season
+  /// </summary>
+  public void StartWinterSequence() 
+  { 
+    
   }
 
     /// <summary>

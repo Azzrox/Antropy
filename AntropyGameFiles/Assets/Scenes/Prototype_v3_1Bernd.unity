@@ -885,12 +885,13 @@ MonoBehaviour:
   freeAnts: 20
   assignedHillAnts: 
   currentMaximumPopulationCapacity: 70
-  resources: 0
-  maxResourceStorage: 150
+  resources: 50000
+  maxResourceStorage: 50000
   income: 0
   growth: 0
-  currentTurnCount: 0
+  currentTurnCount: 89
   currentGoalProgress: 0
+  winterFoodUse: 0
   foodPerAnt: 5
   antPopGrowthPerTurn: 0.3
   antOverPopulationDeathRate: 2
@@ -937,10 +938,10 @@ MonoBehaviour:
   currentWeek: 0
   goal: 80
   tutorialEnabled: 0
-  generalEnabled: 1
-  strategicEnabled: 1
-  warningEnabled: 1
-  EventEnabled: 1
+  generalEnabled: 0
+  strategicEnabled: 0
+  warningEnabled: 0
+  EventEnabled: 0
   totalResources: 0
   totalDeaths: 0
   musicVolume: 0
