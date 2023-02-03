@@ -26,6 +26,7 @@ public class MessageScript : MonoBehaviour
   public Queue<EventMessages> currentEventMessageQueue = new Queue<EventMessages>();
   public Queue<Message> currentSeasonMessageQueue = new Queue<Message>();
   public Queue<Message> currentWarningMessageQueue = new Queue<Message>();
+  public Queue<Message> currentWinterMessageQueue = new Queue<Message>();
   public Queue<GameManager.Tile> fertilityTilesMessage = new Queue<GameManager.Tile>();
   public Queue<GameManager.Tile> resourcesTilesMessage = new Queue<GameManager.Tile>();
   public Queue<GameManager.Tile> distanceAntsMessage = new Queue<GameManager.Tile>();
@@ -78,6 +79,7 @@ public class MessageScript : MonoBehaviour
     getStrategicMessages();
     getWarningMessages();
     getEventMessages();
+    getWinterMessages();
     PlayNextMessage();
   }
 
@@ -86,6 +88,9 @@ public class MessageScript : MonoBehaviour
   /// </summary>
   private void PlayNextMessage()
   {
+    //Clears Queues
+    clearDisabledMessages();
+
     if (currentTutorialMessageQueue.Count > 0) 
     {
       portrait.GetComponent<Image>().color = (currentTutorialMessageQueue.Peek().speaker.Equals("Lyra")) ? Color.blue : Color.yellow;
@@ -136,23 +141,80 @@ public class MessageScript : MonoBehaviour
       this.gameObject.SetActive(true);
       currentEventMessageQueue.Dequeue();
     }
+    else if (currentWinterMessageQueue.Count > 0)
+    {
+      portrait.GetComponent<Image>().color = Color.red;
+      //portrait.GetComponent<Image>().sprite = portraits[0].sprite;
+      title.text = "Winter Message";
+      text.text = currentWinterMessageQueue.Peek().messageText;
+      speaker.text = currentWinterMessageQueue.Peek().speaker;
+      this.gameObject.SetActive(true);
+      currentWinterMessageQueue.Dequeue();
+    }
     else 
     {
       this.gameObject.SetActive(false);
     }
   }
 
+  /// <summary>
+  /// Clears all Messagequeues
+  /// </summary>
+  private void clearDisabledMessages() 
+  {
+    if (!GameManager.Instance.tutorialEnabled)
+    {
+      currentTutorialMessageQueue.Clear();
+    }
+    if (!GameManager.Instance.generalEnabled) 
+    {
+      currentGeneralMessageQueue.Clear();
+    }
+    if (!GameManager.Instance.strategicEnabled)
+    {
+      currentSeasonMessageQueue.Clear();
+    }
+    if (!GameManager.Instance.warningEnabled)
+    {
+      currentWarningMessageQueue.Clear();
+    }
+    if (!GameManager.Instance.eventEnabled)
+    {
+      currentWarningMessageQueue.Clear();
+    }
+    if (!GameManager.Instance.winterEnabled)
+    {
+      currentWinterMessageQueue.Clear();
+    }
+  }
+
+  public void ShowWinterMessages() 
+  { 
+    
+  }
+
+  /// <summary>
+  /// Disables the Message System, except the Winter Messages
+  /// </summary>
+  public void disableMessageSystem() 
+  {
+    clearDisabledMessages();
+    GameManager.Instance.tutorialEnabled = false;
+    GameManager.Instance.generalEnabled = false;
+    GameManager.Instance.strategicEnabled = false;
+    GameManager.Instance.warningEnabled = false;
+    GameManager.Instance.eventEnabled = false;
+  }
+
   //TODO Implementation with the rest of the weather
   private string TurnsUntilWinter()
   {
-    /*
-    string untilWinterCount = "";
-    if(gameManager.currentTurnCount < gameManager.winterStart) 
+    if(GameManager.Instance.currentTurnCount < (GameManager.Instance.maxTurnCount - GameManager.Instance.seasonLength)) 
     {
-      untilWinterCount += (gameManager.currentTurnCount - gameManager.winterStart).ToString();
+       return (GameManager.Instance.maxTurnCount - GameManager.Instance.seasonLength - GameManager.Instance.currentTurnCount).ToString();
     }
-    */
-    return "(not implemented)";
+   
+    return "0";
   }
 
   //TODO Implementation missing
@@ -309,6 +371,7 @@ public class MessageScript : MonoBehaviour
     public List<Message> strategicMessages { get; set; }
     public List<Message> warningMessages { get; set; }
     public List<EventMessages> eventMessages { get; set; }
+    public List<Message> winterMessages { get; set; }
   }
 
   [Serializable]
@@ -371,6 +434,7 @@ public class MessageScript : MonoBehaviour
     List<Message> strategicMessages = new List<Message>();
     List<Message> warningMessages = new List<Message>();
     List<EventMessages> eventMessages = new List<EventMessages>();
+    List<Message> winterMessages = new List<Message>();
 
     foreach (string row in TextFileMessages)
     {
@@ -425,6 +489,16 @@ public class MessageScript : MonoBehaviour
         eventMessage.speaker = indexString[6];
         eventMessages.Add(eventMessage);
       }
+      else if (indexString[0] == "5")
+      {
+        Message winterMessage = new Message();
+        winterMessage.eventName = indexString[1];
+        winterMessage.messageText = indexString[2];
+        //..
+        //eventMessage.picture = Resources.Load<Image>("Messages/SourceNameHere");
+        winterMessage.speaker = indexString[3];
+        winterMessages.Add(winterMessage);
+      }
     }
 
     MessageSystem messageStruct = new MessageSystem()
@@ -433,7 +507,9 @@ public class MessageScript : MonoBehaviour
       generalMessages = generalMessages,
       strategicMessages = strategicMessages,
       warningMessages = warningMessages,
-      eventMessages = eventMessages
+      eventMessages = eventMessages,
+      winterMessages = winterMessages
+
     };
 
     var json = JsonConvert.SerializeObject(messageStruct);
@@ -522,7 +598,7 @@ public class MessageScript : MonoBehaviour
         break;
 
       case 6:
-        encodingString = TurnsUntilWinter(); //not implemented
+        encodingString = TurnsUntilWinter();
         break;
 
       case 7:
@@ -530,7 +606,7 @@ public class MessageScript : MonoBehaviour
         break;
 
       case 8:
-        encodingString = GameManager.Instance.currentSeason.ToString();
+        encodingString = GameManager.Instance.SeasonName(GameManager.Instance.currentSeason);
         break;
 
       case 9:
@@ -787,6 +863,22 @@ public class MessageScript : MonoBehaviour
         currentMessage.speaker = item.speaker;
         //currentMessage.portrait = insertPortraitHere;
         currentEventMessageQueue.Enqueue(currentMessage);
+      }
+    }
+  }
+
+  private void getWinterMessages()
+  {
+    foreach (var item in MessageSystemDataInstance.winterMessages)
+    {
+      Message currentMessage = new Message();
+      if (item.eventName.Equals("winterStart") && (GameManager.Instance.maxTurnCount - GameManager.Instance.currentTurnCount) == GameManager.Instance.seasonLength)
+      {
+        currentMessage.eventName = item.eventName;
+        currentMessage.messageText = applyVariableDecoding(item.messageText);
+        currentMessage.speaker = item.speaker;
+        //currentMessage.portrait = insertPortraitHere;
+        currentWinterMessageQueue.Enqueue(currentMessage);
       }
     }
   }

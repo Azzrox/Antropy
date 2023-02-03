@@ -21,27 +21,70 @@ public class WeatherScript : MonoBehaviour
     /// <param name="currentSeason"> [0]Spring, [1]Summer, [2]Autumn, [3]Winter</param>
    public void UpdateWeather(int currentSeason) 
    {
-     switch (currentSeason)
+    int weatherChance = Random.Range(0, 101);
+    switch (currentSeason)
      {
         case 0:
           //higher probability of rain and sun
           //Basic Implementation for the Prototype
-          int weather = Random.Range(0, 2);
-          GameManager.Instance.currentWeather = weather;
-          WeatherEffectsUpdate(currentSeason, weather);
-          //WeatherMultiplierUpdate(weather);
+          //higher probability of rain < overcast < sun
+          if (weatherChance <= 50)
+          {
+            GameManager.Instance.currentWeather = 1;
+          }
+          else if (weatherChance > 50 && weatherChance <= 70)
+          {
+            GameManager.Instance.currentWeather = 2;
+          }
+          else
+          {
+            GameManager.Instance.currentWeather = 0;
+          }
+          WeatherEffectsUpdate(currentSeason, GameManager.Instance.currentWeather);
           break;
 
         case 1:
-          //higher probability of sun
+          //higher probability of sun < overcast < rain
+          if (weatherChance <= 20)
+          {
+            GameManager.Instance.currentWeather = 1;
+          }
+          else if (weatherChance > 20 && weatherChance <= 40)
+          {
+            GameManager.Instance.currentWeather = 2;
+          }
+          else
+          {
+            GameManager.Instance.currentWeather = 0;
+          }
+          WeatherEffectsUpdate(currentSeason, GameManager.Instance.currentWeather);
           break;
 
         case 2:
-          //higher probability of rain and fog
+          //higher probability of rain < fog < sun
+          if (weatherChance <= 20)
+          {
+            GameManager.Instance.currentWeather = 0;
+          }
+          else if (weatherChance > 20 && weatherChance <= 30)
+          {
+            GameManager.Instance.currentWeather = 3;
+          }
+          else if (weatherChance > 30 && weatherChance <= 40)
+          {
+            GameManager.Instance.currentWeather = 3;
+          }
+          else
+          {
+          GameManager.Instance.currentWeather = 3;
+          }
+          WeatherEffectsUpdate(currentSeason, GameManager.Instance.currentWeather);
           break;
 
         case 3:
           //DEATH
+          GameManager.Instance.currentWeather = 4;
+          WeatherEffectsUpdate(currentSeason, GameManager.Instance.currentWeather);
           break;
 
         default:

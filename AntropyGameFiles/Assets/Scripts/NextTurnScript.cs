@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class NextTurnScript : MonoBehaviour
 {
@@ -10,8 +11,8 @@ public class NextTurnScript : MonoBehaviour
   //UI Update
   GameObject uiAssignAnts; //= GameObject.Find("AssignAnts");
   AntCounter antCounter;
-  bool checker = false;
-    private static int previousSeason;
+
+  private static int previousSeason;
 
     private void Awake()
   {
@@ -26,7 +27,7 @@ public class NextTurnScript : MonoBehaviour
     TurnInfoUpdate();
     antCounter.UpdateAntText();
     previousSeason = GameManager.Instance.currentSeason;
-}
+  }
 
   /// <summary>
   /// Turn Sequence, bind this to a button
@@ -36,20 +37,25 @@ public class NextTurnScript : MonoBehaviour
     if(GameManager.Instance.currentTurnCount < GameManager.Instance.maxTurnCount) 
     {
       Debug.Log("Turn: " + GameManager.Instance.currentTurnCount);
-      AntTurn();
-      ExploreTurn();
-      MapTurn();
-      WeatherTurn();
-      EventTurn();
-      SeasonTurn();
-      MessageTurn();
-      GameManager.Instance.currentTurnCount++;
+      if(GameManager.Instance.currentSeason != 3) 
+      {
+        AntTurn();
+        ExploreTurn();
+        MapTurn();
+        WeatherTurn();
+        EventTurn();
+        SeasonTurn();
+        MessageTurn();
+        GameManager.Instance.currentTurnCount++;
+      }
+      else 
+      {
+        winterTurnSequence();
+      }
+     
+      //Update the infobars
       GameManager.Instance.adjustWeek();
       TurnInfoUpdate();
-      
-      checker = false;
-
-      //Update the infobars
       GameManager.Instance.UpdateIncomeGrowth();
       GameManager.Instance.miniBarInfoInstance.MiniBarInfoUpdate();
       antCounter.UpdateAntText();
@@ -87,7 +93,6 @@ public class NextTurnScript : MonoBehaviour
             GameManager.currentAudioSource.Play();
             previousSeason = GameManager.Instance.currentSeason;
         }
-
         GameManager.currentAudioSource.loop = true;
     }   
     else 
@@ -99,7 +104,6 @@ public class NextTurnScript : MonoBehaviour
 
   void AntTurn() 
   {
-
     // update resources
     // Storage room check 
     if (GameManager.Instance.resources + GameManager.Instance.income > GameManager.Instance.maxResourceStorage)
@@ -252,13 +256,13 @@ public class NextTurnScript : MonoBehaviour
   void SeasonTurn() 
   {
     //Insert Season Turn
+    GameManager.Instance.checkSeasonChange();
   }
 
   public void TurnInfoUpdate()
   {
     TurnText.text = GameManager.Instance.currentTurnCount + "/" + GameManager.Instance.maxTurnCount;
   }
-
 
 
   /// <summary>
@@ -296,5 +300,47 @@ public class NextTurnScript : MonoBehaviour
     return (int)resource;
   }
 
+  /// <summary>
+  /// Starts the Winter Season
+  /// </summary>
+  void winterTurnSequence() 
+  {
+    //Disable systems and antgrowth
+    GameManager.Instance.messageSystemInstance.disableMessageSystem();
+    GameManager.Instance.growth = 0;
+    GameManager.Instance.freeAnts = 0;
 
+    //Activate the interface
+    GameManager.Instance.winterCountDownInstance.gameObject.SetActive(true);
+
+    //Disable the Interface
+    GameManager.Instance.miniBarInfoInstance.gameObject.SetActive(false);
+    GameObject.Find("NextTurnButton").SetActive(false);
+    GameObject.Find("TurnText").SetActive(false);
+
+    //Start the automated WinterTurn
+    StartCoroutine(winterTurn(1));
+    GameManager.Instance.prototypeGoalCheck();
+  }
+
+  /// <summary>
+  /// Automated Winter Turn Sequence (Stops for X seconds each turn)
+  /// </summary>
+  /// <returns></returns>
+  public IEnumerator winterTurn(float time)
+  {
+    WaitForSeconds wait = new WaitForSeconds(time);
+    for (int i = GameManager.Instance.currentTurnCount; i <= GameManager.Instance.maxTurnCount && !GameManager.Instance.gameOverWinter; i++) 
+    {
+      GameManager.Instance.winterCountDownInstance.WinterCountdownUpdate();
+      GameManager.Instance.prototypeLooseCheck();
+      GameManager.Instance.adjustWeek();
+      GameManager.Instance.WinterAntTurn();
+      MessageTurn();
+      WeatherTurn();
+      EventTurn();
+      GameManager.Instance.currentTurnCount++;
+      yield return wait;
+    }
+  }
 }
