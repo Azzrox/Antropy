@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class NextTurnScript : MonoBehaviour
 {
-  private GameManager gameManager;
   public TextMeshProUGUI TurnText;
 
   //UI Update
@@ -16,14 +15,14 @@ public class NextTurnScript : MonoBehaviour
 
     private void Awake()
   {
-    gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
     uiAssignAnts = GameObject.Find("AssignAnts");
     antCounter = uiAssignAnts.GetComponent<AntCounter>();
   }
 
   private void Start()
   {
-    
+    GameManager.Instance.nextTurnInstance = this;
+
     TurnInfoUpdate();
     antCounter.UpdateAntText();
     previousSeason = GameManager.Instance.currentSeason;
@@ -45,7 +44,7 @@ public class NextTurnScript : MonoBehaviour
       SeasonTurn();
       MessageTurn();
       GameManager.Instance.currentTurnCount++;
-      gameManager.adjustWeek();
+      GameManager.Instance.adjustWeek();
       TurnInfoUpdate();
       
       checker = false;
@@ -148,7 +147,7 @@ public class NextTurnScript : MonoBehaviour
         }
 
         //Message checks
-        gameManager.messageSystemInstance.saveTileForMessage(GameManager.Instance.Map[i, j]);
+        GameManager.Instance.messageSystemInstance.saveTileForMessage(GameManager.Instance.Map[i, j]);
       }
        
     }
@@ -247,7 +246,7 @@ public class NextTurnScript : MonoBehaviour
 
   void MessageTurn() 
   {
-    gameManager.messageSystemInstance.PrepareRoundMessages(); 
+    GameManager.Instance.messageSystemInstance.PrepareRoundMessages(); 
   }
 
   void SeasonTurn() 

@@ -28,11 +28,14 @@ public class TileScript : MonoBehaviour, IPointerClickHandler
 
   GameObject road;
 
+  GameObject ant;
+
   /// <summary>
   /// Flag Prefab for Owned Tiles
   /// </summary>
   public GameObject redFlagPrefab;
   public GameObject[] roadPrefab;
+  public GameObject antPrefab;
 
   private MouseListenerUI uiListener;
 
@@ -129,6 +132,38 @@ public class TileScript : MonoBehaviour, IPointerClickHandler
   {if (road != null)
     {Destroy(road);}
   }
+
+  public void SpawnAnt() 
+  {
+      ant = Instantiate<GameObject>(antPrefab, new Vector3(xPos + 0.5f, 0.2f, zPos + 0.5f), Quaternion.identity, transform) ;
+      ant.GetComponent<AntPathing>().coordinates = new int[] {xPos, zPos};
+
+  }
+
+  public void RemoveAnt() 
+  {
+      // some ants might fall outside that area?
+      if (ant != null)
+      {
+          Destroy(ant);
+      }
+  }
+
+  public void AdjustAntSize(int assignedAnts)
+  {
+    if (ant == null)
+    {
+      SpawnAnt();
+    }
+
+    var scale = ant.transform.localScale;
+    float size = Mathf.Sqrt(assignedAnts);
+    scale.Set(size, size, size);
+    ant.transform.localScale = scale;
+      
+  }
+
+
 
   /// <summary>
   /// XPos tile, getter and setter

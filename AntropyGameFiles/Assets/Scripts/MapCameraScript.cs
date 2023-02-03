@@ -95,7 +95,10 @@ public class MapCameraScript : MonoBehaviour
 
   private void OnOpenMenu()
   {
-    Debug.Log("Escape pressed");
     SceneManager.LoadScene("Start");
+    Debug.Log("Back to menu");
+    GameObject backToMenu = GameObject.Find("BackToGame");
+    Debug.Log("should have been found.");
+    //backToMenu.GetComponent<Canvas>().enabled = true;
   }
  }

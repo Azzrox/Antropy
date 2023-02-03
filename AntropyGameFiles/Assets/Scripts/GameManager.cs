@@ -340,6 +340,8 @@ public class GameManager : MonoBehaviour
     public bool showWeatherEffects;
     public bool showGrassMovement;
 
+    public bool GameRunning;
+
 
     public AudioClip summerMusic;
     public AudioClip autmnMusic;
@@ -561,6 +563,22 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+    }
+
+    public void SetInitialValues(){
+
+      totalAnts = 20;
+      freeAnts = 20;
+      currentMaximumPopulationCapacity = 70;
+      resources = 0;
+      maxResourceStorage = 150;
+      income = 0;
+      growth = 0;
+
+      currentTurnCount = 0;
+      currentGoalProgress = 0;
+      
 
     }
 
