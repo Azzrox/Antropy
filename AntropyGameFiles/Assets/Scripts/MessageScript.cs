@@ -397,6 +397,7 @@ public class MessageScript : MonoBehaviour
     public int fertilityChange;
     public int tilesAffected;
     public int antsLost;
+    public float resourceAffectionRate;
     //..
   }
 
