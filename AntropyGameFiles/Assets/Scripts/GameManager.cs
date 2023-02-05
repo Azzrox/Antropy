@@ -35,8 +35,10 @@ public class GameManager : MonoBehaviour
       public bool visible;
       // regrowResource can also be negative
       public int regrowResource;
-      public int fertilityState;
-      // fertility (0 - desert, 1 - steppe, 2 -  lean soil, 3 - normal soil, 4 - humus-rich soil, 5 - ant garden, 6 - ant paradise)
+    /// <summary>
+    /// fertility (0 - desert, 1 - steppe, 2 -  lean soil, 3 - normal soil, 4 - humus-rich soil, 5 - ant garden, 6 - ant paradise)
+    /// </summary>
+    public int fertilityState;
       public int constructionState;
       // (0 - not passable (water), 1 - hard-to-cross (rock), 2 - rough, 3 - normal plain land, 4 - ant path, 5 - ant street, 6 - ant highway )
       public float foodTransportCost;
@@ -99,6 +101,10 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public (int,int)[] goalThreshholds;
 
+    [Header("Difficulty Settings")]
+    public int winterFoodUse;
+    //public int weatherPrediction;
+
 
     [Header("Grow / degrow rates")]
 
@@ -106,10 +112,12 @@ public class GameManager : MonoBehaviour
     /// Food need per Ant
     /// </summary>
     public float foodPerAnt;
+
      /// <summary>
     /// ant growth per turn
     /// </summary>
     public float antPopGrowthPerTurn;
+
     /// <summary>
     /// Death of Ants per turn, due to overpopulation
     /// </summary>
@@ -119,7 +127,12 @@ public class GameManager : MonoBehaviour
     /// Death of ants per turn due to lack of resources;
     /// </summary>
     public float antDeathLackofResourcesRate;
-    
+
+    /// <summary>
+    /// Death of Ants per turn due to winter attrition
+    /// </summary>
+    public float antWinterDeathRate;
+
     /// <summary>
     /// Gathering distance deduction
     /// </summary>
@@ -300,12 +313,17 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Current Turn Number
     /// </summary>
-    public int maxTurnCount;
+    public int maxTurnCount = 120;
 
     /// <summary>
     /// Week Length
     /// </summary>
-    public int weekLength = 7;
+    public int weekLength = 10;
+
+    /// <summary>
+    /// Season Length for each season
+    /// </summary>
+    public int seasonLength = 30;
 
     /// <summary>
     /// Ingame Week, adjusted based on weekLength automatically
@@ -315,8 +333,19 @@ public class GameManager : MonoBehaviour
     //PrototypeGoal
     public int goal;
 
-    //Enables the tutorial
+    /// <summary>
+    /// Stops the Game from Updating values in Winter
+    /// </summary>
+    public bool gameOverWinter = false;
+
+    [Header("MessageSystem Messages")]
+    //Enables Messages
     public bool tutorialEnabled = false;
+    public bool generalEnabled = false;
+    public bool strategicEnabled = false;
+    public bool warningEnabled = false;
+    public bool eventEnabled = false;
+    public bool winterEnabled = true;
 
   [Header("Statistics (cummulated data)")]
 
@@ -346,8 +375,11 @@ public class GameManager : MonoBehaviour
     public MiniBarInfoUI miniBarInfoInstance;
     public NextTurnScript nextTurnInstance;
     public MessageScript messageSystemInstance;
-    
-    
+    public WinterCountdownUI winterCountDownInstance;
+    public EventScript eventInstance;
+
+
+
 
     // Creates an instance that is present in all other classes
     public static GameManager Instance;
@@ -396,10 +428,6 @@ public class GameManager : MonoBehaviour
         currentAudioSource = GetComponent<AudioSource>();
         currentAudioSource.clip = mainMenuMusic;
         currentAudioSource.Play();
-    
-        //messageSystemInstance = GameObject.Find("MessageSystem").GetComponent<MessageScript>();
-        
-     
   }
 
   [System.Serializable]
@@ -486,7 +514,29 @@ public class GameManager : MonoBehaviour
       return type_name;
     }
 
-    public Dictionary<int, string> FertilityNames = new Dictionary<int, string>()
+  /// <summary>
+  /// Returns the season string
+  /// </summary>
+  /// <param name="season"></param>
+  /// <returns></returns>
+  public string SeasonName(int season)
+  {
+    switch (season)
+    {
+      case 0:
+        return "Spring";
+      case 1:
+        return "Summer";
+      case 2:
+        return "Autumn";
+      case 3:
+        return "Winter";
+      default:
+        return "InvalidSeason";
+    }
+  }
+
+  public Dictionary<int, string> FertilityNames = new Dictionary<int, string>()
     {{0, "Desert"},
      {1, "Steppe"},
      {2, "Sandy Soil"},
@@ -700,12 +750,61 @@ public class GameManager : MonoBehaviour
 
     public int Juniors()
     {
-      // use nurse ants == free ants
-      return (int) Mathf.Ceil(freeAnts * 3 * antPopGrowthPerTurn);
+    // use nurse ants == free ants
+    if (resources <= 0 && income < 0)
+    {
+      return -(int)Mathf.Ceil(antDeathLackofResourcesRate);
+    }
+    else 
+    {
+      return (int)Mathf.Ceil(freeAnts * 3 * antPopGrowthPerTurn);
+    } 
       // old: 
       //return (int)Mathf.Ceil((float)totalAnts * antPopGrowthPerTurn);
+    }
+    
+  /// <summary>
+  /// Ant Turn calculation for the winter season
+  /// </summary>
+  public void WinterAntTurn() 
+  {
+    //Resources
+    income = -Upkeep();
+    resources += income;
+    totalResources += income;
+
+    //Population
+    //int growthWinter = 0;
+    if (resources <= 0) 
+    {
+      //growthWinter -= (int)Mathf.Ceil((totalAnts * 0.1f) * antDeathLackofResourcesRate);
+      //growthWinter -= (int)Mathf.Ceil(antDeathLackofResourcesRate);
+      //totalAnts += growthWinter;
+      //growth = growthWinter;
+      AntDeath((int)Mathf.Ceil(antDeathLackofResourcesRate));
+
+      AntDeath((int)Mathf.Ceil(antWinterDeathRate));
+      //growthWinter -= (int)Mathf.Ceil(antWinterDeathRate);
+      //growthWinter -= (int)Mathf.Ceil((totalAnts * 0.1f) * antWinterDeathRate);
+      //totalAnts += growthWinter;
+      //growth = growthWinter;
 
     }
+    else 
+    {
+      //growthWinter -= (int)Mathf.Ceil(antWinterDeathRate);
+      //growthWinter -= (int)Mathf.Ceil((totalAnts*0.1f) * antWinterDeathRate);
+      //growth = growthWinter;
+      //totalAnts += growthWinter;
+      AntDeath((int)Mathf.Ceil(antWinterDeathRate));
+    }
+  }
+
+  public void AntDeath(int amount) 
+  {
+    totalAnts -= amount;
+    UpdateGrowth();
+  }
 
     /// <summary>
     /// Prototype end screen (Remove Later)
@@ -720,8 +819,13 @@ public class GameManager : MonoBehaviour
     }
   public void prototypeLooseCheck() 
   {
-    if (resources <= 0 && income < 0)
+    if (totalAnts < 1)
     {
+      if(currentSeason == 3) 
+      {
+        gameOverWinter = true;
+        GameObject.Find("WinterCountdownSystem").SetActive(false);
+      }
       SceneManager.LoadScene("PrototypeEndScreen", LoadSceneMode.Additive);
     }
   }
@@ -735,6 +839,11 @@ public class GameManager : MonoBehaviour
     {
       currentWeek++;
     } 
+  }
+
+  public void checkSeasonChange() 
+  {
+    currentSeason = Mathf.CeilToInt(currentTurnCount / seasonLength);
   }
 
     /// <summary>
