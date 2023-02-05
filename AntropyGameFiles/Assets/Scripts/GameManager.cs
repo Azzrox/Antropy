@@ -35,8 +35,10 @@ public class GameManager : MonoBehaviour
       public bool visible;
       // regrowResource can also be negative
       public int regrowResource;
-      public int fertilityState;
-      // fertility (0 - desert, 1 - steppe, 2 -  lean soil, 3 - normal soil, 4 - humus-rich soil, 5 - ant garden, 6 - ant paradise)
+    /// <summary>
+    /// fertility (0 - desert, 1 - steppe, 2 -  lean soil, 3 - normal soil, 4 - humus-rich soil, 5 - ant garden, 6 - ant paradise)
+    /// </summary>
+    public int fertilityState;
       public int constructionState;
       // (0 - not passable (water), 1 - hard-to-cross (rock), 2 - rough, 3 - normal plain land, 4 - ant path, 5 - ant street, 6 - ant highway )
       public float foodTransportCost;
@@ -374,7 +376,8 @@ public class GameManager : MonoBehaviour
     public NextTurnScript nextTurnInstance;
     public MessageScript messageSystemInstance;
     public WinterCountdownUI winterCountDownInstance;
-  
+    public EventScript eventInstance;
+
 
 
 
@@ -771,27 +774,36 @@ public class GameManager : MonoBehaviour
     totalResources += income;
 
     //Population
-    int growthWinter = 0;
+    //int growthWinter = 0;
     if (resources <= 0) 
     {
       //growthWinter -= (int)Mathf.Ceil((totalAnts * 0.1f) * antDeathLackofResourcesRate);
-      growthWinter -= (int)Mathf.Ceil(antDeathLackofResourcesRate);
-      totalAnts += growthWinter;
-      growth = growthWinter;
+      //growthWinter -= (int)Mathf.Ceil(antDeathLackofResourcesRate);
+      //totalAnts += growthWinter;
+      //growth = growthWinter;
+      AntDeath((int)Mathf.Ceil(antDeathLackofResourcesRate));
 
-      growthWinter -= (int)Mathf.Ceil(antWinterDeathRate);
+      AntDeath((int)Mathf.Ceil(antWinterDeathRate));
+      //growthWinter -= (int)Mathf.Ceil(antWinterDeathRate);
       //growthWinter -= (int)Mathf.Ceil((totalAnts * 0.1f) * antWinterDeathRate);
-      totalAnts += growthWinter;
-      growth = growthWinter;
+      //totalAnts += growthWinter;
+      //growth = growthWinter;
 
     }
     else 
     {
-      growthWinter -= (int)Mathf.Ceil(antWinterDeathRate);
+      //growthWinter -= (int)Mathf.Ceil(antWinterDeathRate);
       //growthWinter -= (int)Mathf.Ceil((totalAnts*0.1f) * antWinterDeathRate);
-      growth = growthWinter;
-      totalAnts += growthWinter;
+      //growth = growthWinter;
+      //totalAnts += growthWinter;
+      AntDeath((int)Mathf.Ceil(antWinterDeathRate));
     }
+  }
+
+  public void AntDeath(int amount) 
+  {
+    totalAnts -= amount;
+    UpdateGrowth();
   }
 
     /// <summary>
