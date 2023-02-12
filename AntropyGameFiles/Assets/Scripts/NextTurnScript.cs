@@ -42,9 +42,9 @@ public class NextTurnScript : MonoBehaviour
         AntTurn();
         ExploreTurn();
         MapTurn();
-        WeatherTurn();
-        EventTurn();
         SeasonTurn();
+        EventTurn();
+        WeatherTurn();
         MessageTurn();
         GameManager.Instance.currentTurnCount++;
       }
@@ -151,7 +151,7 @@ public class NextTurnScript : MonoBehaviour
         }
 
         //Message checks
-        GameManager.Instance.messageSystemInstance.saveTileForMessage(GameManager.Instance.Map[i, j]);
+        GameManager.Instance.messageSystemInstance.SaveTileForMessage(GameManager.Instance.Map[i, j]);
       }
        
     }
@@ -238,14 +238,12 @@ public class NextTurnScript : MonoBehaviour
 
   void WeatherTurn()
   {
-    //Insert Weather Turn
     GameManager.Instance.weatherInstance.UpdateWeather(GameManager.Instance.currentSeason);
-    GameManager.Instance.weatherInstance.WeatherMultiplierUpdate(GameManager.Instance.currentWeather);
   }
 
   void EventTurn() 
   {
-    //Insert Event Turn
+    GameManager.Instance.eventInstance.PrepareEventTurn();
   }
 
   void MessageTurn() 
@@ -255,7 +253,6 @@ public class NextTurnScript : MonoBehaviour
 
   void SeasonTurn() 
   {
-    //Insert Season Turn
     GameManager.Instance.checkSeasonChange();
   }
 

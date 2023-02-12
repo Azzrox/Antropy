@@ -409,7 +409,8 @@ public class GameManager : MonoBehaviour
         transportUpgradeCost = new int[] {1000, 100, 50, 50 , 50, 50};
         
         //adjust them accordingly, just a test
-        goalThreshholds = new (int, int)[] {(3000,100), (3500, 250), (4000,300), (5000,400), (7000, 700)};
+        goalThreshholds = new (int, int)[] {(3000,100), (3500, 250), (4000,300), (5000,400), (7000, 700), 
+                                            (7000, 700) , (7000, 700) , (7000, 700)  , (7000, 700) , (7000, 700), (7000, 700), (7000, 700) };
 
 
         Map = new Tile[rows, columns];
