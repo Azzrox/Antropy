@@ -299,7 +299,8 @@ public void SetExplored(int posX, int posZ, bool explored)
     GameManager.Instance.Map[i,j].foodTransportCost = GameManager.Instance.transportCostVector[GameManager.Instance.Map[i,j].constructionState];
     GameManager.Instance.Map[i,j].fertilityState = 2; // no grow
     GameManager.Instance.Map[i,j].regrowResource = GameManager.Instance.regrowRateVector[GameManager.Instance.Map[i,j].fertilityState];
-    
+    GameManager.Instance.Map[i, j].partOfAnthill = true;
+
     newTile.XPos = i; 
     newTile.ZPos = j;
 
@@ -335,9 +336,10 @@ public void SetExplored(int posX, int posZ, bool explored)
     GameManager.Instance.Map[i,j].dominatedByPlayer = false;
     GameManager.Instance.Map[i,j].assignedAnts = 0;
     GameManager.Instance.Map[i,j].maxAssignedAnts = GameManager.Instance.maxAntsResourceTile;
+    GameManager.Instance.Map[i, j].partOfAnthill = false;
 
-    
-    
+
+
 
     newTile.XPos = i;
     newTile.ZPos = j;

@@ -23,7 +23,7 @@ public class MessageScript : MonoBehaviour
   public MessageSystem MessageSystemDataInstance;
   public Queue<TutorialMessages> currentTutorialMessageQueue = new Queue<TutorialMessages>();
   public Queue<Message> currentGeneralMessageQueue = new Queue<Message>();
-  public Queue<EventMessages> currentEventMessageQueue = new Queue<EventMessages>();
+  public Queue<Message> currentEventMessageQueue = new Queue<Message>();
   public Queue<Message> currentSeasonMessageQueue = new Queue<Message>();
   public Queue<Message> currentWarningMessageQueue = new Queue<Message>();
   public Queue<Message> currentWinterMessageQueue = new Queue<Message>();
@@ -52,7 +52,7 @@ public class MessageScript : MonoBehaviour
     EnableMessageSystem();
     if (GameManager.Instance.tutorialEnabled)
     {
-      getTutorialMessages();
+      GetTutorialMessages();
       PlayNextMessage();
     }
     else
@@ -75,11 +75,11 @@ public class MessageScript : MonoBehaviour
   /// </summary>
   public void PrepareRoundMessages()
   {
-    getGeneralMessages();
-    getStrategicMessages();
-    getWarningMessages();
-    getEventMessages();
-    getWinterMessages();
+    GetGeneralMessages();
+    GetStrategicMessages();
+    GetWarningMessages();
+    GetEventMessages();
+    GetWinterMessages();
     PlayNextMessage();
   }
 
@@ -89,7 +89,7 @@ public class MessageScript : MonoBehaviour
   private void PlayNextMessage()
   {
     //Clears Queues
-    clearDisabledMessages();
+    ClearDisabledMessages();
 
     if (currentTutorialMessageQueue.Count > 0) 
     {
@@ -160,7 +160,7 @@ public class MessageScript : MonoBehaviour
   /// <summary>
   /// Clears all Messagequeues
   /// </summary>
-  private void clearDisabledMessages() 
+  private void ClearDisabledMessages() 
   {
     if (!GameManager.Instance.tutorialEnabled)
     {
@@ -198,7 +198,7 @@ public class MessageScript : MonoBehaviour
   /// </summary>
   public void disableMessageSystem() 
   {
-    clearDisabledMessages();
+    ClearDisabledMessages();
     GameManager.Instance.tutorialEnabled = false;
     GameManager.Instance.generalEnabled = false;
     GameManager.Instance.strategicEnabled = false;
@@ -227,7 +227,7 @@ public class MessageScript : MonoBehaviour
   /// Checks if the weekly goal has been reached
   /// </summary>
   /// <returns></returns>
-  private bool checkWeeklyGoal()
+  private bool CheckWeeklyGoal()
   {
     if (GameManager.Instance.goalThreshholds[GameManager.Instance.currentWeek].Item1 <= GameManager.Instance.resources 
       && GameManager.Instance.goalThreshholds[GameManager.Instance.currentWeek].Item2 <= GameManager.Instance.totalAnts)
@@ -245,7 +245,7 @@ public class MessageScript : MonoBehaviour
   /// Rework if needed to show each individual tile
   /// </summary>
   /// <returns></returns>
-  private bool checkTilesFertility()
+  private bool CheckTilesFertility()
   {
     
     if(fertilityTilesMessage.Count > 0) 
@@ -265,7 +265,7 @@ public class MessageScript : MonoBehaviour
   /// Rework if needed to show each individual tile
   /// </summary>
   /// <returns></returns>
-  private bool checkAntTileDistance()
+  private bool CheckAntTileDistance()
   {
     if(distanceAntsMessage.Count > 0) 
     {
@@ -284,7 +284,7 @@ public class MessageScript : MonoBehaviour
   /// Rework if needed to show each individual tile
   /// </summary>
   /// <returns></returns>
-  private bool checkTileDepletion()
+  private bool CheckTileDepletion()
   {
     if(resourcesTilesMessage.Count > 0) 
     {
@@ -299,7 +299,7 @@ public class MessageScript : MonoBehaviour
   }
 
   //TODO Implementation missing
-  private string predictWeather()
+  private string PredictWeather()
   {
     //(confident | uncertain | indicate nothing good)
     //dependend on difficulty (if we really want to do it)
@@ -310,7 +310,7 @@ public class MessageScript : MonoBehaviour
   /// Checks if a new season has been reached, updates oldSeason variable
   /// </summary>
   /// <returns></returns>
-  private bool checkSeasonChange()
+  private bool CheckSeasonChange()
   {
     if(oldSeason != GameManager.Instance.currentSeason) 
     {
@@ -326,7 +326,7 @@ public class MessageScript : MonoBehaviour
   /// Checks if a new week has been reached, updates oldWeek variable
   /// </summary>
   /// <returns></returns>
-  private bool checkNewWeek()
+  private bool CheckNewWeek()
   {
     if (oldWeek != GameManager.Instance.currentWeek)
     {
@@ -340,25 +340,7 @@ public class MessageScript : MonoBehaviour
   }
 
   //TODO Implementation missing
-  private bool checkWinterPrediction()
-  {
-    return false;
-  }
-
-  //TODO Implementation missing
-  private bool heavyRainCheck() 
-  {
-    return false;
-  }
-
-  //TODO Implementation missing
-  private bool heavyFogCheck() 
-  {
-    return false;
-  }
-
-  //TODO Implementation missing
-  private bool floodCheck() 
+  private bool CheckWinterPrediction()
   {
     return false;
   }
@@ -370,7 +352,7 @@ public class MessageScript : MonoBehaviour
     public List<Message> generalMessages { get; set; }
     public List<Message> strategicMessages { get; set; }
     public List<Message> warningMessages { get; set; }
-    public List<EventMessages> eventMessages { get; set; }
+    public List<Message> eventMessages { get; set; }
     public List<Message> winterMessages { get; set; }
   }
 
@@ -434,7 +416,7 @@ public class MessageScript : MonoBehaviour
     List<Message> generalMessages = new List<Message>();
     List<Message> strategicMessages = new List<Message>();
     List<Message> warningMessages = new List<Message>();
-    List<EventMessages> eventMessages = new List<EventMessages>();
+    List<Message> eventMessages = new List<Message>();
     List<Message> winterMessages = new List<Message>();
 
     foreach (string row in TextFileMessages)
@@ -479,15 +461,10 @@ public class MessageScript : MonoBehaviour
       }
       else if (indexString[0] == "4")
       {
-        EventMessages eventMessage = new EventMessages();
+        Message eventMessage = new Message();
         eventMessage.eventName = indexString[1];
         eventMessage.messageText = indexString[2];
         //..
-        //eventMessage.picture = Resources.Load<Image>("Messages/SourceNameHere");
-        eventMessage.fertilityChange = Convert.ToInt32(indexString[3]);
-        eventMessage.tilesAffected = Convert.ToInt32(indexString[4]);
-        eventMessage.antsLost = Convert.ToInt32(indexString[5]);
-        eventMessage.speaker = indexString[6];
         eventMessages.Add(eventMessage);
       }
       else if (indexString[0] == "5")
@@ -510,7 +487,6 @@ public class MessageScript : MonoBehaviour
       warningMessages = warningMessages,
       eventMessages = eventMessages,
       winterMessages = winterMessages
-
     };
 
     var json = JsonConvert.SerializeObject(messageStruct);
@@ -526,7 +502,7 @@ public class MessageScript : MonoBehaviour
     }
   }
 
-  private string applyVariableDecoding(string MessageString)
+  private string ApplyVariableDecoding(string MessageString)
   {
     string adaptedString = "";
     for (int i = 0; i < MessageString.Length; i++)
@@ -535,11 +511,11 @@ public class MessageScript : MonoBehaviour
       {
         if (MessageString[i + 2].ToString().Equals(" "))
         {
-          adaptedString += returnDencodedVariable(Convert.ToInt32(MessageString[i + 1].ToString()));
+          adaptedString += ReturnDencodedVariable(Convert.ToInt32(MessageString[i + 1].ToString()));
         }
         else
         {
-          adaptedString += returnDencodedVariable(Convert.ToInt32(MessageString[i + 1].ToString() + MessageString[i + 2].ToString()));
+          adaptedString += ReturnDencodedVariable(Convert.ToInt32(MessageString[i + 1].ToString() + MessageString[i + 2].ToString()));
           i++;
         }
         i++;
@@ -566,10 +542,10 @@ public class MessageScript : MonoBehaviour
   /// prediction Winter           %9 ;
   /// add new Line "\n"           %10;
   /// ants lost during event      %11;
-  /// affected tiles by event     %12;
+  /// flood fertility condition   %12;
   /// Total Ants                  %13; 
   /// </summary>
-  private string returnDencodedVariable(int encoding)
+  private string ReturnDencodedVariable(int encoding)
   {
     string encodingString = "";
     switch (encoding)
@@ -611,20 +587,20 @@ public class MessageScript : MonoBehaviour
         break;
 
       case 9:
-        encodingString = predictWeather();
+        encodingString = PredictWeather();
         break;
 
       case 10:
         encodingString = "\n";
         break;
 
-      //case 11:
-      //  encodingString = GameManager.Instance.antsLostEvent.ToString();
-      //  break;
-      //
-      //case 12:
-      //  encodingString = GameManager.Instance.affectedTilesEvent;
-      //  break;
+      case 11:
+        encodingString = GameManager.Instance.eventInstance.antsEventValue.ToString();
+        break;
+      
+      case 12:
+        encodingString = GameManager.Instance.FertilityNames[GameManager.Instance.floodFertilityThreshhold].ToString();
+        break;
 
       case 13:
         encodingString = GameManager.Instance.totalAnts.ToString();
@@ -640,12 +616,12 @@ public class MessageScript : MonoBehaviour
   /// <summary>
   /// Pushes the tutorial messages into the queue
   /// </summary>
-  private void getTutorialMessages()
+  private void GetTutorialMessages()
   {
     foreach (var item in MessageSystemDataInstance.tutorialMessages)
     {
         TutorialMessages message = new TutorialMessages();
-        message.messageText = applyVariableDecoding(item.messageText);
+        message.messageText = ApplyVariableDecoding(item.messageText);
         message.voiceRecording = item.voiceRecording;
         message.speaker = item.speaker;
         currentTutorialMessageQueue.Enqueue(message);
@@ -655,7 +631,7 @@ public class MessageScript : MonoBehaviour
   /// <summary>
   /// Pushes the general messages into the queue
   /// </summary>
-  private void getGeneralMessages()
+  private void GetGeneralMessages()
   {
     foreach (var item in MessageSystemDataInstance.generalMessages)
     {
@@ -663,7 +639,7 @@ public class MessageScript : MonoBehaviour
       if (item.eventName.Equals("positiveIncome") && GameManager.Instance.income > 0)
       {
         currentMessage.eventName = item.eventName;
-        currentMessage.messageText = applyVariableDecoding(item.messageText);
+        currentMessage.messageText = ApplyVariableDecoding(item.messageText);
         currentMessage.speaker = item.speaker;
         //currentMessage.portrait = insertPortraitHere;
         currentGeneralMessageQueue.Enqueue(currentMessage);
@@ -671,7 +647,7 @@ public class MessageScript : MonoBehaviour
       else if (item.eventName.Equals("negativeIncome") && GameManager.Instance.income < 0)
       {
         currentMessage.eventName = item.eventName;
-        currentMessage.messageText = applyVariableDecoding(item.messageText);
+        currentMessage.messageText = ApplyVariableDecoding(item.messageText);
         currentMessage.speaker = item.speaker;
         //currentMessage.portrait = insertPortraitHere;
         currentGeneralMessageQueue.Enqueue(currentMessage);
@@ -679,7 +655,7 @@ public class MessageScript : MonoBehaviour
       else if (item.eventName.Equals("antGrowth") && GameManager.Instance.growth > 0)
       {
         currentMessage.eventName = item.eventName;
-        currentMessage.messageText = applyVariableDecoding(item.messageText);
+        currentMessage.messageText = ApplyVariableDecoding(item.messageText);
         currentMessage.speaker = item.speaker;
         //currentMessage.portrait = insertPortraitHere;
         currentGeneralMessageQueue.Enqueue(currentMessage);
@@ -687,7 +663,7 @@ public class MessageScript : MonoBehaviour
       else if (item.eventName.Equals("stagnation") && GameManager.Instance.freeAnts == 0)
       {
         currentMessage.eventName = item.eventName;
-        currentMessage.messageText = applyVariableDecoding(item.messageText);
+        currentMessage.messageText = ApplyVariableDecoding(item.messageText);
         currentMessage.speaker = item.speaker;
         //currentMessage.portrait = insertPortraitHere;
         currentGeneralMessageQueue.Enqueue(currentMessage);
@@ -695,7 +671,7 @@ public class MessageScript : MonoBehaviour
       else if (item.eventName.Equals("starvation") && GameManager.Instance.resources == 0 && GameManager.Instance.income < 0)
       {
         currentMessage.eventName = item.eventName;
-        currentMessage.messageText = applyVariableDecoding(item.messageText);
+        currentMessage.messageText = ApplyVariableDecoding(item.messageText);
         currentMessage.speaker = item.speaker;
         //currentMessage.portrait = insertPortraitHere;
         currentGeneralMessageQueue.Enqueue(currentMessage);
@@ -703,7 +679,7 @@ public class MessageScript : MonoBehaviour
       else if (item.eventName.Equals("overpopulation") && GameManager.Instance.totalAnts > GameManager.Instance.currentMaximumPopulationCapacity)
       {
         currentMessage.eventName = item.eventName;
-        currentMessage.messageText = applyVariableDecoding(item.messageText);
+        currentMessage.messageText = ApplyVariableDecoding(item.messageText);
         currentMessage.speaker = item.speaker;
         //currentMessage.portrait = insertPortraitHere;
         currentGeneralMessageQueue.Enqueue(currentMessage);
@@ -714,15 +690,15 @@ public class MessageScript : MonoBehaviour
   /// <summary>
   /// Pushes the warning messages into the queue
   /// </summary>
-  private void getWarningMessages()
+  private void GetWarningMessages()
   {
     foreach (var item in MessageSystemDataInstance.warningMessages)
     {
       Message currentMessage = new Message();
-      if (item.eventName.Equals("depletion") && checkTileDepletion())
+      if (item.eventName.Equals("depletion") && CheckTileDepletion())
       {
         currentMessage.eventName = item.eventName;
-        currentMessage.messageText = applyVariableDecoding(item.messageText);
+        currentMessage.messageText = ApplyVariableDecoding(item.messageText);
         currentMessage.speaker = item.speaker;
         //currentMessage.portrait = insertPortraitHere;
         currentWarningMessageQueue.Enqueue(currentMessage);
@@ -730,7 +706,7 @@ public class MessageScript : MonoBehaviour
       else if (item.eventName.Equals("negativeIncome") && GameManager.Instance.income < 0)
       {
         currentMessage.eventName = item.eventName;
-        currentMessage.messageText = applyVariableDecoding(item.messageText);
+        currentMessage.messageText = ApplyVariableDecoding(item.messageText);
         currentMessage.speaker = item.speaker;
         //currentMessage.portrait = insertPortraitHere;
         currentWarningMessageQueue.Enqueue(currentMessage);
@@ -738,7 +714,7 @@ public class MessageScript : MonoBehaviour
       else if (item.eventName.Equals("overpopulation") && GameManager.Instance.totalAnts > GameManager.Instance.currentMaximumPopulationCapacity)
       {
         currentMessage.eventName = item.eventName;
-        currentMessage.messageText = applyVariableDecoding(item.messageText);
+        currentMessage.messageText = ApplyVariableDecoding(item.messageText);
         currentMessage.speaker = item.speaker;
         //currentMessage.portrait = insertPortraitHere;
         currentWarningMessageQueue.Enqueue(currentMessage);
@@ -746,15 +722,15 @@ public class MessageScript : MonoBehaviour
       else if (item.eventName.Equals("stagnation") && GameManager.Instance.freeAnts == 0)
       {
         currentMessage.eventName = item.eventName;
-        currentMessage.messageText = applyVariableDecoding(item.messageText);
+        currentMessage.messageText = ApplyVariableDecoding(item.messageText);
         currentMessage.speaker = item.speaker;
         //currentMessage.portrait = insertPortraitHere;
         currentWarningMessageQueue.Enqueue(currentMessage);
       }
-      else if (item.eventName.Equals("antDistance") && checkAntTileDistance())
+      else if (item.eventName.Equals("antDistance") && CheckAntTileDistance())
       {
         currentMessage.eventName = item.eventName;
-        currentMessage.messageText = applyVariableDecoding(item.messageText);
+        currentMessage.messageText = ApplyVariableDecoding(item.messageText);
         currentMessage.speaker = item.speaker;
         //currentMessage.portrait = insertPortraitHere;
         currentWarningMessageQueue.Enqueue(currentMessage);
@@ -762,15 +738,15 @@ public class MessageScript : MonoBehaviour
       else if (item.eventName.Equals("fullStorage") && GameManager.Instance.maxResourceStorage == GameManager.Instance.resources)
       {
         currentMessage.eventName = item.eventName;
-        currentMessage.messageText = applyVariableDecoding(item.messageText);
+        currentMessage.messageText = ApplyVariableDecoding(item.messageText);
         currentMessage.speaker = item.speaker;
         //currentMessage.portrait = insertPortraitHere;
         currentWarningMessageQueue.Enqueue(currentMessage);
       }
-      else if (item.eventName.Equals("lowFertility") && checkTilesFertility())
+      else if (item.eventName.Equals("lowFertility") && CheckTilesFertility())
       {
         currentMessage.eventName = item.eventName;
-        currentMessage.messageText = applyVariableDecoding(item.messageText);
+        currentMessage.messageText = ApplyVariableDecoding(item.messageText);
         currentMessage.speaker = item.speaker;
         //currentMessage.portrait = insertPortraitHere;
         currentWarningMessageQueue.Enqueue(currentMessage);
@@ -778,7 +754,7 @@ public class MessageScript : MonoBehaviour
       else if (item.eventName.Equals("starvation") && GameManager.Instance.resources == 0 && GameManager.Instance.income < 0)
       {
         currentMessage.eventName = item.eventName;
-        currentMessage.messageText = applyVariableDecoding(item.messageText);
+        currentMessage.messageText = ApplyVariableDecoding(item.messageText);
         currentMessage.speaker = item.speaker;
         //currentMessage.portrait = insertPortraitHere;
         currentWarningMessageQueue.Enqueue(currentMessage);
@@ -789,42 +765,42 @@ public class MessageScript : MonoBehaviour
   /// <summary>
   /// Pushes the strategic messages into the queue
   /// </summary>
-  private void getStrategicMessages()
+  private void GetStrategicMessages()
   {
     //because we have to check 2 messages
-    bool newWeek = checkNewWeek();
+    bool newWeek = CheckNewWeek();
     
     foreach (var item in MessageSystemDataInstance.strategicMessages)
     {
       Message currentMessage = new Message();
-      if (item.eventName.Equals("seasonChange") && checkSeasonChange())
+      if (item.eventName.Equals("seasonChange") && CheckSeasonChange())
       {
         currentMessage.eventName = item.eventName;
-        currentMessage.messageText = applyVariableDecoding(item.messageText);
+        currentMessage.messageText = ApplyVariableDecoding(item.messageText);
         currentMessage.speaker = item.speaker;
         //currentMessage.portrait = insertPortraitHere;
         currentSeasonMessageQueue.Enqueue(currentMessage);
       }
-      else if (item.eventName.Equals("winterPrediction") && checkWinterPrediction())
+      else if (item.eventName.Equals("winterPrediction") && CheckWinterPrediction())
       {
         currentMessage.eventName = item.eventName;
-        currentMessage.messageText = applyVariableDecoding(item.messageText);
+        currentMessage.messageText = ApplyVariableDecoding(item.messageText);
         currentMessage.speaker = item.speaker;
         //currentMessage.portrait = insertPortraitHere;
         currentSeasonMessageQueue.Enqueue(currentMessage);
       }
-      else if (item.eventName.Equals("goalReached") && newWeek && checkWeeklyGoal())
+      else if (item.eventName.Equals("goalReached") && newWeek && CheckWeeklyGoal())
       {
         currentMessage.eventName = item.eventName;
-        currentMessage.messageText = applyVariableDecoding(item.messageText);
+        currentMessage.messageText = ApplyVariableDecoding(item.messageText);
         currentMessage.speaker = item.speaker;
         //currentMessage.portrait = insertPortraitHere;
         currentSeasonMessageQueue.Enqueue(currentMessage);
       }
-      else if (item.eventName.Equals("goalMissed") && newWeek && !checkWeeklyGoal())
+      else if (item.eventName.Equals("goalMissed") && newWeek && !CheckWeeklyGoal())
       {
         currentMessage.eventName = item.eventName;
-        currentMessage.messageText = applyVariableDecoding(item.messageText);
+        currentMessage.messageText = ApplyVariableDecoding(item.messageText);
         currentMessage.speaker = item.speaker;
         //currentMessage.portrait = insertPortraitHere;
         currentSeasonMessageQueue.Enqueue(currentMessage);
@@ -835,13 +811,46 @@ public class MessageScript : MonoBehaviour
   /// <summary>
   /// Pushes the event messages into the queue
   /// </summary>
-  private void getEventMessages()
+  private void GetEventMessages()
   {
     foreach (var item in MessageSystemDataInstance.eventMessages)
     {
-      EventMessages currentMessage = new EventMessages();
+      Message currentMessage = new Message();
       
-      if (item.eventName.Equals("heavyRain") && heavyRainCheck())
+      if (item.eventName.Equals("heavyRain") && GameManager.Instance.eventInstance.GetEventMessageTurn.Peek().Item1.Equals("heavyRain"))
+      {
+        currentMessage.eventName = item.eventName;
+        currentMessage.messageText = ApplyVariableDecoding(item.messageText);
+        currentMessage.speaker = item.speaker;
+        //currentMessage.portrait = insertPortraitHere;
+        currentEventMessageQueue.Enqueue(currentMessage);
+      }
+      else if (item.eventName.Equals("heavyFog") && GameManager.Instance.eventInstance.GetEventMessageTurn.Peek().Item1.Equals("heavyFog"))
+      {
+        currentMessage.eventName = item.eventName;
+        currentMessage.messageText = ApplyVariableDecoding(item.messageText);
+        currentMessage.speaker = item.speaker;
+        //currentMessage.portrait = insertPortraitHere;
+        currentEventMessageQueue.Enqueue(currentMessage);
+      }
+      else if (item.eventName.Equals("flood") && GameManager.Instance.eventInstance.GetEventMessageTurn.Peek().Item1.Equals("flood"))
+      {
+        currentMessage.eventName = item.eventName;
+        currentMessage.messageText = ApplyVariableDecoding(item.messageText);
+        currentMessage.speaker = item.speaker;
+        //currentMessage.portrait = insertPortraitHere;
+        currentEventMessageQueue.Enqueue(currentMessage);
+      }
+      else if (item.eventName.Equals("lightRain") && GameManager.Instance.eventInstance.GetEventMessageTurn.Peek().Item1.Equals("lightRain"))
+      {
+        currentMessage.eventName = item.eventName;
+        currentMessage.messageText = ApplyVariableDecoding(item.messageText);
+        currentMessage.speaker = item.speaker;
+        //currentMessage.portrait = insertPortraitHere;
+        currentEventMessageQueue.Enqueue(currentMessage);
+      }
+      /*
+      else if (item.eventName.Equals("clearDays") && GameManager.Instance.eventInstance.GetEventMessageTurn.Peek().Item1.Equals("clearDays"))
       {
         currentMessage.eventName = item.eventName;
         currentMessage.messageText = applyVariableDecoding(item.messageText);
@@ -849,7 +858,7 @@ public class MessageScript : MonoBehaviour
         //currentMessage.portrait = insertPortraitHere;
         currentEventMessageQueue.Enqueue(currentMessage);
       }
-      else if (item.eventName.Equals("heavyFog") && heavyFogCheck())
+      else if (item.eventName.Equals("overcastDays") && GameManager.Instance.eventInstance.GetEventMessageTurn.Peek().Item1.Equals("overcastDays"))
       {
         currentMessage.eventName = item.eventName;
         currentMessage.messageText = applyVariableDecoding(item.messageText);
@@ -857,18 +866,11 @@ public class MessageScript : MonoBehaviour
         //currentMessage.portrait = insertPortraitHere;
         currentEventMessageQueue.Enqueue(currentMessage);
       }
-      else if (item.eventName.Equals("flood") && floodCheck())
-      {
-        currentMessage.eventName = item.eventName;
-        currentMessage.messageText = applyVariableDecoding(item.messageText);
-        currentMessage.speaker = item.speaker;
-        //currentMessage.portrait = insertPortraitHere;
-        currentEventMessageQueue.Enqueue(currentMessage);
-      }
+      */
     }
   }
 
-  private void getWinterMessages()
+  private void GetWinterMessages()
   {
     foreach (var item in MessageSystemDataInstance.winterMessages)
     {
@@ -876,7 +878,7 @@ public class MessageScript : MonoBehaviour
       if (item.eventName.Equals("winterStart") && (GameManager.Instance.maxTurnCount - GameManager.Instance.currentTurnCount) == GameManager.Instance.seasonLength)
       {
         currentMessage.eventName = item.eventName;
-        currentMessage.messageText = applyVariableDecoding(item.messageText);
+        currentMessage.messageText = ApplyVariableDecoding(item.messageText);
         currentMessage.speaker = item.speaker;
         //currentMessage.portrait = insertPortraitHere;
         currentWinterMessageQueue.Enqueue(currentMessage);
@@ -887,7 +889,7 @@ public class MessageScript : MonoBehaviour
   /// Saves a tile from the MapTurn in the NextTurnScript in the MessageQueue
   /// </summary>
   /// <param name="tile"></param>
-  public void saveTileForMessage(GameManager.Tile tile) 
+  public void SaveTileForMessage(GameManager.Tile tile) 
   {
     if(tile.fertilityState < 3) 
     {
