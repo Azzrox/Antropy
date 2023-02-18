@@ -293,11 +293,11 @@ public class EventScript : MonoBehaviour
     {
       for (int j = 0; j < GameManager.Instance.columns; j++)
       {
-        if (GameManager.Instance.Map[i, j].explored && GameManager.Instance.Map[i, j].fertilityState < 5 && GameManager.Instance.Map[i, j].partOfAnthill == false) 
+        if (GameManager.Instance.Map[i, j].explored && GameManager.Instance.Map[i, j].fertilityState < 3 && GameManager.Instance.Map[i, j].partOfAnthill == false) 
         {
           floodTiles.Enqueue((GameManager.Instance.Map[i, j],(i,j)));
           GameManager.Instance.mapInstance.UpdatePrefab(i, j, 3);
-          GameManager.Instance.mapInstance.UpdatePrefabAppearance(i, j);
+          //GameManager.Instance.mapInstance.UpdatePrefabAppearance(i, j);
 
           if (GameManager.Instance.Map[i, j].assignedAnts > 0)
           {
@@ -329,7 +329,7 @@ public class EventScript : MonoBehaviour
     {
       Debug.Log("Flood Restore [" + item.Item2.Item1 + "]" + "[" + item.Item2.Item2 + "]" + ": " + item.Item1.type + " Type");
       GameManager.Instance.mapInstance.UpdatePrefab(item.Item2.Item1, item.Item2.Item2, item.Item1.type);
-      GameManager.Instance.mapInstance.UpdatePrefabAppearance(item.Item2.Item1, item.Item2.Item2);
+      //GameManager.Instance.mapInstance.UpdatePrefabAppearance(item.Item2.Item1, item.Item2.Item2);
     }
   }
 
@@ -348,16 +348,19 @@ public class EventScript : MonoBehaviour
         if (GameManager.Instance.Map[i, j].explored)
         {
           GameManager.Instance.Map[i, j].resourceAmount = (int)Mathf.Clamp(GameManager.Instance.Map[i, j].resourceAmount - (GameManager.Instance.Map[i, j].resourceAmount * resourceAffectionRate), 0, GameManager.Instance.Map[i, j].resourceMaxAmount);
-          GameManager.Instance.Map[i, j].fertilityState -= 1;
+          
+          //GameManager.Instance.Map[i, j].fertilityState -= 1;
+          GameManager.Instance.Map[i, j].fertilityState = (int)Mathf.Clamp(GameManager.Instance.Map[i, j].fertilityState - 1, 0, 6);
 
           // update visuals of grass tile
           if (GameManager.Instance.Map[i, j].type == 1 || GameManager.Instance.Map[i, j].type == 2)
           {
-            GameManager.Instance.mapInstance.mapMatrix[i, j].GetComponent<MapTileGeneration>().RecalculateGrassDensity(GameManager.Instance.Map[i, j].resourceAmount);
+            //GameManager.Instance.mapInstance.mapMatrix[i, j].GetComponent<MapTileGeneration>().RecalculateGrassDensity(GameManager.Instance.Map[i, j].resourceAmount);
+           // GameManager.Instance.mapInstance.TileErosionCheck(i, j);
           }
 
           //check if the growth if we reached a threshhold to update the tile mesh
-          GameManager.Instance.mapInstance.TileErosionCheck(i, j);
+          
         }
       }
     }
@@ -379,7 +382,7 @@ public class EventScript : MonoBehaviour
         if (GameManager.Instance.Map[i, j].occupiedByPlayer)
         {
           GameManager.Instance.mapInstance.UpdatePrefab(i, j, 3);
-          GameManager.Instance.mapInstance.UpdatePrefabAppearance(i, j);
+          //GameManager.Instance.mapInstance.UpdatePrefabAppearance(i, j);
 
           if (GameManager.Instance.Map[i, j].assignedAnts > 0 && GameManager.Instance.Map[i, j].constructionState < 4)
           {
@@ -417,7 +420,7 @@ public class EventScript : MonoBehaviour
         if (GameManager.Instance.Map[i, j].occupiedByPlayer)
         {
           GameManager.Instance.mapInstance.UpdatePrefab(i, j, 3);
-          GameManager.Instance.mapInstance.UpdatePrefabAppearance(i, j);
+          //GameManager.Instance.mapInstance.UpdatePrefabAppearance(i, j);
 
           if (GameManager.Instance.Map[i, j].assignedAnts > 0 && GameManager.Instance.Map[i, j].constructionState < 4)
           {
