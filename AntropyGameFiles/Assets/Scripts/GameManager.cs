@@ -71,8 +71,6 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public int resources;
 
-    
-
     /// <summary>
     /// Max storage the player can fill up
     /// </summary>
@@ -119,11 +117,6 @@ public class GameManager : MonoBehaviour
     public float antPopGrowthPerTurn;
 
     /// <summary>
-    /// Death of Ants per turn, due to overpopulation
-    /// </summary>
-    public float antOverPopulationDeathRate;
-
-    /// <summary>
     /// Death of ants per turn due to lack of resources;
     /// </summary>
     public float antDeathLackofResourcesRate;
@@ -147,16 +140,6 @@ public class GameManager : MonoBehaviour
     /// Regrow rate of tiles
     /// </summary>
     public int tileRegrowAmount;
-    
-    /// <summary>
-    /// Weather distance multiplier
-    /// </summary>
-    public float weatherAcessMultiplier;
-
-    /// <summary>
-    /// Weather regrow multiplier
-    /// </summary>
-    public float weatherRegrowMultiplier;
 
     /// <summary>
     /// [0]Spring, [1]Summer, [2]Autumn, [3]Winter
@@ -232,57 +215,6 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public int maxAntsAnthillTile;
 
-    //Weather
-    /// <summary>
-    /// Sun, easy tile access
-    /// </summary>
-    public float sunAccess;
-
-    /// <summary>
-    /// Sun, no regrow bonus
-    /// </summary>
-    public float sunRegrow;
-
-    /// <summary>
-    /// Rain, slower tile access
-    /// </summary>
-    public float rainAccess;
-
-    /// <summary>
-    /// Rain, major regrow bonus
-    /// </summary>
-    public float rainRegrow;
-
-    /// <summary>
-    /// Overcast,  normal tile access
-    /// </summary>
-    public float overcastAccess;
-
-    /// <summary>
-    /// Overcast,  no regrow bonus 
-    /// </summary>
-    public float overcastRegrow;
-
-    /// <summary>
-    /// Fog, slower tile access,  minor regrow bonus
-    /// </summary>
-    public float fogAccess;
-
-    /// <summary>
-    /// Fog, minor regrow bonus
-    /// </summary>
-    public float fogRegrow;
-
-    /// <summary>
-    /// Snow, no tile access
-    /// </summary>
-    public float snowAccess;
-
-    /// <summary>
-    /// Snow,  negative regrow bonus
-    /// </summary>
-    public float snowRegrow;
-
     /// <summary>
     /// Weight for the grass creating closer to less = more grass closer
     /// </summary>
@@ -337,6 +269,13 @@ public class GameManager : MonoBehaviour
     /// Stops the Game from Updating values in Winter
     /// </summary>
     public bool gameOverWinter = false;
+
+    [Header("EventSystem")]
+    public int floodFertilityThreshhold = 3;
+    public float antsLostFloodpercentage = 0.5f;
+    public float droughtResourceAffectionRate = 0.5f;
+    public int heavyFogAntsLostAmount = 5;
+    public int lightFogAntsLostAmount = 2;
 
     [Header("MessageSystem Messages")]
     //Enables Messages
@@ -410,7 +349,7 @@ public class GameManager : MonoBehaviour
         
         //adjust them accordingly, just a test
         goalThreshholds = new (int, int)[] {(3000,100), (3500, 250), (4000,300), (5000,400), (7000, 700), 
-                                            (7000, 700) , (7000, 700) , (7000, 700)  , (7000, 700) , (7000, 700), (7000, 700), (7000, 700) };
+                                            (7000, 700) , (7000, 700) , (7000, 700)  , (7000, 700) , (7000, 700), (7000, 700), (7000, 700), (0, 0) };
 
 
         Map = new Tile[rows, columns];
@@ -754,7 +693,19 @@ public class GameManager : MonoBehaviour
     // use nurse ants == free ants
     if (resources <= 0 && income < 0)
     {
-      return -(int)Mathf.Ceil(antDeathLackofResourcesRate);
+      if(currentSeason == 3) 
+      {
+        //Starving in Winter
+        return -(int)(Mathf.Ceil(antDeathLackofResourcesRate) + (Mathf.Ceil(antWinterDeathRate)));
+      }
+      else
+      {
+        return -(int)Mathf.Ceil(antDeathLackofResourcesRate);
+      }
+    }
+    else if(currentSeason == 3) 
+    {
+      return -(int)Mathf.Ceil(antWinterDeathRate);
     }
     else 
     {
@@ -771,32 +722,24 @@ public class GameManager : MonoBehaviour
   {
     //Resources
     income = -Upkeep();
-    resources += income;
-    totalResources += income;
-
-    //Population
-    //int growthWinter = 0;
-    if (resources <= 0) 
+    if(income > resources) 
     {
-      //growthWinter -= (int)Mathf.Ceil((totalAnts * 0.1f) * antDeathLackofResourcesRate);
-      //growthWinter -= (int)Mathf.Ceil(antDeathLackofResourcesRate);
-      //totalAnts += growthWinter;
-      //growth = growthWinter;
-      AntDeath((int)Mathf.Ceil(antDeathLackofResourcesRate));
-
-      AntDeath((int)Mathf.Ceil(antWinterDeathRate));
-      //growthWinter -= (int)Mathf.Ceil(antWinterDeathRate);
-      //growthWinter -= (int)Mathf.Ceil((totalAnts * 0.1f) * antWinterDeathRate);
-      //totalAnts += growthWinter;
-      //growth = growthWinter;
-
+      resources = 0;
     }
     else 
     {
-      //growthWinter -= (int)Mathf.Ceil(antWinterDeathRate);
-      //growthWinter -= (int)Mathf.Ceil((totalAnts*0.1f) * antWinterDeathRate);
-      //growth = growthWinter;
-      //totalAnts += growthWinter;
+      resources += income;//Mathf.Clamp(resources- income, 0, 1);
+    }
+    totalResources += income;
+
+    //Population
+    if (resources <= 0) 
+    {
+      AntDeath((int)Mathf.Ceil(antDeathLackofResourcesRate));
+      AntDeath((int)Mathf.Ceil(antWinterDeathRate));
+    }
+    else 
+    {
       AntDeath((int)Mathf.Ceil(antWinterDeathRate));
     }
   }

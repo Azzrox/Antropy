@@ -111,39 +111,4 @@ public class WeatherScript : MonoBehaviour
             }
         }
     }
-
-  /// <summary>
-  /// Updates the current active multiplier
-  /// </summary>
-  /// <param name="weather"></param>
-  public void WeatherMultiplierUpdate(int weather)
-  {
-    if (weather == 0)
-    {
-      GameManager.Instance.weatherAcessMultiplier = GameManager.Instance.sunAccess;
-      GameManager.Instance.weatherRegrowMultiplier = GameManager.Instance.sunRegrow;
-    }
-    else if (weather == 1)
-    {
-      GameManager.Instance.weatherAcessMultiplier = GameManager.Instance.rainAccess;
-      GameManager.Instance.weatherRegrowMultiplier = GameManager.Instance.rainRegrow;
-    }
-    else if (weather == 2)
-    {
-      GameManager.Instance.weatherAcessMultiplier = GameManager.Instance.overcastAccess;
-      GameManager.Instance.weatherRegrowMultiplier = GameManager.Instance.overcastRegrow;
-    }
-    else if (weather == 3)
-    {
-      GameManager.Instance.weatherAcessMultiplier = GameManager.Instance.fogAccess;
-      GameManager.Instance.weatherRegrowMultiplier = GameManager.Instance.fogRegrow;
-    }
-    else if (weather == 4)
-    {
-      GameManager.Instance.weatherAcessMultiplier = GameManager.Instance.snowAccess;
-      GameManager.Instance.weatherRegrowMultiplier = GameManager.Instance.snowRegrow;
-    }
-  }
-
-
 }

@@ -23,7 +23,7 @@ public class MessageScript : MonoBehaviour
   public MessageSystem MessageSystemDataInstance;
   public Queue<TutorialMessages> currentTutorialMessageQueue = new Queue<TutorialMessages>();
   public Queue<Message> currentGeneralMessageQueue = new Queue<Message>();
-  public Queue<EventMessages> currentEventMessageQueue = new Queue<EventMessages>();
+  public Queue<Message> currentEventMessageQueue = new Queue<Message>();
   public Queue<Message> currentSeasonMessageQueue = new Queue<Message>();
   public Queue<Message> currentWarningMessageQueue = new Queue<Message>();
   public Queue<Message> currentWinterMessageQueue = new Queue<Message>();
@@ -542,7 +542,7 @@ public class MessageScript : MonoBehaviour
   /// prediction Winter           %9 ;
   /// add new Line "\n"           %10;
   /// ants lost during event      %11;
-  /// affected tiles by event     %12;
+  /// flood fertility condition   %12;
   /// Total Ants                  %13; 
   /// </summary>
   private string ReturnDencodedVariable(int encoding)
@@ -594,13 +594,13 @@ public class MessageScript : MonoBehaviour
         encodingString = "\n";
         break;
 
-      //case 11:
-      //  encodingString = GameManager.Instance.antsLostEvent.ToString();
-      //  break;
-      //
-      //case 12:
-      //  encodingString = GameManager.Instance.affectedTilesEvent;
-      //  break;
+      case 11:
+        encodingString = GameManager.Instance.eventInstance.antsEventValue.ToString();
+        break;
+      
+      case 12:
+        encodingString = GameManager.Instance.FertilityNames[GameManager.Instance.floodFertilityThreshhold].ToString();
+        break;
 
       case 13:
         encodingString = GameManager.Instance.totalAnts.ToString();
@@ -815,7 +815,7 @@ public class MessageScript : MonoBehaviour
   {
     foreach (var item in MessageSystemDataInstance.eventMessages)
     {
-      EventMessages currentMessage = new EventMessages();
+      Message currentMessage = new Message();
       
       if (item.eventName.Equals("heavyRain") && GameManager.Instance.eventInstance.GetEventMessageTurn.Peek().Item1.Equals("heavyRain"))
       {

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public class EventScript : MonoBehaviour
 {
@@ -25,6 +26,10 @@ public class EventScript : MonoBehaviour
   /// </summary>
   float oldGatherRate;
 
+  /// <summary>
+  /// Ants that got (lost, drowned, .....) in events
+  /// </summary>
+  public int antsEventValue;
 
   private void Start()
   {
@@ -199,10 +204,10 @@ public class EventScript : MonoBehaviour
   /// </summary>
   /// <param name="eventChance"></param>
   private void WinterEvents(int eventChance) 
-  { 
+  {
     //TODO Implement me
+    ClearDaysEvent();
   }
-
 
   /// <summary>
   /// Saves what event needs to be played at the message turn
@@ -236,7 +241,6 @@ public class EventScript : MonoBehaviour
       //Queue Empty
       return;
     }
-    //Debug.Log("EventTurnMessage removed: " + currentEvents.Peek());
   }
 
   /// <summary>
@@ -287,37 +291,40 @@ public class EventScript : MonoBehaviour
   /// <param name="eventMessage"></param>
   private void FloodEvent() 
   {
-    int antsLost = 5;
-
     for (int i = 0; i < GameManager.Instance.rows; i++)
     {
       for (int j = 0; j < GameManager.Instance.columns; j++)
       {
-        if (GameManager.Instance.Map[i, j].explored && GameManager.Instance.Map[i, j].fertilityState < 3 && GameManager.Instance.Map[i, j].partOfAnthill == false) 
+        if (GameManager.Instance.Map[i, j].explored && GameManager.Instance.Map[i, j].fertilityState < GameManager.Instance.floodFertilityThreshhold && GameManager.Instance.Map[i, j].partOfAnthill == false) 
         {
           floodTiles.Enqueue((GameManager.Instance.Map[i, j],(i,j)));
-          GameManager.Instance.mapInstance.UpdatePrefab(i, j, 3);
-          //GameManager.Instance.mapInstance.UpdatePrefabAppearance(i, j);
-
-          if (GameManager.Instance.Map[i, j].assignedAnts > 0)
+          if(GameManager.Instance.Map[i, j].assignedAnts > 0)
           {
-            if (antsLost > GameManager.Instance.Map[i, j].assignedAnts)
+            if(GameManager.Instance.Map[i, j].assignedAnts > 5)
             {
-              GameManager.Instance.Map[i, j].assignedAnts = antsLost - GameManager.Instance.Map[i, j].assignedAnts;
-              GameManager.Instance.AntDeath(GameManager.Instance.Map[i, j].assignedAnts);
+              int ants_drowned = (int)(GameManager.Instance.Map[i, j].assignedAnts * GameManager.Instance.antsLostFloodpercentage);
+              GameManager.Instance.Map[i, j].assignedAnts -= ants_drowned;
+              GameManager.Instance.AntDeath(ants_drowned);
+              antsEventValue += ants_drowned;
+
+
               Debug.Log("Flood Death [" + i + "]" + "[" + j + "]" + ": " + GameManager.Instance.Map[i, j].assignedAnts + "Ants");
             }
-            else
+            else 
             {
-              GameManager.Instance.Map[i, j].assignedAnts = GameManager.Instance.Map[i, j].assignedAnts -antsLost;
-              GameManager.Instance.AntDeath(GameManager.Instance.Map[i, j].assignedAnts);
-              Debug.Log("Flood Death [" + i + "]" + "[" + j + "]" + ": " + GameManager.Instance.Map[i, j].assignedAnts + "Ants");
+              //don't remove ants, because you could softlock yourself
+              Debug.Log("No Flood Death [" + i + "]" + "[" + j + "]" + ": " + GameManager.Instance.Map[i, j].assignedAnts + "Ants");
             }
           }
+          GameManager.Instance.Map[i, j].type = 3;
+          GameManager.Instance.mapInstance.UpdatePrefab(i, j, 3);
+          GameManager.Instance.mapInstance.UpdatePrefabAppearance(i, j);
         }
       }
     }
     AddToQueues("flood", 1, Random.Range(1, 3));
+    GameManager.Instance.UpdateIncomeGrowth();
+    GameManager.Instance.miniBarInfoInstance.MiniBarInfoUpdate();
   }
 
   /// <summary>
@@ -328,9 +335,12 @@ public class EventScript : MonoBehaviour
     foreach (var item in floodTiles)
     {
       Debug.Log("Flood Restore [" + item.Item2.Item1 + "]" + "[" + item.Item2.Item2 + "]" + ": " + item.Item1.type + " Type");
+      GameManager.Instance.Map[item.Item2.Item1, item.Item2.Item2].type = item.Item1.type;
       GameManager.Instance.mapInstance.UpdatePrefab(item.Item2.Item1, item.Item2.Item2, item.Item1.type);
-      //GameManager.Instance.mapInstance.UpdatePrefabAppearance(item.Item2.Item1, item.Item2.Item2);
+      GameManager.Instance.mapInstance.UpdatePrefabAppearance(item.Item2.Item1, item.Item2.Item2);
     }
+    antsEventValue = 0;
+    ClearDaysEvent();
   }
 
   /// <summary>
@@ -339,31 +349,27 @@ public class EventScript : MonoBehaviour
   /// <param name="eventMessage"></param>
   private void DroughtEvent()
   {
-    float resourceAffectionRate = 0.5f;
 
     for (int i = 0; i < GameManager.Instance.rows; i++)
     {
       for (int j = 0; j < GameManager.Instance.columns; j++)
       {
-        if (GameManager.Instance.Map[i, j].explored)
-        {
-          GameManager.Instance.Map[i, j].resourceAmount = (int)Mathf.Clamp(GameManager.Instance.Map[i, j].resourceAmount - (GameManager.Instance.Map[i, j].resourceAmount * resourceAffectionRate), 0, GameManager.Instance.Map[i, j].resourceMaxAmount);
-          
-          //GameManager.Instance.Map[i, j].fertilityState -= 1;
+          GameManager.Instance.Map[i, j].resourceAmount = (int)Mathf.Clamp(GameManager.Instance.Map[i, j].resourceAmount - (GameManager.Instance.Map[i, j].resourceAmount * GameManager.Instance.droughtResourceAffectionRate), 0, GameManager.Instance.Map[i, j].resourceMaxAmount);
+        
           GameManager.Instance.Map[i, j].fertilityState = (int)Mathf.Clamp(GameManager.Instance.Map[i, j].fertilityState - 1, 0, 6);
 
           // update visuals of grass tile
           if (GameManager.Instance.Map[i, j].type == 1 || GameManager.Instance.Map[i, j].type == 2)
           {
-            //GameManager.Instance.mapInstance.mapMatrix[i, j].GetComponent<MapTileGeneration>().RecalculateGrassDensity(GameManager.Instance.Map[i, j].resourceAmount);
-           // GameManager.Instance.mapInstance.TileErosionCheck(i, j);
+            GameManager.Instance.mapInstance.mapMatrix[i, j].GetComponent<MapTileGeneration>().RecalculateGrassDensity(GameManager.Instance.Map[i, j].resourceAmount);
+            GameManager.Instance.mapInstance.UpgradeFertilityColor(i, j, GameManager.Instance.Map[i, j].fertilityState);
           }
-
-          //check if the growth if we reached a threshhold to update the tile mesh
-          
-        }
+        GameManager.Instance.mapInstance.TileErosionCheck(i, j);
+        GameManager.Instance.mapInstance.UpdatePrefabAppearance(i, j);
       }
     }
+    GameManager.Instance.UpdateIncomeGrowth();
+    GameManager.Instance.miniBarInfoInstance.MiniBarInfoUpdate();
     AddToQueues("drought", 0, Random.Range(1, 3));
   }
 
@@ -373,36 +379,43 @@ public class EventScript : MonoBehaviour
   /// <param name="eventMessage"></param>
   private void HeavyFogEvent()
   {
-    int antsLost = 5;
-
     for (int i = 0; i < GameManager.Instance.rows; i++)
     {
       for (int j = 0; j < GameManager.Instance.columns; j++)
       {
         if (GameManager.Instance.Map[i, j].occupiedByPlayer)
         {
-          GameManager.Instance.mapInstance.UpdatePrefab(i, j, 3);
-          //GameManager.Instance.mapInstance.UpdatePrefabAppearance(i, j);
-
           if (GameManager.Instance.Map[i, j].assignedAnts > 0 && GameManager.Instance.Map[i, j].constructionState < 4)
           {
-            if (antsLost > GameManager.Instance.Map[i, j].assignedAnts)
+            if (GameManager.Instance.heavyFogAntsLostAmount > GameManager.Instance.Map[i, j].assignedAnts)
             {
-              GameManager.Instance.Map[i, j].assignedAnts = antsLost - GameManager.Instance.Map[i, j].assignedAnts;
-              fogEventLostAnts.Enqueue(antsLost - GameManager.Instance.Map[i, j].assignedAnts);
-              Debug.Log("Fog Lost [" + i + "]" + "[" + j + "]" + ": " + (antsLost - GameManager.Instance.Map[i, j].assignedAnts) + "Ants");
+              int lost_ants  = GameManager.Instance.heavyFogAntsLostAmount - GameManager.Instance.Map[i, j].assignedAnts;
+              
+              GameManager.Instance.Map[i, j].assignedAnts -= lost_ants;
+              GameManager.Instance.totalAnts -= lost_ants;
+              fogEventLostAnts.Enqueue(lost_ants);
+              antsEventValue += lost_ants;
+              Debug.Log("Fog Lost [" + i + "]" + "[" + j + "]" + ": " + (GameManager.Instance.heavyFogAntsLostAmount - GameManager.Instance.Map[i, j].assignedAnts) + "Ants");
             }
             else
             {
-              GameManager.Instance.Map[i, j].assignedAnts = GameManager.Instance.Map[i, j].assignedAnts - antsLost;
-              fogEventLostAnts.Enqueue(antsLost);
-              Debug.Log("Fog Lost [" + i + "]" + "[" + j + "]" + ": " + antsLost + "Ants");
+              int lost_ants = GameManager.Instance.Map[i, j].assignedAnts - GameManager.Instance.heavyFogAntsLostAmount;
+              GameManager.Instance.Map[i, j].assignedAnts -= lost_ants;
+              GameManager.Instance.totalAnts -= lost_ants;
+              fogEventLostAnts.Enqueue(lost_ants);
+              antsEventValue += lost_ants;
+              Debug.Log("Fog Lost [" + i + "]" + "[" + j + "]" + ": " + GameManager.Instance.heavyFogAntsLostAmount + "Ants");
             }
           }
         }
+        //Fog effect?
+        //GameManager.Instance.mapInstance.UpdatePrefab(i, j, 3);
+        //GameManager.Instance.mapInstance.UpdatePrefabAppearance(i, j);
       }
-      AddToQueues("heavyFog", 3, Random.Range(1, 3));
     }
+    AddToQueues("heavyFog", 3, Random.Range(1, 3));
+    GameManager.Instance.UpdateIncomeGrowth();
+    GameManager.Instance.miniBarInfoInstance.MiniBarInfoUpdate();
   }
 
   /// <summary>
@@ -411,36 +424,42 @@ public class EventScript : MonoBehaviour
   /// <param name="eventMessage"></param>
   private void LightFogEvent()
   {
-    int antsLost = 2;
-
     for (int i = 0; i < GameManager.Instance.rows; i++)
     {
       for (int j = 0; j < GameManager.Instance.columns; j++)
       {
         if (GameManager.Instance.Map[i, j].occupiedByPlayer)
         {
-          GameManager.Instance.mapInstance.UpdatePrefab(i, j, 3);
-          //GameManager.Instance.mapInstance.UpdatePrefabAppearance(i, j);
-
           if (GameManager.Instance.Map[i, j].assignedAnts > 0 && GameManager.Instance.Map[i, j].constructionState < 4)
           {
-            if (antsLost > GameManager.Instance.Map[i, j].assignedAnts)
+            if (GameManager.Instance.lightFogAntsLostAmount > GameManager.Instance.Map[i, j].assignedAnts)
             {
-              GameManager.Instance.Map[i, j].assignedAnts = antsLost - GameManager.Instance.Map[i, j].assignedAnts;
-              fogEventLostAnts.Enqueue(antsLost - GameManager.Instance.Map[i, j].assignedAnts);
-              Debug.Log("Fog Lost [" + i + "]" + "[" + j + "]" + ": " + (antsLost - GameManager.Instance.Map[i, j].assignedAnts) + "Ants");
+              int lost_ants = GameManager.Instance.lightFogAntsLostAmount - GameManager.Instance.Map[i, j].assignedAnts;
+              GameManager.Instance.Map[i, j].assignedAnts -= lost_ants;
+              GameManager.Instance.totalAnts -= lost_ants;
+              fogEventLostAnts.Enqueue(lost_ants);
+              antsEventValue += lost_ants;
+              Debug.Log("Fog Lost [" + i + "]" + "[" + j + "]" + ": " + (GameManager.Instance.lightFogAntsLostAmount - GameManager.Instance.Map[i, j].assignedAnts) + "Ants");
             }
             else
             {
-              GameManager.Instance.Map[i, j].assignedAnts = GameManager.Instance.Map[i, j].assignedAnts - antsLost;
-              fogEventLostAnts.Enqueue(antsLost);
-              Debug.Log("Fog Lost [" + i + "]" + "[" + j + "]" + ": " + antsLost + "Ants");
+              int lost_ants = GameManager.Instance.Map[i, j].assignedAnts - GameManager.Instance.lightFogAntsLostAmount;
+              GameManager.Instance.Map[i, j].assignedAnts -= lost_ants;
+              GameManager.Instance.totalAnts -= lost_ants;
+              fogEventLostAnts.Enqueue(lost_ants);
+              antsEventValue += lost_ants;
+              Debug.Log("Fog Lost [" + i + "]" + "[" + j + "]" + ": " + GameManager.Instance.lightFogAntsLostAmount + "Ants");
             }
           }
         }
+        //Fog effect?
+        //GameManager.Instance.mapInstance.UpdatePrefab(i, j, 3);
+        //GameManager.Instance.mapInstance.UpdatePrefabAppearance(i, j);
       }
-      AddToQueues("lightFog", 3, Random.Range(1, 3));
     }
+    AddToQueues("lightFog", 3, Random.Range(1, 3));
+    GameManager.Instance.UpdateIncomeGrowth();
+    GameManager.Instance.miniBarInfoInstance.MiniBarInfoUpdate();
   }
 
   /// <summary>
@@ -455,9 +474,14 @@ public class EventScript : MonoBehaviour
     }
     Debug.Log("After dense fog: " + antsThatFoundHome + "Ants found back home");
     GameManager.Instance.totalAnts += antsThatFoundHome;
+    GameManager.Instance.freeAnts += antsThatFoundHome;
+    GameManager.Instance.UpdateIncomeGrowth();
+    GameManager.Instance.miniBarInfoInstance.MiniBarInfoUpdate();
 
+    //Assert.IsTrue(antsThatFoundHome == antsEventValue);
+    antsEventValue = 0;
     //Default back to sun
-    AddToQueues("undoFog", 0, Random.Range(1, 3));
+    ClearDaysEvent();
   }
 
   /// <summary>
@@ -468,6 +492,8 @@ public class EventScript : MonoBehaviour
   {
     GameManager.Instance.resourceGatherRate -= 2;
     AddToQueues("heavyRain", 1, Random.Range(1, 4));
+    GameManager.Instance.UpdateIncomeGrowth();
+    GameManager.Instance.miniBarInfoInstance.MiniBarInfoUpdate();
   }
 
   /// <summary>
@@ -477,7 +503,8 @@ public class EventScript : MonoBehaviour
   private void UndoHeavyRainEvent()
   {
     GameManager.Instance.resourceGatherRate = oldGatherRate;
-    AddToQueues("undoHeavyRain", 0, Random.Range(1, 4));
+    //default to clear days
+    ClearDaysEvent();
   }
 
   /// <summary>
@@ -498,6 +525,8 @@ public class EventScript : MonoBehaviour
       }
     }
     AddToQueues("lightRain", 1, Random.Range(1, 3));
+    GameManager.Instance.UpdateIncomeGrowth();
+    GameManager.Instance.miniBarInfoInstance.MiniBarInfoUpdate();
   }
 
   /// <summary>

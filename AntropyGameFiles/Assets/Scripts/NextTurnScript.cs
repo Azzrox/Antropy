@@ -333,9 +333,9 @@ public class NextTurnScript : MonoBehaviour
       GameManager.Instance.prototypeLooseCheck();
       GameManager.Instance.adjustWeek();
       GameManager.Instance.WinterAntTurn();
-      MessageTurn();
-      WeatherTurn();
       EventTurn();
+      WeatherTurn();
+      MessageTurn();
       GameManager.Instance.currentTurnCount++;
       yield return wait;
     }
