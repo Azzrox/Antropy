@@ -2740,15 +2740,14 @@ MonoBehaviour:
   growth: 0
   currentTurnCount: 0
   currentGoalProgress: 0
+  winterFoodUse: 0
   foodPerAnt: 5
   antPopGrowthPerTurn: 0.3
-  antOverPopulationDeathRate: 2
   antDeathLackofResourcesRate: 0
+  antWinterDeathRate: 0
   distanceGatheringReductionRate: 0.06931472
   resourceGatherRate: 10
   tileRegrowAmount: 20
-  weatherAcessMultiplier: 0
-  weatherRegrowMultiplier: 0
   currentSeason: 0
   currentWeather: 0
   regrowRateVector: 
@@ -2765,26 +2764,28 @@ MonoBehaviour:
   populationCapacityAmount: 
   maxAntsResourceTile: 10
   maxAntsAnthillTile: 20
-  sunAccess: 0
-  sunRegrow: 0
-  rainAccess: 0
-  rainRegrow: 0
-  overcastAccess: 0
-  overcastRegrow: 0
-  fogAccess: 0
-  fogRegrow: 0
-  snowAccess: 0
-  snowRegrow: 0
   grassWeight: 0.5
   resourceWeight: 0.05
   soilWeight: 0.3
   grassThreshhold: 150
   soilThreshold: 100
-  maxTurnCount: 100
-  weekLength: 7
+  maxTurnCount: 120
+  weekLength: 10
+  seasonLength: 30
   currentWeek: 0
   goal: 80
+  gameOverWinter: 0
+  floodFertilityThreshhold: 3
+  antsLostFloodpercentage: 0.5
+  droughtResourceAffectionRate: 0.5
+  heavyFogAntsLostAmount: 5
+  lightFogAntsLostAmount: 2
   tutorialEnabled: 0
+  generalEnabled: 0
+  strategicEnabled: 0
+  warningEnabled: 0
+  eventEnabled: 1
+  winterEnabled: 1
   totalResources: 0
   totalDeaths: 0
   musicVolume: 0
@@ -2804,6 +2805,8 @@ MonoBehaviour:
   miniBarInfoInstance: {fileID: 0}
   nextTurnInstance: {fileID: 0}
   messageSystemInstance: {fileID: 0}
+  winterCountDownInstance: {fileID: 0}
+  eventInstance: {fileID: 0}
 --- !u!4 &974892011
 Transform:
   m_ObjectHideFlags: 0

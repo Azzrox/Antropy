@@ -86,7 +86,7 @@ public class AntCounter : MonoBehaviour
     }
 
    
-    void DecreaseAnts()
+    public void DecreaseAnts()
     {
       if (GameManager.Instance.Map[posX, posZ].assignedAnts > 0)
       {
