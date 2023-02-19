@@ -19,6 +19,7 @@ public class MiniBarInfoUI : MonoBehaviour
   public RelativeBoxUI resourceFill;
   public RelativeBoxUI incomeIndicator;
   public RelativeBoxUI growthIndicator;
+  public TextMeshProUGUI eventPlaying;
 
 
   private void Awake()
@@ -102,8 +103,8 @@ public class MiniBarInfoUI : MonoBehaviour
     CheckLimits(resourceDescription, GameManager.Instance.resources + GameManager.Instance.income,  GameManager.Instance.maxResourceStorage, Color.red, Color.blue);
     CheckLimits(populationDescription, GameManager.Instance.totalAnts + GameManager.Instance.growth,  GameManager.Instance.currentMaximumPopulationCapacity, Color.red, Color.red);
     //OverCapacityColourChange();
+    getEventData();
   }
-
 
   void CheckLimits(TextMeshProUGUI text, float value, float maximum, Color colMin, Color colMax)
   {
@@ -115,30 +116,17 @@ public class MiniBarInfoUI : MonoBehaviour
     { text.color = Color.black;
     }
   }
-  /// <summary>
-  /// Changes the text color of the ui for the player to see
-  /// </summary>
-  void OverCapacityColourChange() 
-  {
-    if(GameManager.Instance.totalAnts  > GameManager.Instance.currentMaximumPopulationCapacity) 
-    {
-      populationValue.color = Color.red;
 
+  void getEventData() 
+  {
+    if(GameManager.Instance.messageSystemInstance.currentEventMessageQueue.Count > 0) 
+    {
+      eventPlaying.text = "Event: " + GameManager.Instance.messageSystemInstance.currentEventMessageQueue.Peek().eventName;
     }
     else 
     {
-      populationValue.color = Color.black;
-    }
-
-    if (GameManager.Instance.resources >= GameManager.Instance.maxResourceStorage)
-    {
-      resourcesValue.color = Color.red;
-
-    }
-    else
-    {
-      resourcesValue.color = Color.black;
-    }
-
+      eventPlaying.text = "Event: " + "none";
+    } 
   }
+ 
 }
