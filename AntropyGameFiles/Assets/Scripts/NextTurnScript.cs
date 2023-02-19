@@ -65,35 +65,30 @@ public class NextTurnScript : MonoBehaviour
             GameManager.Instance.prototypeGoalCheck();
             return;
         }
-        if (GameManager.Instance.currentSeason == ((int)t_season.SPRING))
-        {
-            Debug.Log("Playing spring music");
-            GameManager.currentAudioSource.clip = GameManager.Instance.springMusic;
-            GameManager.currentAudioSource.Play();
-            previousSeason = GameManager.Instance.currentSeason;
-        }
-        else if (GameManager.Instance.currentSeason == ((int)t_season.FALL))
-        {
-            Debug.Log("Playing fall music");
-            GameManager.currentAudioSource.clip = GameManager.Instance.autmnMusic;
-            GameManager.currentAudioSource.Play();
-            previousSeason = GameManager.Instance.currentSeason;
-        }
-        else if (GameManager.Instance.currentSeason == ((int)t_season.SUMMER))
-        {
-            Debug.Log("Playing summer music");
-            GameManager.currentAudioSource.clip = GameManager.Instance.summerMusic;
-            GameManager.currentAudioSource.Play();
-            previousSeason = GameManager.Instance.currentSeason;
-        }
-        else
-        {
-            Debug.Log("Playing winter music");
-            GameManager.currentAudioSource.clip = GameManager.Instance.winterMusic;
-            GameManager.currentAudioSource.Play();
-            previousSeason = GameManager.Instance.currentSeason;
-        }
-        GameManager.currentAudioSource.loop = true;
+            if (GameManager.Instance.currentSeason == ((int)t_season.SPRING))
+            {
+                Debug.Log("Playing spring music");
+                GameManager.Instance.playMusic(GameManager.Instance.springMusic);
+                previousSeason = (int)t_season.SPRING;
+            }
+            else if (GameManager.Instance.currentSeason == ((int)t_season.FALL))
+            {
+                Debug.Log("Playing autmn music");
+                GameManager.Instance.playMusic(GameManager.Instance.autmnMusic);
+                previousSeason = (int)t_season.FALL;
+            }
+            else if (GameManager.Instance.currentSeason == ((int)t_season.SUMMER))
+            {
+                Debug.Log("Playing summer music");
+                GameManager.Instance.playMusic(GameManager.Instance.summerMusic);
+                previousSeason = (int)t_season.SUMMER;
+            }
+            else
+            {
+                Debug.Log("Playing winter music");
+                GameManager.Instance.playMusic(GameManager.Instance.winterMusic);
+                previousSeason = (int)t_season.WINTER;
+            }
     }   
     else 
     {

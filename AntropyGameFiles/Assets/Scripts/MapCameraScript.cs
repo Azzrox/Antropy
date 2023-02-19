@@ -86,7 +86,7 @@ public class MapCameraScript : MonoBehaviour
   }
   
   private void OnMove(InputValue movementValue)
-  {
+  { 
     Debug.Log("moving");
     Vector2 movementVector = movementValue.Get<Vector2>();
     inputX = movementVector.x;
