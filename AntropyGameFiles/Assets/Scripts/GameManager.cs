@@ -316,12 +316,13 @@ public class GameManager : MonoBehaviour
     public MessageScript messageSystemInstance;
     public WinterCountdownUI winterCountDownInstance;
     public EventScript eventInstance;
+    public MessageSideBarUI messageSideBarUIInstance;
 
 
 
 
-    // Creates an instance that is present in all other classes
-    public static GameManager Instance;
+  // Creates an instance that is present in all other classes
+  public static GameManager Instance;
 
     //takes care that there is only one instance of GameManager
     private void Awake()

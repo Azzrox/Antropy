@@ -336,7 +336,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e851c38746d39441889f6e86a7a334d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  antsDrownedFlood: 0
+  antsEventValue: 0
 --- !u!4 &860731279
 Transform:
   m_ObjectHideFlags: 0
@@ -662,6 +662,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3522118166356271542, guid: 1b08e5242766f204e8f2ef23f589ff0c, type: 3}
+      propertyPath: m_Type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3522118166356271542, guid: 1b08e5242766f204e8f2ef23f589ff0c, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 3522118166356271542, guid: 1b08e5242766f204e8f2ef23f589ff0c, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3522118167620666810, guid: 1b08e5242766f204e8f2ef23f589ff0c, type: 3}
       propertyPath: m_RootOrder
       value: 13
@@ -996,14 +1008,11 @@ MonoBehaviour:
   winterFoodUse: 0
   foodPerAnt: 5
   antPopGrowthPerTurn: 0.3
-  antOverPopulationDeathRate: 2
   antDeathLackofResourcesRate: 2
   antWinterDeathRate: 1
   distanceGatheringReductionRate: 0.06931472
   resourceGatherRate: 10
   tileRegrowAmount: 20
-  weatherAcessMultiplier: 0
-  weatherRegrowMultiplier: 0
   currentSeason: 0
   currentWeather: 0
   regrowRateVector: 
@@ -1036,7 +1045,7 @@ MonoBehaviour:
   droughtResourceAffectionRate: 0.5
   heavyFogAntsLostAmount: 5
   lightFogAntsLostAmount: 2
-  tutorialEnabled: 0
+  tutorialEnabled: 1
   generalEnabled: 1
   strategicEnabled: 1
   warningEnabled: 1
@@ -1063,6 +1072,7 @@ MonoBehaviour:
   messageSystemInstance: {fileID: 0}
   winterCountDownInstance: {fileID: 0}
   eventInstance: {fileID: 0}
+  messageSideBarUIInstance: {fileID: 0}
 --- !u!4 &1398438779
 Transform:
   m_ObjectHideFlags: 0
@@ -1908,26 +1918,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 143873210, guid: 930aa972a31ee0f42b40935ed5e9cdc6, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 21300000, guid: 8137220fdd4cb8348b1f86011f672c57, type: 3}
-    - target: {fileID: 143873210, guid: 930aa972a31ee0f42b40935ed5e9cdc6, type: 3}
-      propertyPath: m_Color.b
-      value: 0.025424192
-      objectReference: {fileID: 0}
-    - target: {fileID: 143873210, guid: 930aa972a31ee0f42b40935ed5e9cdc6, type: 3}
-      propertyPath: m_Color.g
-      value: 0.3490566
-      objectReference: {fileID: 0}
-    - target: {fileID: 143873210, guid: 930aa972a31ee0f42b40935ed5e9cdc6, type: 3}
-      propertyPath: m_Color.r
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1583300760479513015, guid: 930aa972a31ee0f42b40935ed5e9cdc6, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 4874741452438488258, guid: 930aa972a31ee0f42b40935ed5e9cdc6, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -2015,22 +2005,6 @@ PrefabInstance:
     - target: {fileID: 4874741452438488286, guid: 930aa972a31ee0f42b40935ed5e9cdc6, type: 3}
       propertyPath: m_Name
       value: MiniBarInfo
-      objectReference: {fileID: 0}
-    - target: {fileID: 5776188457983958455, guid: 930aa972a31ee0f42b40935ed5e9cdc6, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 21300000, guid: 8137220fdd4cb8348b1f86011f672c57, type: 3}
-    - target: {fileID: 5776188457983958455, guid: 930aa972a31ee0f42b40935ed5e9cdc6, type: 3}
-      propertyPath: m_Color.b
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5776188457983958455, guid: 930aa972a31ee0f42b40935ed5e9cdc6, type: 3}
-      propertyPath: m_Color.g
-      value: 0.28981042
-      objectReference: {fileID: 0}
-    - target: {fileID: 5776188457983958455, guid: 930aa972a31ee0f42b40935ed5e9cdc6, type: 3}
-      propertyPath: m_Color.r
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 930aa972a31ee0f42b40935ed5e9cdc6, type: 3}
