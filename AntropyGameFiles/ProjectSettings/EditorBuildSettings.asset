@@ -20,5 +20,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/PrototypeEndScreen.unity
     guid: 3d7ea85c1a6fe094eac6159e0c153d35
+  - enabled: 1
+    path: Assets/Scenes/Credits.unity
+    guid: 24fb2ecddaa774e878d5f069486e3cdb
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: d59056646cc5de34d82e472b51a19eb9, type: 2}

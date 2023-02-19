@@ -90,7 +90,8 @@ public class SceneScript : MonoBehaviour
     }
 
     public void SaveGame(){
-        SceneManager.LoadScene("Menu");
+        //SceneManager.LoadScene("Menu");
+        SceneManager.LoadScene("Credits");
     }
 
     public void LoadGame(){
