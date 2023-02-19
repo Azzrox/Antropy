@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine.SceneManagement;
 using UnityEngine;
 
@@ -149,7 +148,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// current audio source that is playing the current audio clip
     /// </summary>
-    public static AudioSource currentAudioSource = new AudioSource();
+    public AudioSource currentAudioSource;
 
     /// <summary>
     /// [0]sun, [1]rain, [2]overcast, [3]fog, [4] snow
@@ -337,6 +336,7 @@ public class GameManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
+
         // optional: load last gameplay (if saved)
         //LoadLastGame();
 
@@ -367,9 +367,11 @@ public class GameManager : MonoBehaviour
         //nextTurnInstance = GameObject.Find("NextTurnCanvas").GetComponent<NextTurnScript>();
 
         currentAudioSource = GetComponent<AudioSource>();
-        currentAudioSource.clip = mainMenuMusic;
-        currentAudioSource.Play();
-  }
+
+        if (currentAudioSource == null)
+            currentAudioSource = new AudioSource();
+
+    }
 
   [System.Serializable]
     class SaveData
@@ -819,5 +821,96 @@ public class GameManager : MonoBehaviour
       {
         totalDeaths = value;
       }
+    }
+
+    public float MusicVolume
+    {
+        get
+        {
+            return musicVolume;
+        }
+        set
+        {
+            musicVolume = value;
+        }
+    }
+
+
+
+    public void playMusic(AudioClip clip)
+    {
+        Debug.Log("Starting music fade out routine.");
+        StartCoroutine(transitionMusic(currentAudioSource, 10.0f, musicVolume, clip));
+    }
+
+
+    public void setCurrentAudioVolume()
+    {
+        Debug.Log("Music volume set to " + musicVolume);
+
+        if (currentAudioSource == null)
+            currentAudioSource = GetComponent<AudioSource>();
+
+        currentAudioSource.volume = musicVolume;
+    }
+
+    public static IEnumerator wait(float time)
+    {
+        Debug.Log("Waiting " + time + " seconds");
+        yield return new WaitForSeconds(time);
+    }
+
+
+    public static IEnumerator StartFadeIn(AudioSource source, float duration, float targetVolume)
+    {
+        Debug.Log("Fade in started.");
+        float currentTime = 0.0f;
+
+        source.volume = 0.0f;
+
+        source.Play();
+
+        Debug.Log("Volume Fade In Start: " + source.volume);
+        while(currentTime < duration)
+        {
+            currentTime += Time.deltaTime;
+
+
+            source.volume = Mathf.Lerp(source.volume, targetVolume, currentTime / duration);
+        }
+
+        Debug.Log("Volume Fade In End: " + source.volume);
+        yield return null;
+    }
+
+    public static IEnumerator StartFadeOut(AudioSource source, float duration)
+    {
+        Debug.Log("Fading out started");
+        float currentTime = 0.0f;
+        float targetVolume = 0.0f;
+
+        Debug.Log("Volume Fade out Start: " + source.volume);
+        while (currentTime < duration)
+        {
+            currentTime += Time.deltaTime;
+
+            source.volume = Mathf.Lerp(source.volume, targetVolume, currentTime / duration);
+        }
+
+        Debug.Log("Volume Fade out end: " + source.volume);
+        yield return null;
+    }
+
+    public IEnumerator transitionMusic(AudioSource source, float duration, float targetVolume, AudioClip newClip)
+    {
+        if(source != null && source.isPlaying)
+            yield return StartCoroutine(StartFadeOut(source, duration));
+
+        currentAudioSource.clip = newClip;
+        currentAudioSource.volume = 0.0f;
+        currentAudioSource.loop = true;
+
+        StartCoroutine(StartFadeIn(source, duration, targetVolume));
+
     }
 }

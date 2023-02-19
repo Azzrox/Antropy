@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18035254, g: 0.22578925, b: 0.30702662, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1155,10 +1155,22 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0
+  m_Value: 0.5
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 974892010}
+        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+        m_MethodName: setCurrentAudioVolume
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &365885992
 GameObject:
   m_ObjectHideFlags: 0
@@ -2366,7 +2378,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0
+  m_Value: 1
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -2749,6 +2761,7 @@ MonoBehaviour:
   resourceGatherRate: 10
   tileRegrowAmount: 20
   currentSeason: 0
+  currentAudioSource: {fileID: 0}
   currentWeather: 0
   regrowRateVector: 
   transportCostVector: []
@@ -2788,8 +2801,8 @@ MonoBehaviour:
   winterEnabled: 1
   totalResources: 0
   totalDeaths: 0
-  musicVolume: 0
-  soundVolume: 0
+  musicVolume: 1
+  soundVolume: 1
   showAntsMovement: 0
   showWeatherEffects: 0
   showGrassMovement: 0
@@ -2797,8 +2810,8 @@ MonoBehaviour:
   summerMusic: {fileID: 8300000, guid: 9572b81223dd68943bdeb36f67fb727e, type: 3}
   autmnMusic: {fileID: 8300000, guid: 37be31a312bd4fe4b96389a376d7faf3, type: 3}
   springMusic: {fileID: 8300000, guid: a7992452c65054a42b72c942e5041952, type: 3}
-  winterMusic: {fileID: 8300000, guid: 9df16741027e2d14c865e398671f5068, type: 3}
-  mainMenuMusic: {fileID: 8300000, guid: 74f583557d1b1b34ea3faad235ae1b2f, type: 3}
+  winterMusic: {fileID: 8300000, guid: 0f43e9bdc53eea74fbfec0502c88da95, type: 3}
+  mainMenuMusic: {fileID: 8300000, guid: 9df16741027e2d14c865e398671f5068, type: 3}
   mapInstance: {fileID: 0}
   cameraInstance: {fileID: 0}
   weatherInstance: {fileID: 0}
