@@ -45,6 +45,8 @@ public class SceneScript : MonoBehaviour
             backToMenu.enabled = true;
         }
 
+        GameManager.Instance.playMusic(GameManager.Instance.mainMenuMusic);
+
     }
 
     // Update is called once per frame
@@ -57,6 +59,8 @@ public class SceneScript : MonoBehaviour
         // generate map if no map was loaded
         GameManager.Instance.GameRunning = false;
         SceneManager.LoadScene("Prototype_v3 1");
+        GameManager.Instance.playMusic(GameManager.Instance.springMusic);
+
     }
 
     public void QuitGame(){
@@ -86,7 +90,8 @@ public class SceneScript : MonoBehaviour
     }
 
     public void SaveGame(){
-        SceneManager.LoadScene("Menu");
+        //SceneManager.LoadScene("Menu");
+        SceneManager.LoadScene("Credits");
     }
 
     public void LoadGame(){

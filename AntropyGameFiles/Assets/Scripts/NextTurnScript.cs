@@ -42,15 +42,16 @@ public class NextTurnScript : MonoBehaviour
         AntTurn();
         ExploreTurn();
         MapTurn();
-        WeatherTurn();
-        EventTurn();
         SeasonTurn();
+        EventTurn();
+        WeatherTurn();
         MessageTurn();
         GameManager.Instance.currentTurnCount++;
       }
       else 
       {
         winterTurnSequence();
+        GameManager.Instance.prototypeGoalCheck();
       }
      
       //Update the infobars
@@ -65,35 +66,30 @@ public class NextTurnScript : MonoBehaviour
             GameManager.Instance.prototypeGoalCheck();
             return;
         }
-        if (GameManager.Instance.currentSeason == ((int)t_season.SPRING))
-        {
-            Debug.Log("Playing spring music");
-            GameManager.currentAudioSource.clip = GameManager.Instance.springMusic;
-            GameManager.currentAudioSource.Play();
-            previousSeason = GameManager.Instance.currentSeason;
-        }
-        else if (GameManager.Instance.currentSeason == ((int)t_season.FALL))
-        {
-            Debug.Log("Playing fall music");
-            GameManager.currentAudioSource.clip = GameManager.Instance.autmnMusic;
-            GameManager.currentAudioSource.Play();
-            previousSeason = GameManager.Instance.currentSeason;
-        }
-        else if (GameManager.Instance.currentSeason == ((int)t_season.SUMMER))
-        {
-            Debug.Log("Playing summer music");
-            GameManager.currentAudioSource.clip = GameManager.Instance.summerMusic;
-            GameManager.currentAudioSource.Play();
-            previousSeason = GameManager.Instance.currentSeason;
-        }
-        else
-        {
-            Debug.Log("Playing winter music");
-            GameManager.currentAudioSource.clip = GameManager.Instance.winterMusic;
-            GameManager.currentAudioSource.Play();
-            previousSeason = GameManager.Instance.currentSeason;
-        }
-        GameManager.currentAudioSource.loop = true;
+            if (GameManager.Instance.currentSeason == ((int)t_season.SPRING))
+            {
+                Debug.Log("Playing spring music");
+                GameManager.Instance.playMusic(GameManager.Instance.springMusic);
+                previousSeason = (int)t_season.SPRING;
+            }
+            else if (GameManager.Instance.currentSeason == ((int)t_season.FALL))
+            {
+                Debug.Log("Playing autmn music");
+                GameManager.Instance.playMusic(GameManager.Instance.autmnMusic);
+                previousSeason = (int)t_season.FALL;
+            }
+            else if (GameManager.Instance.currentSeason == ((int)t_season.SUMMER))
+            {
+                Debug.Log("Playing summer music");
+                GameManager.Instance.playMusic(GameManager.Instance.summerMusic);
+                previousSeason = (int)t_season.SUMMER;
+            }
+            else
+            {
+                Debug.Log("Playing winter music");
+                GameManager.Instance.playMusic(GameManager.Instance.winterMusic);
+                previousSeason = (int)t_season.WINTER;
+            }
     }   
     else 
     {
@@ -113,7 +109,15 @@ public class NextTurnScript : MonoBehaviour
       GameManager.Instance.income = GameManager.Instance.maxResourceStorage - GameManager.Instance.resources;
     }
 
+
     GameManager.Instance.resources += GameManager.Instance.income;
+
+    if (GameManager.Instance.resources < 0)
+    {
+      // Trigger for storage underflow
+      // effectively stored income (needed for historic data)
+      GameManager.Instance.resources = 0;
+    }
 
     // historic data
     GameManager.Instance.totalResources += GameManager.Instance.income;
@@ -151,7 +155,7 @@ public class NextTurnScript : MonoBehaviour
         }
 
         //Message checks
-        GameManager.Instance.messageSystemInstance.saveTileForMessage(GameManager.Instance.Map[i, j]);
+        GameManager.Instance.messageSystemInstance.SaveTileForMessage(GameManager.Instance.Map[i, j]);
       }
        
     }
@@ -173,6 +177,10 @@ public class NextTurnScript : MonoBehaviour
     // update population
     //Population growth
     int new_pop =  GameManager.Instance.Juniors();
+    if(GameManager.Instance.totalAnts + new_pop > GameManager.Instance.currentMaximumPopulationCapacity)
+    {
+      new_pop = GameManager.Instance.currentMaximumPopulationCapacity - GameManager.Instance.totalAnts;
+    }
     GameManager.Instance.freeAnts += new_pop;
     GameManager.Instance.totalAnts += new_pop;
     GameManager.Instance.UpdateGrowth();
@@ -238,14 +246,12 @@ public class NextTurnScript : MonoBehaviour
 
   void WeatherTurn()
   {
-    //Insert Weather Turn
     GameManager.Instance.weatherInstance.UpdateWeather(GameManager.Instance.currentSeason);
-    GameManager.Instance.weatherInstance.WeatherMultiplierUpdate(GameManager.Instance.currentWeather);
   }
 
   void EventTurn() 
   {
-    //Insert Event Turn
+    GameManager.Instance.eventInstance.PrepareEventTurn();
   }
 
   void MessageTurn() 
@@ -255,7 +261,6 @@ public class NextTurnScript : MonoBehaviour
 
   void SeasonTurn() 
   {
-    //Insert Season Turn
     GameManager.Instance.checkSeasonChange();
   }
 
@@ -320,7 +325,7 @@ public class NextTurnScript : MonoBehaviour
 
     //Start the automated WinterTurn
     StartCoroutine(winterTurn(1));
-    GameManager.Instance.prototypeGoalCheck();
+    
   }
 
   /// <summary>
@@ -334,11 +339,12 @@ public class NextTurnScript : MonoBehaviour
     {
       GameManager.Instance.winterCountDownInstance.WinterCountdownUpdate();
       GameManager.Instance.prototypeLooseCheck();
+      GameManager.Instance.prototypeGoalCheck();
       GameManager.Instance.adjustWeek();
       GameManager.Instance.WinterAntTurn();
-      MessageTurn();
-      WeatherTurn();
       EventTurn();
+      WeatherTurn();
+      MessageTurn();
       GameManager.Instance.currentTurnCount++;
       yield return wait;
     }

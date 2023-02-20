@@ -19,6 +19,7 @@ public class MiniBarInfoUI : MonoBehaviour
   public RelativeBoxUI resourceFill;
   public RelativeBoxUI incomeIndicator;
   public RelativeBoxUI growthIndicator;
+  public TextMeshProUGUI eventPlaying;
 
 
   private void Awake()
@@ -71,8 +72,17 @@ public class MiniBarInfoUI : MonoBehaviour
 
     season.text = GameManager.Instance.SeasonName(GameManager.Instance.currentSeason) + " / " + WeatherName(GameManager.Instance.currentWeather);
 
+    int intermediate_growth = GameManager.Instance.growth;
+    if(intermediate_growth < 0)
+    {
+      intermediate_growth = 0;
+    }
+    else if (intermediate_growth + GameManager.Instance.totalAnts > GameManager.Instance.currentMaximumPopulationCapacity)
+    {
+      intermediate_growth = GameManager.Instance.currentMaximumPopulationCapacity - GameManager.Instance.totalAnts;
+    }
     populationFill.SetLeftRight(0, GameManager.Instance.totalAnts, GameManager.Instance.currentMaximumPopulationCapacity,0);
-    growthIndicator.SetLeftRight(GameManager.Instance.totalAnts, GameManager.Instance.growth, GameManager.Instance.currentMaximumPopulationCapacity, 0.17f);
+    growthIndicator.SetLeftRight(GameManager.Instance.totalAnts, intermediate_growth, GameManager.Instance.currentMaximumPopulationCapacity, 0.17f);
 
     RelativeBoxUI growthTextBox = populationValue.GetComponent<RelativeBoxUI>();
     if (GameManager.Instance.totalAnts > 0.5 * GameManager.Instance.currentMaximumPopulationCapacity)
@@ -85,7 +95,16 @@ public class MiniBarInfoUI : MonoBehaviour
 
 
     resourceFill.SetLeftRight(0, GameManager.Instance.resources, GameManager.Instance.maxResourceStorage,0);
-    incomeIndicator.SetLeftRight(GameManager.Instance.resources, GameManager.Instance.income, GameManager.Instance.maxResourceStorage, 0.17f);
+    int intermediate_income = GameManager.Instance.income;
+    if(intermediate_income < 0)
+    {
+      intermediate_income = 0;
+    }
+    else if (intermediate_income + GameManager.Instance.resources > GameManager.Instance.maxResourceStorage)
+    {
+      intermediate_income = GameManager.Instance.maxResourceStorage - GameManager.Instance.resources;
+    }
+    incomeIndicator.SetLeftRight(GameManager.Instance.resources, intermediate_income, GameManager.Instance.maxResourceStorage, 0.17f);
 
     RelativeBoxUI resourceTextBox = resourcesValue.GetComponent<RelativeBoxUI>();
     if (GameManager.Instance.resources > 0.5 * GameManager.Instance.maxResourceStorage)
@@ -102,43 +121,30 @@ public class MiniBarInfoUI : MonoBehaviour
     CheckLimits(resourceDescription, GameManager.Instance.resources + GameManager.Instance.income,  GameManager.Instance.maxResourceStorage, Color.red, Color.blue);
     CheckLimits(populationDescription, GameManager.Instance.totalAnts + GameManager.Instance.growth,  GameManager.Instance.currentMaximumPopulationCapacity, Color.red, Color.red);
     //OverCapacityColourChange();
+    getEventData();
   }
-
 
   void CheckLimits(TextMeshProUGUI text, float value, float maximum, Color colMin, Color colMax)
   {
     if (value > maximum)
     {text.color = colMax;}
-    else if (value < 0)
-    {text.color = colMin;}
+    else if (value <= 0)
+    { text.color = colMin;}
     else
     { text.color = Color.black;
     }
   }
-  /// <summary>
-  /// Changes the text color of the ui for the player to see
-  /// </summary>
-  void OverCapacityColourChange() 
-  {
-    if(GameManager.Instance.totalAnts  > GameManager.Instance.currentMaximumPopulationCapacity) 
-    {
-      populationValue.color = Color.red;
 
+  void getEventData() 
+  {
+    if(GameManager.Instance.messageSystemInstance.currentEventMessageQueue.Count > 0) 
+    {
+      eventPlaying.text = "Event: " + GameManager.Instance.messageSystemInstance.currentEventMessageQueue.Peek().eventName;
     }
     else 
     {
-      populationValue.color = Color.black;
-    }
-
-    if (GameManager.Instance.resources >= GameManager.Instance.maxResourceStorage)
-    {
-      resourcesValue.color = Color.red;
-
-    }
-    else
-    {
-      resourcesValue.color = Color.black;
-    }
-
+      eventPlaying.text = "Event: " + "none";
+    } 
   }
+ 
 }

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18035254, g: 0.22578925, b: 0.30702662, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -592,7 +592,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 21300000, guid: 184d8ffefa3b21e4194382772ae8b146, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -951,15 +951,13 @@ MonoBehaviour:
   winterFoodUse: 0
   foodPerAnt: 5
   antPopGrowthPerTurn: 0.3
-  antOverPopulationDeathRate: 2
-  antDeathLackofResourcesRate: 0
-  antWinterDeathRate: 0
+  antDeathLackofResourcesRate: 2
+  antWinterDeathRate: 1
   distanceGatheringReductionRate: 0.06931472
   resourceGatherRate: 10
   tileRegrowAmount: 20
-  weatherAcessMultiplier: 0
-  weatherRegrowMultiplier: 0
   currentSeason: 0
+  currentAudioSource: {fileID: 0}
   currentWeather: 0
   regrowRateVector: 
   transportCostVector: []
@@ -975,16 +973,6 @@ MonoBehaviour:
   populationCapacityAmount: 
   maxAntsResourceTile: 10
   maxAntsAnthillTile: 20
-  sunAccess: 0
-  sunRegrow: 0
-  rainAccess: 0
-  rainRegrow: 0
-  overcastAccess: 0
-  overcastRegrow: 0
-  fogAccess: 0
-  fogRegrow: 0
-  snowAccess: 0
-  snowRegrow: 0
   grassWeight: 0.5
   resourceWeight: 0.05
   soilWeight: 0.3
@@ -996,7 +984,12 @@ MonoBehaviour:
   currentWeek: 0
   goal: 80
   gameOverWinter: 0
-  tutorialEnabled: 1
+  floodFertilityThreshhold: 3
+  antsLostFloodpercentage: 0.5
+  droughtResourceAffectionRate: 0.5
+  heavyFogAntsLostAmount: 5
+  lightFogAntsLostAmount: 2
+  tutorialEnabled: 0
   generalEnabled: 1
   strategicEnabled: 1
   warningEnabled: 1
@@ -1006,15 +999,15 @@ MonoBehaviour:
   totalDeaths: 0
   musicVolume: 0
   soundVolume: 0
-  showAntsMovement: 0
-  showWeatherEffects: 0
-  showGrassMovement: 0
+  showAntsMovement: 1
+  showWeatherEffects: 1
+  showGrassMovement: 1
   GameRunning: 0
-  summerMusic: {fileID: 0}
-  autmnMusic: {fileID: 0}
-  springMusic: {fileID: 0}
-  winterMusic: {fileID: 0}
-  mainMenuMusic: {fileID: 0}
+  summerMusic: {fileID: 8300000, guid: 9572b81223dd68943bdeb36f67fb727e, type: 3}
+  autmnMusic: {fileID: 8300000, guid: 37be31a312bd4fe4b96389a376d7faf3, type: 3}
+  springMusic: {fileID: 8300000, guid: 7538bc0922cd46d45b2dade665b9c35f, type: 3}
+  winterMusic: {fileID: 8300000, guid: 9df16741027e2d14c865e398671f5068, type: 3}
+  mainMenuMusic: {fileID: 8300000, guid: 74f583557d1b1b34ea3faad235ae1b2f, type: 3}
   mapInstance: {fileID: 0}
   cameraInstance: {fileID: 0}
   weatherInstance: {fileID: 0}
@@ -1022,6 +1015,8 @@ MonoBehaviour:
   nextTurnInstance: {fileID: 0}
   messageSystemInstance: {fileID: 0}
   winterCountDownInstance: {fileID: 0}
+  eventInstance: {fileID: 0}
+  messageSideBarUIInstance: {fileID: 0}
 --- !u!4 &1398438779
 Transform:
   m_ObjectHideFlags: 0
@@ -1883,6 +1878,10 @@ PrefabInstance:
       propertyPath: m_Color.r
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1583300760479513015, guid: 930aa972a31ee0f42b40935ed5e9cdc6, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4874741452438488258, guid: 930aa972a31ee0f42b40935ed5e9cdc6, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -2046,3 +2045,60 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6038e0322a737c04fa8c4d906f5684fa, type: 3}
+--- !u!1001 &6723712931989804075
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 6723712931164218276, guid: 19df3208b9c993241b1483d033efc31f, type: 3}
+      propertyPath: m_RootOrder
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 6723712931164218276, guid: 19df3208b9c993241b1483d033efc31f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 335.23108
+      objectReference: {fileID: 0}
+    - target: {fileID: 6723712931164218276, guid: 19df3208b9c993241b1483d033efc31f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 305.16373
+      objectReference: {fileID: 0}
+    - target: {fileID: 6723712931164218276, guid: 19df3208b9c993241b1483d033efc31f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.43136054
+      objectReference: {fileID: 0}
+    - target: {fileID: 6723712931164218276, guid: 19df3208b9c993241b1483d033efc31f, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6723712931164218276, guid: 19df3208b9c993241b1483d033efc31f, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6723712931164218276, guid: 19df3208b9c993241b1483d033efc31f, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6723712931164218276, guid: 19df3208b9c993241b1483d033efc31f, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6723712931164218276, guid: 19df3208b9c993241b1483d033efc31f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6723712931164218276, guid: 19df3208b9c993241b1483d033efc31f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6723712931164218276, guid: 19df3208b9c993241b1483d033efc31f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6723712931164218278, guid: 19df3208b9c993241b1483d033efc31f, type: 3}
+      propertyPath: m_Name
+      value: TurnEventSystem
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 19df3208b9c993241b1483d033efc31f, type: 3}

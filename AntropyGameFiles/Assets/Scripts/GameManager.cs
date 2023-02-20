@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine.SceneManagement;
 using UnityEngine;
 
@@ -71,8 +70,6 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public int resources;
 
-    
-
     /// <summary>
     /// Max storage the player can fill up
     /// </summary>
@@ -119,11 +116,6 @@ public class GameManager : MonoBehaviour
     public float antPopGrowthPerTurn;
 
     /// <summary>
-    /// Death of Ants per turn, due to overpopulation
-    /// </summary>
-    public float antOverPopulationDeathRate;
-
-    /// <summary>
     /// Death of ants per turn due to lack of resources;
     /// </summary>
     public float antDeathLackofResourcesRate;
@@ -147,16 +139,6 @@ public class GameManager : MonoBehaviour
     /// Regrow rate of tiles
     /// </summary>
     public int tileRegrowAmount;
-    
-    /// <summary>
-    /// Weather distance multiplier
-    /// </summary>
-    public float weatherAcessMultiplier;
-
-    /// <summary>
-    /// Weather regrow multiplier
-    /// </summary>
-    public float weatherRegrowMultiplier;
 
     /// <summary>
     /// [0]Spring, [1]Summer, [2]Autumn, [3]Winter
@@ -166,7 +148,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// current audio source that is playing the current audio clip
     /// </summary>
-    public static AudioSource currentAudioSource = new AudioSource();
+    public AudioSource currentAudioSource;
 
     /// <summary>
     /// [0]sun, [1]rain, [2]overcast, [3]fog, [4] snow
@@ -232,57 +214,6 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public int maxAntsAnthillTile;
 
-    //Weather
-    /// <summary>
-    /// Sun, easy tile access
-    /// </summary>
-    public float sunAccess;
-
-    /// <summary>
-    /// Sun, no regrow bonus
-    /// </summary>
-    public float sunRegrow;
-
-    /// <summary>
-    /// Rain, slower tile access
-    /// </summary>
-    public float rainAccess;
-
-    /// <summary>
-    /// Rain, major regrow bonus
-    /// </summary>
-    public float rainRegrow;
-
-    /// <summary>
-    /// Overcast,  normal tile access
-    /// </summary>
-    public float overcastAccess;
-
-    /// <summary>
-    /// Overcast,  no regrow bonus 
-    /// </summary>
-    public float overcastRegrow;
-
-    /// <summary>
-    /// Fog, slower tile access,  minor regrow bonus
-    /// </summary>
-    public float fogAccess;
-
-    /// <summary>
-    /// Fog, minor regrow bonus
-    /// </summary>
-    public float fogRegrow;
-
-    /// <summary>
-    /// Snow, no tile access
-    /// </summary>
-    public float snowAccess;
-
-    /// <summary>
-    /// Snow,  negative regrow bonus
-    /// </summary>
-    public float snowRegrow;
-
     /// <summary>
     /// Weight for the grass creating closer to less = more grass closer
     /// </summary>
@@ -338,6 +269,13 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public bool gameOverWinter = false;
 
+    [Header("EventSystem")]
+    public int floodFertilityThreshhold = 3;
+    public float antsLostFloodpercentage = 0.5f;
+    public float droughtResourceAffectionRate = 0.2f;
+    public int heavyFogAntsLostAmount = 5;
+    public int lightFogAntsLostAmount = 2;
+
     [Header("MessageSystem Messages")]
     //Enables Messages
     public bool tutorialEnabled = false;
@@ -377,12 +315,13 @@ public class GameManager : MonoBehaviour
     public MessageScript messageSystemInstance;
     public WinterCountdownUI winterCountDownInstance;
     public EventScript eventInstance;
+    public MessageSideBarUI messageSideBarUIInstance;
 
 
 
 
-    // Creates an instance that is present in all other classes
-    public static GameManager Instance;
+  // Creates an instance that is present in all other classes
+  public static GameManager Instance;
 
     //takes care that there is only one instance of GameManager
     private void Awake()
@@ -397,6 +336,7 @@ public class GameManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
+
         // optional: load last gameplay (if saved)
         //LoadLastGame();
 
@@ -409,7 +349,8 @@ public class GameManager : MonoBehaviour
         transportUpgradeCost = new int[] {1000, 100, 50, 50 , 50, 50};
         
         //adjust them accordingly, just a test
-        goalThreshholds = new (int, int)[] {(3000,100), (3500, 250), (4000,300), (5000,400), (7000, 700)};
+        goalThreshholds = new (int, int)[] {(3000,100), (3500, 250), (4000,300), (5000,400), (7000, 700), 
+                                            (7000, 700) , (7000, 700) , (7000, 700)  , (7000, 700) , (7000, 700), (7000, 700), (7000, 700), (0, 0) };
 
 
         Map = new Tile[rows, columns];
@@ -426,9 +367,11 @@ public class GameManager : MonoBehaviour
         //nextTurnInstance = GameObject.Find("NextTurnCanvas").GetComponent<NextTurnScript>();
 
         currentAudioSource = GetComponent<AudioSource>();
-        currentAudioSource.clip = mainMenuMusic;
-        currentAudioSource.Play();
-  }
+
+        if (currentAudioSource == null)
+            currentAudioSource = new AudioSource();
+
+    }
 
   [System.Serializable]
     class SaveData
@@ -569,7 +512,7 @@ public class GameManager : MonoBehaviour
       
       UpdateIncomeGrowth();
       hatcheryCost =             new int[] {200,  400, 600,   800,  1600, 3200, 4800, 5400, 5800, 6500, 7000 };
-      storageCapacityAmount =    new int[] {350,  500, 1000,  1500, 2000, 2500, 3000, 3500, 4000, 5000, 7000 };
+      storageCapacityAmount =    new int[] {350,  500, 1000,  1500, 2000, 4000, 8000, 10000, 15000, 20000, 30000};
       storageCost =              new int[] {100,  200, 400,   600,  1200, 1800, 2400, 3000, 3600, 4200, 4800 };
       populationCapacityAmount = new int[] {250,  400, 550,   700,  1000, 1200, 1400, 2000, 2500, 3000, 6000};
 
@@ -753,7 +696,19 @@ public class GameManager : MonoBehaviour
     // use nurse ants == free ants
     if (resources <= 0 && income < 0)
     {
-      return -(int)Mathf.Ceil(antDeathLackofResourcesRate);
+      if(currentSeason == 3) 
+      {
+        //Starving in Winter
+        return -(int)(Mathf.Ceil(antDeathLackofResourcesRate) + (Mathf.Ceil(antWinterDeathRate)));
+      }
+      else
+      {
+        return -(int)Mathf.Ceil(antDeathLackofResourcesRate);
+      }
+    }
+    else if(currentSeason == 3) 
+    {
+      return -(int)Mathf.Ceil(antWinterDeathRate);
     }
     else 
     {
@@ -770,32 +725,24 @@ public class GameManager : MonoBehaviour
   {
     //Resources
     income = -Upkeep();
-    resources += income;
-    totalResources += income;
-
-    //Population
-    //int growthWinter = 0;
-    if (resources <= 0) 
+    if(income > resources) 
     {
-      //growthWinter -= (int)Mathf.Ceil((totalAnts * 0.1f) * antDeathLackofResourcesRate);
-      //growthWinter -= (int)Mathf.Ceil(antDeathLackofResourcesRate);
-      //totalAnts += growthWinter;
-      //growth = growthWinter;
-      AntDeath((int)Mathf.Ceil(antDeathLackofResourcesRate));
-
-      AntDeath((int)Mathf.Ceil(antWinterDeathRate));
-      //growthWinter -= (int)Mathf.Ceil(antWinterDeathRate);
-      //growthWinter -= (int)Mathf.Ceil((totalAnts * 0.1f) * antWinterDeathRate);
-      //totalAnts += growthWinter;
-      //growth = growthWinter;
-
+      resources = 0;
     }
     else 
     {
-      //growthWinter -= (int)Mathf.Ceil(antWinterDeathRate);
-      //growthWinter -= (int)Mathf.Ceil((totalAnts*0.1f) * antWinterDeathRate);
-      //growth = growthWinter;
-      //totalAnts += growthWinter;
+      resources += income;//Mathf.Clamp(resources- income, 0, 1);
+    }
+    totalResources += income;
+
+    //Population
+    if (resources <= 0) 
+    {
+      AntDeath((int)Mathf.Ceil(antDeathLackofResourcesRate));
+      AntDeath((int)Mathf.Ceil(antWinterDeathRate));
+    }
+    else 
+    {
       AntDeath((int)Mathf.Ceil(antWinterDeathRate));
     }
   }
@@ -814,9 +761,9 @@ public class GameManager : MonoBehaviour
       if(currentGoalProgress >= goal || currentTurnCount >= maxTurnCount) 
       {
         SceneManager.LoadScene("PrototypeEndScreen", LoadSceneMode.Additive);
-      }
-      
+        GameObject.Find("WinterCountdownSystem").SetActive(false);
     }
+  }
   public void prototypeLooseCheck() 
   {
     if (totalAnts < 1)
@@ -874,5 +821,96 @@ public class GameManager : MonoBehaviour
       {
         totalDeaths = value;
       }
+    }
+
+    public float MusicVolume
+    {
+        get
+        {
+            return musicVolume;
+        }
+        set
+        {
+            musicVolume = value;
+        }
+    }
+
+
+
+    public void playMusic(AudioClip clip)
+    {
+        Debug.Log("Starting music fade out routine.");
+        StartCoroutine(transitionMusic(currentAudioSource, 10.0f, musicVolume, clip));
+    }
+
+
+    public void setCurrentAudioVolume()
+    {
+        Debug.Log("Music volume set to " + musicVolume);
+
+        if (currentAudioSource == null)
+            currentAudioSource = GetComponent<AudioSource>();
+
+        currentAudioSource.volume = musicVolume;
+    }
+
+    public static IEnumerator wait(float time)
+    {
+        Debug.Log("Waiting " + time + " seconds");
+        yield return new WaitForSeconds(time);
+    }
+
+
+    public static IEnumerator StartFadeIn(AudioSource source, float duration, float targetVolume)
+    {
+        Debug.Log("Fade in started.");
+        float currentTime = 0.0f;
+
+        source.volume = 0.0f;
+
+        source.Play();
+
+        Debug.Log("Volume Fade In Start: " + source.volume);
+        while(currentTime < duration)
+        {
+            currentTime += Time.deltaTime;
+
+
+            source.volume = Mathf.Lerp(source.volume, targetVolume, currentTime / duration);
+        }
+
+        Debug.Log("Volume Fade In End: " + source.volume);
+        yield return null;
+    }
+
+    public static IEnumerator StartFadeOut(AudioSource source, float duration)
+    {
+        Debug.Log("Fading out started");
+        float currentTime = 0.0f;
+        float targetVolume = 0.0f;
+
+        Debug.Log("Volume Fade out Start: " + source.volume);
+        while (currentTime < duration)
+        {
+            currentTime += Time.deltaTime;
+
+            source.volume = Mathf.Lerp(source.volume, targetVolume, currentTime / duration);
+        }
+
+        Debug.Log("Volume Fade out end: " + source.volume);
+        yield return null;
+    }
+
+    public IEnumerator transitionMusic(AudioSource source, float duration, float targetVolume, AudioClip newClip)
+    {
+        if(source != null && source.isPlaying)
+            yield return StartCoroutine(StartFadeOut(source, duration));
+
+        currentAudioSource.clip = newClip;
+        currentAudioSource.volume = 0.0f;
+        currentAudioSource.loop = true;
+
+        StartCoroutine(StartFadeIn(source, duration, targetVolume));
+
     }
 }
