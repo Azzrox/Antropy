@@ -72,8 +72,17 @@ public class MiniBarInfoUI : MonoBehaviour
 
     season.text = GameManager.Instance.SeasonName(GameManager.Instance.currentSeason) + " / " + WeatherName(GameManager.Instance.currentWeather);
 
+    int intermediate_growth = GameManager.Instance.growth;
+    if(intermediate_growth < 0)
+    {
+      intermediate_growth = 0;
+    }
+    else if (intermediate_growth + GameManager.Instance.totalAnts > GameManager.Instance.currentMaximumPopulationCapacity)
+    {
+      intermediate_growth = GameManager.Instance.currentMaximumPopulationCapacity - GameManager.Instance.totalAnts;
+    }
     populationFill.SetLeftRight(0, GameManager.Instance.totalAnts, GameManager.Instance.currentMaximumPopulationCapacity,0);
-    growthIndicator.SetLeftRight(GameManager.Instance.totalAnts, GameManager.Instance.growth, GameManager.Instance.currentMaximumPopulationCapacity, 0.17f);
+    growthIndicator.SetLeftRight(GameManager.Instance.totalAnts, intermediate_growth, GameManager.Instance.currentMaximumPopulationCapacity, 0.17f);
 
     RelativeBoxUI growthTextBox = populationValue.GetComponent<RelativeBoxUI>();
     if (GameManager.Instance.totalAnts > 0.5 * GameManager.Instance.currentMaximumPopulationCapacity)
@@ -86,7 +95,16 @@ public class MiniBarInfoUI : MonoBehaviour
 
 
     resourceFill.SetLeftRight(0, GameManager.Instance.resources, GameManager.Instance.maxResourceStorage,0);
-    incomeIndicator.SetLeftRight(GameManager.Instance.resources, GameManager.Instance.income, GameManager.Instance.maxResourceStorage, 0.17f);
+    int intermediate_income = GameManager.Instance.income;
+    if(intermediate_income < 0)
+    {
+      intermediate_income = 0;
+    }
+    else if (intermediate_income + GameManager.Instance.resources > GameManager.Instance.maxResourceStorage)
+    {
+      intermediate_income = GameManager.Instance.maxResourceStorage - GameManager.Instance.resources;
+    }
+    incomeIndicator.SetLeftRight(GameManager.Instance.resources, intermediate_income, GameManager.Instance.maxResourceStorage, 0.17f);
 
     RelativeBoxUI resourceTextBox = resourcesValue.GetComponent<RelativeBoxUI>();
     if (GameManager.Instance.resources > 0.5 * GameManager.Instance.maxResourceStorage)
@@ -110,8 +128,8 @@ public class MiniBarInfoUI : MonoBehaviour
   {
     if (value > maximum)
     {text.color = colMax;}
-    else if (value < 0)
-    {text.color = colMin;}
+    else if (value <= 0)
+    { text.color = colMin;}
     else
     { text.color = Color.black;
     }

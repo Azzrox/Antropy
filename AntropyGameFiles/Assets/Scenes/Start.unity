@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18035254, g: 0.22578925, b: 0.30702662, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2526,7 +2526,7 @@ MonoBehaviour:
   winterFoodUse: 0
   foodPerAnt: 5
   antPopGrowthPerTurn: 0.3
-  antDeathLackofResourcesRate: 0
+  antDeathLackofResourcesRate: 2
   antWinterDeathRate: 0
   distanceGatheringReductionRate: 0.06931472
   resourceGatherRate: 10
@@ -2564,20 +2564,20 @@ MonoBehaviour:
   droughtResourceAffectionRate: 0.5
   heavyFogAntsLostAmount: 5
   lightFogAntsLostAmount: 2
-  tutorialEnabled: 0
-  generalEnabled: 0
-  strategicEnabled: 0
-  warningEnabled: 0
+  tutorialEnabled: 1
+  generalEnabled: 1
+  strategicEnabled: 1
+  warningEnabled: 1
   eventEnabled: 1
   winterEnabled: 1
   totalResources: 0
   totalDeaths: 0
   musicVolume: 1
   soundVolume: 1
-  showAntsMovement: 0
-  showWeatherEffects: 0
-  showGrassMovement: 0
-  GameRunning: 0
+  showAntsMovement: 1
+  showWeatherEffects: 1
+  showGrassMovement: 1
+  GameRunning: 1
   summerMusic: {fileID: 8300000, guid: 9572b81223dd68943bdeb36f67fb727e, type: 3}
   autmnMusic: {fileID: 8300000, guid: 37be31a312bd4fe4b96389a376d7faf3, type: 3}
   springMusic: {fileID: 8300000, guid: a7992452c65054a42b72c942e5041952, type: 3}

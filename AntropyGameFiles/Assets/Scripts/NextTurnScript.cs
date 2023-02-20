@@ -108,7 +108,15 @@ public class NextTurnScript : MonoBehaviour
       GameManager.Instance.income = GameManager.Instance.maxResourceStorage - GameManager.Instance.resources;
     }
 
+
     GameManager.Instance.resources += GameManager.Instance.income;
+
+    if (GameManager.Instance.resources < 0)
+    {
+      // Trigger for storage underflow
+      // effectively stored income (needed for historic data)
+      GameManager.Instance.resources = 0;
+    }
 
     // historic data
     GameManager.Instance.totalResources += GameManager.Instance.income;
@@ -168,6 +176,10 @@ public class NextTurnScript : MonoBehaviour
     // update population
     //Population growth
     int new_pop =  GameManager.Instance.Juniors();
+    if(GameManager.Instance.totalAnts + new_pop > GameManager.Instance.currentMaximumPopulationCapacity)
+    {
+      new_pop = GameManager.Instance.currentMaximumPopulationCapacity - GameManager.Instance.totalAnts;
+    }
     GameManager.Instance.freeAnts += new_pop;
     GameManager.Instance.totalAnts += new_pop;
     GameManager.Instance.UpdateGrowth();
