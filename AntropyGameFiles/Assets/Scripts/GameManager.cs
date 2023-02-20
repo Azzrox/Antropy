@@ -512,7 +512,7 @@ public class GameManager : MonoBehaviour
       
       UpdateIncomeGrowth();
       hatcheryCost =             new int[] {200,  400, 600,   800,  1600, 3200, 4800, 5400, 5800, 6500, 7000 };
-      storageCapacityAmount =    new int[] {350,  500, 1000,  1500, 2000, 2500, 3000, 3500, 4000, 5000, 7000 };
+      storageCapacityAmount =    new int[] {350,  500, 1000,  1500, 2000, 4000, 8000, 10000, 15000, 20000, 30000};
       storageCost =              new int[] {100,  200, 400,   600,  1200, 1800, 2400, 3000, 3600, 4200, 4800 };
       populationCapacityAmount = new int[] {250,  400, 550,   700,  1000, 1200, 1400, 2000, 2500, 3000, 6000};
 
@@ -761,9 +761,9 @@ public class GameManager : MonoBehaviour
       if(currentGoalProgress >= goal || currentTurnCount >= maxTurnCount) 
       {
         SceneManager.LoadScene("PrototypeEndScreen", LoadSceneMode.Additive);
-      }
-      
+        GameObject.Find("WinterCountdownSystem").SetActive(false);
     }
+  }
   public void prototypeLooseCheck() 
   {
     if (totalAnts < 1)

@@ -51,6 +51,7 @@ public class NextTurnScript : MonoBehaviour
       else 
       {
         winterTurnSequence();
+        GameManager.Instance.prototypeGoalCheck();
       }
      
       //Update the infobars
@@ -324,7 +325,7 @@ public class NextTurnScript : MonoBehaviour
 
     //Start the automated WinterTurn
     StartCoroutine(winterTurn(1));
-    GameManager.Instance.prototypeGoalCheck();
+    
   }
 
   /// <summary>
@@ -338,6 +339,7 @@ public class NextTurnScript : MonoBehaviour
     {
       GameManager.Instance.winterCountDownInstance.WinterCountdownUpdate();
       GameManager.Instance.prototypeLooseCheck();
+      GameManager.Instance.prototypeGoalCheck();
       GameManager.Instance.adjustWeek();
       GameManager.Instance.WinterAntTurn();
       EventTurn();

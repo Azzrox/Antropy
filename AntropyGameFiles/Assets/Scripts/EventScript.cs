@@ -367,6 +367,8 @@ public class EventScript : MonoBehaviour
           }
         GameManager.Instance.mapInstance.TileErosionCheck(i, j);
         GameManager.Instance.mapInstance.UpdatePrefabAppearance(i, j);
+        //UpdateAntText
+
       }
     }
     GameManager.Instance.UpdateIncomeGrowth();

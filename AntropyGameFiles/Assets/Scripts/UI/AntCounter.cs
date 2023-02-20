@@ -277,4 +277,33 @@ public class AntCounter : MonoBehaviour
         GameManager.Instance.mapInstance.mapMatrix[posX, posZ].RemoveAnt();
       }
     }
+
+  public void UpdateAntText2(int pos_x, int pos_Z)
+  {
+    resources.text = "Resources: " + GameManager.Instance.Map[pos_x, pos_Z].resourceAmount;
+    tileName.text = GameManager.Instance.TileName(GameManager.Instance.Map[pos_x, pos_Z].type) + "[" + pos_x + "," + pos_Z + "]";
+    fertilityText.text = GameManager.Instance.FertilityNames[GameManager.Instance.Map[pos_x, pos_Z].fertilityState];
+    if (GameManager.Instance.Map[pos_x, pos_Z].fertilityState < GameManager.Instance.fertilityUpgradeCost.Length)
+    {
+      fertilityUpgradeCost.text = "Cost: " + GameManager.Instance.fertilityUpgradeCost[GameManager.Instance.Map[pos_x, pos_Z].fertilityState];
+    }
+    else
+    {
+      fertilityUpgradeCost.text = "Max";
+    }
+
+    streetText.text = GameManager.Instance.StreetNames[GameManager.Instance.Map[pos_x, pos_Z].constructionState] + " | " + GameManager.Instance.Map[pos_x, pos_Z].constructionState;
+    if (GameManager.Instance.Map[pos_x, pos_Z].constructionState < GameManager.Instance.transportUpgradeCost.Length)
+    {
+      streetUpgradeCost.text = "Cost: " + GameManager.Instance.transportUpgradeCost[GameManager.Instance.Map[pos_x, pos_Z].constructionState];
+    }
+    else
+    { streetUpgradeCost.text = "Max"; }
+
+    freeAnts.text = "Nursing Ants: " + GameManager.Instance.freeAnts;
+    assignedAntsText.text = GameManager.Instance.Map[pos_x, pos_Z].assignedAnts + "/" + GameManager.Instance.Map[pos_x, pos_Z].maxAssignedAnts + " ants";
+
+    regrowText.text = "Expected regrow: " + GameManager.Instance.Map[pos_x, pos_Z].regrowResource;
+    transportCostText.text = "Transport cost: " + GameManager.Instance.Map[pos_x, pos_Z].foodTransportCost + ", dis: " + GameManager.Instance.Map[pos_x, pos_Z].distanceAntHill;
+  }
 }
