@@ -272,7 +272,7 @@ public class GameManager : MonoBehaviour
     [Header("EventSystem")]
     public int floodFertilityThreshhold = 3;
     public float antsLostFloodpercentage = 0.5f;
-    public float droughtResourceAffectionRate = 0.5f;
+    public float droughtResourceAffectionRate = 0.2f;
     public int heavyFogAntsLostAmount = 5;
     public int lightFogAntsLostAmount = 2;
 

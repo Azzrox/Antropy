@@ -955,6 +955,7 @@ public class MessageScript : MonoBehaviour
         currentMessage.portrait = Resources.Load<Texture2D>("Images/OfficeAnt2");
         currentSeasonMessageQueue.Enqueue(currentMessage);
       }
+      /*
       else if (item.eventName.Equals("goalReached") && newWeek && CheckWeeklyGoal())
       {
         currentMessage.eventName = item.eventName;
@@ -970,7 +971,8 @@ public class MessageScript : MonoBehaviour
         currentMessage.speaker = item.speaker;
         currentMessage.portrait = Resources.Load<Texture2D>("Images/OfficeAnt2");
         currentSeasonMessageQueue.Enqueue(currentMessage);
-      } 
+      }
+      */
     }
   }
 

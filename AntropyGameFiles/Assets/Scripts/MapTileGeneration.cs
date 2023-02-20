@@ -262,18 +262,21 @@ public class MapTileGeneration : MonoBehaviour
         //        Destroy(grassPrefab);
         //    }
         //}
-
-        var destroyDecorations = Array.FindAll(decorations, ob => (Mathf.Abs(ob.transform.localPosition.x - 0.5f) < roadwidth ||
-                                                                Mathf.Abs(ob.transform.localPosition.z - 0.5f) < roadwidth));
-        var keepDecorations = Array.FindAll(decorations, ob => (Mathf.Abs(ob.transform.localPosition.x - 0.5f) >= roadwidth &&
-                                                                Mathf.Abs(ob.transform.localPosition.z - 0.5f) >= roadwidth));
-
-        for (int i = 0; i < destroyDecorations.Length; i++) 
+        if(tyleType != TyleType.stones && tyleType != TyleType.water) 
         {
+          var destroyDecorations = Array.FindAll(decorations, ob => (Mathf.Abs(ob.transform.localPosition.x - 0.5f) < roadwidth ||
+                                                                Mathf.Abs(ob.transform.localPosition.z - 0.5f) < roadwidth));
+          var keepDecorations = Array.FindAll(decorations, ob => (Mathf.Abs(ob.transform.localPosition.x - 0.5f) >= roadwidth &&
+                                                              Mathf.Abs(ob.transform.localPosition.z - 0.5f) >= roadwidth));
+
+          for (int i = 0; i < destroyDecorations.Length; i++)
+          {
             DestroyImmediate(destroyDecorations[i]);
+          }
+
+          decorations = keepDecorations;
         }
 
-        decorations = keepDecorations;
     }
 
     private Color RandomizeColor(int fertilityLevel)

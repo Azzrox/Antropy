@@ -142,7 +142,7 @@ public class AntCounter : MonoBehaviour
 
     void UpdateRoad()
     {
-      if (GameManager.Instance.Map[posX, posZ].constructionState < GameManager.Instance.transportCostVector.Length)
+      if (GameManager.Instance.Map[posX, posZ].constructionState < GameManager.Instance.transportCostVector.Length - 1)
       {
         if (GameManager.Instance.transportUpgradeCost[GameManager.Instance.Map[posX,posZ].constructionState] <= GameManager.Instance.resources)
         {
