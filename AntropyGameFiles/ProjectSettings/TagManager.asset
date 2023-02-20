@@ -9,6 +9,7 @@ TagManager:
   - Ant
   - WeatherEffect
   - Road
+  - CreditsText
   layers:
   - Default
   - TransparentFX
