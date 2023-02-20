@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18035254, g: 0.22578925, b: 0.30702662, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -158,7 +158,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -11, y: 158}
+  m_AnchoredPosition: {x: -91, y: 182.69}
   m_SizeDelta: {x: -412.2755, y: -365.3735}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &33902891
@@ -1981,11 +1981,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8682624006653776542, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 300
+      value: 271.36
       objectReference: {fileID: 0}
     - target: {fileID: 8682624006653776542, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 10
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 8682624006653776542, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -2391,6 +2391,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 974892011}
+  - component: {fileID: 974892012}
   - component: {fileID: 974892010}
   - component: {fileID: 974892009}
   m_Layer: 0
@@ -2607,6 +2608,23 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &974892012
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 974892008}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 592fd32ba7af940dd960c0cff2dc6d69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clickClip: {fileID: 8300000, guid: e16fd8c14ca74478c933554f5a0ac473, type: 3}
+  anthillUpgradeClip: {fileID: 8300000, guid: 6dd89ad1804d945deb451c46640bfd85, type: 3}
+  tileUpgradeClip: {fileID: 8300000, guid: 842be1673a82040d582f7085303841ee, type: 3}
+  springClip: {fileID: 8300000, guid: 8857a116c8c444101b4edc44e045361f, type: 3}
+  summerClip: {fileID: 8300000, guid: 7a5229a81fb984550833c4864a9e5449, type: 3}
 --- !u!1 &986533149
 GameObject:
   m_ObjectHideFlags: 0
@@ -3192,11 +3210,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8682624006653776542, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 300
+      value: 271.36
       objectReference: {fileID: 0}
     - target: {fileID: 8682624006653776542, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -40
+      value: -32
       objectReference: {fileID: 0}
     - target: {fileID: 8682624006653776542, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -3313,11 +3331,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8682624006653776542, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 300
+      value: 271.36
       objectReference: {fileID: 0}
     - target: {fileID: 8682624006653776542, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -90
+      value: -78
       objectReference: {fileID: 0}
     - target: {fileID: 8682624006653776542, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -3579,11 +3597,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8682624006653776542, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -120
+      value: -104.39
       objectReference: {fileID: 0}
     - target: {fileID: 8682624006653776542, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 60
+      value: 59
       objectReference: {fileID: 0}
     - target: {fileID: 8682624006653776542, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -3596,6 +3614,34 @@ PrefabInstance:
     - target: {fileID: 8682624006653776542, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8682624006653776543, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8682624006653776543, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8682624006653776543, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 974892012}
+    - target: {fileID: 8682624006653776543, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8682624006653776543, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: playClickSound
+      objectReference: {fileID: 0}
+    - target: {fileID: 8682624006653776543, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: SoundScript, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 8682624006653776543, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 8682624007286254534, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
       propertyPath: m_Name
@@ -4340,11 +4386,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8682624006653776542, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 300
+      value: 271.36
       objectReference: {fileID: 0}
     - target: {fileID: 8682624006653776542, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -140
+      value: -130
       objectReference: {fileID: 0}
     - target: {fileID: 8682624006653776542, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
