@@ -170,12 +170,13 @@ public class AntCounter : MonoBehaviour
     }
 
     void UpdateFertility()
-    { 
+    {
+      
       if (GameManager.Instance.Map[posX, posZ].fertilityState < GameManager.Instance.fertilityUpgradeCost.Length)
       {
         if (GameManager.Instance.fertilityUpgradeCost[GameManager.Instance.Map[posX,posZ].fertilityState] <= GameManager.Instance.resources)
         {
-          
+
           GameManager.Instance.resources -= GameManager.Instance.fertilityUpgradeCost[GameManager.Instance.Map[posX,posZ].fertilityState];
           GameManager.Instance.Map[posX,posZ].fertilityState += 1;
           GameManager.Instance.Map[posX, posZ].regrowResource = GameManager.Instance.regrowRateVector[GameManager.Instance.Map[posX, posZ].fertilityState];

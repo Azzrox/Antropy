@@ -42,7 +42,7 @@ public class GameManager : MonoBehaviour
       // (0 - not passable (water), 1 - hard-to-cross (rock), 2 - rough, 3 - normal plain land, 4 - ant path, 5 - ant street, 6 - ant highway )
       public float foodTransportCost;
     }
-
+    public int backtogame;
     public Tile[,] Map;
     [Header("Map properties")]
     public int rows;

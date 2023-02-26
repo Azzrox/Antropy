@@ -21,6 +21,8 @@ public class GameManagerUI : MonoBehaviour
     {
         
     }
+
+
     void SpawnTiles(int nx, int nz) {
 
         GameObject tile;

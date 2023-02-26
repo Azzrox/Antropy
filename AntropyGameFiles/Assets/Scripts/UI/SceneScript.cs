@@ -58,6 +58,7 @@ public class SceneScript : MonoBehaviour
     public void NewGame(){
         // generate map if no map was loaded
         GameManager.Instance.GameRunning = false;
+        GameManager.Instance.backtogame = 100;
         SceneManager.LoadScene("Prototype_v3 1");
         GameManager.Instance.playMusic(GameManager.Instance.springMusic);
 
@@ -98,7 +99,10 @@ public class SceneScript : MonoBehaviour
         //SceneManager.LoadScene("Menu");
     }
     public void BackToGame(){
-        SceneManager.LoadScene("Prototype_v3 1");
+        if(GameManager.Instance.backtogame > 0)
+        {
+          SceneManager.LoadScene("Prototype_v3 1");
+        }
     }
 
 }
