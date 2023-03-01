@@ -8,6 +8,7 @@ using System.Collections;
 using UnityEngine.UI;
 using static MessageScript;
 using Unity.VisualScripting;
+using UnityEditor.Search;
 
 public class MessageScript : MonoBehaviour
 {
@@ -28,9 +29,12 @@ public class MessageScript : MonoBehaviour
   public Queue<Message> currentSeasonMessageQueue = new Queue<Message>();
   public Queue<Message> currentWarningMessageQueue = new Queue<Message>();
   public Queue<Message> currentWinterMessageQueue = new Queue<Message>();
-  public Queue<GameManager.Tile> fertilityTilesMessage = new Queue<GameManager.Tile>();
-  public Queue<GameManager.Tile> resourcesTilesMessage = new Queue<GameManager.Tile>();
-  public Queue<GameManager.Tile> distanceAntsMessage = new Queue<GameManager.Tile>();
+  public Queue<Message> currentCriticalMessageQueue = new Queue<Message>();
+
+  public Queue<(GameManager.Tile, (int, int))> resourcesTilesMessage = new Queue<(GameManager.Tile, (int, int))>();
+  public Queue<(GameManager.Tile, (int, int))> distanceAntsMessage = new Queue<(GameManager.Tile, (int, int))>();
+  public Queue<(GameManager.Tile, (int, int))> fertilityTilesMessage = new Queue<(GameManager.Tile, (int, int))>();
+
 
   /// <summary>
   /// old Week (only needed here)
@@ -49,7 +53,6 @@ public class MessageScript : MonoBehaviour
     if (GameManager.Instance.tutorialEnabled)
     {
       GetTutorialMessages();
-      //PlayNextMessage();
       PlayTutorialMessage();
     }
     else
@@ -83,11 +86,11 @@ public class MessageScript : MonoBehaviour
     GetEventMessages();
     GetWinterMessages();
 
-    //Play them all at once
-    //PlayNextMessage();
-
     //Check If messages are disabled
     ClearDisabledMessages();
+
+    /*Always Displayed Critical Messages*/
+    PlayCriticalMessage();
 
     //Button Assignment
     GameManager.Instance.messageSideBarUIInstance.spawnMessageButton(PlayGeneralMessage, currentGeneralMessageQueue.Count, Color.blue, "generalMessage");
@@ -97,6 +100,9 @@ public class MessageScript : MonoBehaviour
     GameManager.Instance.messageSideBarUIInstance.spawnMessageButton(PlayWinterMessage, currentWinterMessageQueue.Count, Color.magenta, "winterMessage");
   }
 
+  /// <summary>
+  /// Clears all messages and resources
+  /// </summary>
   private void ClearAllMessages() 
   {
     currentTutorialMessageQueue.Clear();
@@ -105,90 +111,38 @@ public class MessageScript : MonoBehaviour
     currentSeasonMessageQueue.Clear();
     currentWarningMessageQueue.Clear();
     currentWinterMessageQueue.Clear();
+    resourcesTilesMessage.Clear();
+    distanceAntsMessage.Clear();
+    fertilityTilesMessage.Clear();
   }
 
-
   /// <summary>
-  /// Function that Plays the next Round Message and displays it in the UI
+  /// Plays the critical messages, that will be displayed
   /// </summary>
-  private void PlayNextMessage()
+  private void PlayCriticalMessage()
   {
-    //Clears Queues
-    ClearDisabledMessages();
-
-    if (currentTutorialMessageQueue.Count > 0) 
+    confirmButton.onClick.RemoveAllListeners();
+    if (currentCriticalMessageQueue.Count > 0)
     {
-      portrait.GetComponent<Image>().sprite = Sprite.Create(currentTutorialMessageQueue.Peek().portrait,
-                                                            new Rect(0, 0, currentTutorialMessageQueue.Peek().portrait.width,
-                                                            currentTutorialMessageQueue.Peek().portrait.height), new Vector2(0.5f, 0.5f), 100);
-      title.text = "Tutorial Message";
-      text.text = currentTutorialMessageQueue.Peek().messageText;
-      speaker.text = currentTutorialMessageQueue.Peek().speaker;
+      portrait.GetComponent<Image>().sprite = Sprite.Create(currentCriticalMessageQueue.Peek().portrait,
+                                                            new Rect(0, 0, currentCriticalMessageQueue.Peek().portrait.width,
+                                                            currentCriticalMessageQueue.Peek().portrait.height), new Vector2(0.5f, 0.5f), 100);
+      title.text = "Critical Message";
+      text.text = currentCriticalMessageQueue.Peek().messageText;
+      speaker.text = currentCriticalMessageQueue.Peek().speaker;
       this.gameObject.SetActive(true);
-      currentTutorialMessageQueue.Dequeue();
+      currentCriticalMessageQueue.Dequeue();
+      confirmButton.onClick.AddListener(PlayCriticalMessage);
     }
-    else if (currentGeneralMessageQueue.Count > 0)
-    {
-      portrait.GetComponent<Image>().color = Color.green;
-      portrait.GetComponent<Image>().sprite = Sprite.Create(currentGeneralMessageQueue.Peek().portrait,
-                                                            new Rect(0, 0, currentGeneralMessageQueue.Peek().portrait.width,
-                                                            currentGeneralMessageQueue.Peek().portrait.height), new Vector2(0.5f, 0.5f), 100);
-      title.text = "General Message";
-      text.text = currentGeneralMessageQueue.Peek().messageText;
-      speaker.text = currentGeneralMessageQueue.Peek().speaker;
-      this.gameObject.SetActive(true);
-      currentGeneralMessageQueue.Dequeue();
-    }
-    else if (currentSeasonMessageQueue.Count > 0)
-    {
-      portrait.GetComponent<Image>().sprite = Sprite.Create(currentSeasonMessageQueue.Peek().portrait,
-                                                            new Rect(0, 0, currentSeasonMessageQueue.Peek().portrait.width,
-                                                            currentSeasonMessageQueue.Peek().portrait.height), new Vector2(0.5f, 0.5f), 100);
-      title.text = "Season Message";
-      text.text = currentSeasonMessageQueue.Peek().messageText;
-      speaker.text = currentSeasonMessageQueue.Peek().speaker;
-      this.gameObject.SetActive(true);
-      currentSeasonMessageQueue.Dequeue();
-    }
-    else if (currentWarningMessageQueue.Count > 0)
-    {
-      portrait.GetComponent<Image>().sprite = Sprite.Create(currentWarningMessageQueue.Peek().portrait,
-                                                            new Rect(0, 0, currentWarningMessageQueue.Peek().portrait.width,
-                                                            currentWarningMessageQueue.Peek().portrait.height), new Vector2(0.5f, 0.5f), 100);
-      title.text = "Warning Message";
-      text.text = currentWarningMessageQueue.Peek().messageText;
-      speaker.text = currentWarningMessageQueue.Peek().speaker;
-      this.gameObject.SetActive(true);
-      currentWarningMessageQueue.Dequeue();
-    }
-    else if (currentEventMessageQueue.Count > 0)
-    {
-      portrait.GetComponent<Image>().sprite = Sprite.Create(currentEventMessageQueue.Peek().portrait,
-                                                            new Rect(0, 0, currentEventMessageQueue.Peek().portrait.width,
-                                                            currentEventMessageQueue.Peek().portrait.height), new Vector2(0.5f, 0.5f), 100);
-      title.text = "Event Message";
-      text.text = currentEventMessageQueue.Peek().messageText;
-      speaker.text = currentEventMessageQueue.Peek().speaker;
-      this.gameObject.SetActive(true);
-      currentEventMessageQueue.Dequeue();
-    }
-    else if (currentWinterMessageQueue.Count > 0)
-    {
-      portrait.GetComponent<Image>().sprite = Sprite.Create(currentWinterMessageQueue.Peek().portrait,
-                                                            new Rect(0, 0, currentWinterMessageQueue.Peek().portrait.width,
-                                                            currentWinterMessageQueue.Peek().portrait.height), new Vector2(0.5f, 0.5f), 100);
-      title.text = "Winter Message";
-      text.text = currentWinterMessageQueue.Peek().messageText;
-      speaker.text = currentWinterMessageQueue.Peek().speaker;
-      this.gameObject.SetActive(true);
-      currentWinterMessageQueue.Dequeue();
-    }
-    else 
+    else
     {
       this.gameObject.SetActive(false);
     }
   }
 
+  /// <summary>
+  /// Plays the tutorial messages, that will be spawned on a button
+  /// </summary>
   private void PlayTutorialMessage() 
   {
     confirmButton.onClick.RemoveAllListeners();
@@ -207,9 +161,15 @@ public class MessageScript : MonoBehaviour
     else
     {
       this.gameObject.SetActive(false);
+
+      /*Tutorial was already played*/
+      GameManager.Instance.tutorialEnabled = false;
     }
   }
 
+  /// <summary>
+  /// Plays the general messages, that will be spawned on a button
+  /// </summary>
   private void PlayGeneralMessage() 
   {
     confirmButton.onClick.RemoveAllListeners();
@@ -232,6 +192,9 @@ public class MessageScript : MonoBehaviour
     }
   }
 
+  /// <summary>
+  /// Plays the strategic messages, that will be spawned on a button
+  /// </summary>
   private void PlayStrategicMessage() 
   {
     confirmButton.onClick.RemoveAllListeners();
@@ -254,6 +217,9 @@ public class MessageScript : MonoBehaviour
     }
   }
 
+  /// <summary>
+  /// Plays the warning messages, that will be spawned on a button
+  /// </summary>
   private void PlayWarningMessage() 
   {
     confirmButton.onClick.RemoveAllListeners();
@@ -276,6 +242,9 @@ public class MessageScript : MonoBehaviour
     }
   }
 
+  /// <summary>
+  /// Plays the event messages, that will be spawned on a button
+  /// </summary>
   private void PlayEventMessage() 
   {
     confirmButton.onClick.RemoveAllListeners();
@@ -298,6 +267,9 @@ public class MessageScript : MonoBehaviour
     }
   }
 
+  /// <summary>
+  /// Plays the winter messages, that will be spawned on a button
+  /// </summary>
   private void PlayWinterMessage() 
   {
     confirmButton.onClick.RemoveAllListeners();
@@ -349,11 +321,10 @@ public class MessageScript : MonoBehaviour
     {
       currentWinterMessageQueue.Clear();
     }
-  }
-
-  public void ShowWinterMessages() 
-  { 
-    
+    if (!GameManager.Instance.criticalEnabled)
+    {
+      currentWinterMessageQueue.Clear();
+    }
   }
 
   /// <summary>
@@ -413,7 +384,6 @@ public class MessageScript : MonoBehaviour
     
     if(fertilityTilesMessage.Count > 0) 
     {
-      fertilityTilesMessage.Clear();
       return true;
     }
     else 
@@ -451,7 +421,6 @@ public class MessageScript : MonoBehaviour
   {
     if(resourcesTilesMessage.Count > 0) 
     {
-      resourcesTilesMessage.Clear();
       return true;
     }
     else 
@@ -865,6 +834,7 @@ public class MessageScript : MonoBehaviour
       {
         currentMessage.eventName = item.eventName;
         currentMessage.messageText = ApplyVariableDecoding(item.messageText);
+        currentMessage.messageText += "\n\n" + ResourcesTilesMessageString();
         currentMessage.speaker = item.speaker;
         currentMessage.portrait = Resources.Load<Texture2D>("Images/EngineerAnt2");
         currentWarningMessageQueue.Enqueue(currentMessage);
@@ -897,6 +867,7 @@ public class MessageScript : MonoBehaviour
       {
         currentMessage.eventName = item.eventName;
         currentMessage.messageText = ApplyVariableDecoding(item.messageText);
+        currentMessage.messageText += "\n\n" + DistanceTilesMessageString();
         currentMessage.speaker = item.speaker;
         currentMessage.portrait = Resources.Load<Texture2D>("Images/EngineerAnt2");
         currentWarningMessageQueue.Enqueue(currentMessage);
@@ -912,7 +883,8 @@ public class MessageScript : MonoBehaviour
       else if (item.eventName.Equals("lowFertility") && CheckTilesFertility())
       {
         currentMessage.eventName = item.eventName;
-        currentMessage.messageText = ApplyVariableDecoding(item.messageText);
+        currentMessage.messageText += ApplyVariableDecoding(item.messageText);
+        currentMessage.messageText += "\n\n" + FertilityTilesMessageString();
         currentMessage.speaker = item.speaker;
         currentMessage.portrait = Resources.Load<Texture2D>("Images/EngineerAnt2");
         currentWarningMessageQueue.Enqueue(currentMessage);
@@ -924,6 +896,7 @@ public class MessageScript : MonoBehaviour
         currentMessage.speaker = item.speaker;
         currentMessage.portrait = Resources.Load<Texture2D>("Images/EngineerAnt2");
         currentWarningMessageQueue.Enqueue(currentMessage);
+        setCrtiticalMessage(currentMessage);
       }
     }
   }
@@ -933,9 +906,6 @@ public class MessageScript : MonoBehaviour
   /// </summary>
   private void GetStrategicMessages()
   {
-    //because we have to check 2 messages
-    bool newWeek = CheckNewWeek();
-    
     foreach (var item in MessageSystemDataInstance.strategicMessages)
     {
       Message currentMessage = new Message();
@@ -946,6 +916,7 @@ public class MessageScript : MonoBehaviour
         currentMessage.speaker = item.speaker;
         currentMessage.portrait = Resources.Load<Texture2D>("Images/OfficeAnt2");
         currentSeasonMessageQueue.Enqueue(currentMessage);
+        setCrtiticalMessage(currentMessage);
       }
       else if (item.eventName.Equals("winterPrediction") && CheckWinterPrediction())
       {
@@ -955,24 +926,6 @@ public class MessageScript : MonoBehaviour
         currentMessage.portrait = Resources.Load<Texture2D>("Images/OfficeAnt2");
         currentSeasonMessageQueue.Enqueue(currentMessage);
       }
-      /*
-      else if (item.eventName.Equals("goalReached") && newWeek && CheckWeeklyGoal())
-      {
-        currentMessage.eventName = item.eventName;
-        currentMessage.messageText = ApplyVariableDecoding(item.messageText);
-        currentMessage.speaker = item.speaker;
-        currentMessage.portrait = Resources.Load<Texture2D>("Images/OfficeAnt4");
-        currentSeasonMessageQueue.Enqueue(currentMessage);
-      }
-      else if (item.eventName.Equals("goalMissed") && newWeek && !CheckWeeklyGoal())
-      {
-        currentMessage.eventName = item.eventName;
-        currentMessage.messageText = ApplyVariableDecoding(item.messageText);
-        currentMessage.speaker = item.speaker;
-        currentMessage.portrait = Resources.Load<Texture2D>("Images/OfficeAnt2");
-        currentSeasonMessageQueue.Enqueue(currentMessage);
-      }
-      */
     }
   }
 
@@ -1008,6 +961,8 @@ public class MessageScript : MonoBehaviour
         currentMessage.speaker = item.speaker;
         currentMessage.portrait = Resources.Load<Texture2D>("Images/EngineerAnt");
         currentEventMessageQueue.Enqueue(currentMessage);
+        setCrtiticalMessage(currentMessage);
+
       }
       else if (item.eventName.Equals("lightRain") && GameManager.Instance.eventInstance.GetEventMessageTurn.Peek().Item1.Equals("lightRain"))
       {
@@ -1017,25 +972,25 @@ public class MessageScript : MonoBehaviour
         currentMessage.portrait = Resources.Load<Texture2D>("Images/EngineerAnt");
         currentEventMessageQueue.Enqueue(currentMessage);
       }
-      /*
-      else if (item.eventName.Equals("clearDays") && GameManager.Instance.eventInstance.GetEventMessageTurn.Peek().Item1.Equals("clearDays"))
+      else if (item.eventName.Equals("drought") && GameManager.Instance.eventInstance.GetEventMessageTurn.Peek().Item1.Equals("drought"))
       {
         currentMessage.eventName = item.eventName;
-        currentMessage.messageText = applyVariableDecoding(item.messageText);
+        currentMessage.messageText = ApplyVariableDecoding(item.messageText);
         currentMessage.speaker = item.speaker;
-        //currentMessage.portrait = insertPortraitHere;
+        currentMessage.portrait = Resources.Load<Texture2D>("Images/EngineerAnt");
         currentEventMessageQueue.Enqueue(currentMessage);
+        setCrtiticalMessage(currentMessage);
       }
-      else if (item.eventName.Equals("overcastDays") && GameManager.Instance.eventInstance.GetEventMessageTurn.Peek().Item1.Equals("overcastDays"))
-      {
-        currentMessage.eventName = item.eventName;
-        currentMessage.messageText = applyVariableDecoding(item.messageText);
-        currentMessage.speaker = item.speaker;
-        //currentMessage.portrait = insertPortraitHere;
-        currentEventMessageQueue.Enqueue(currentMessage);
-      }
-      */
     }
+  }
+
+  /// <summary>
+  /// Sets the critical message displayed at the start of the turn
+  /// </summary>
+  /// <param name="message"></param>
+  private void setCrtiticalMessage(Message message) 
+  {
+    currentCriticalMessageQueue.Enqueue(message);
   }
 
   private void GetWinterMessages()
@@ -1050,28 +1005,96 @@ public class MessageScript : MonoBehaviour
         currentMessage.speaker = item.speaker;
         currentMessage.portrait = Resources.Load<Texture2D>("Images/EngineerAnt2");
         currentWinterMessageQueue.Enqueue(currentMessage);
+        setCrtiticalMessage(currentMessage);
       }
     }
   }
+
   /// <summary>
   /// Saves a tile from the MapTurn in the NextTurnScript in the MessageQueue
   /// </summary>
   /// <param name="tile"></param>
-  public void SaveTileForMessage(GameManager.Tile tile) 
+  public void SaveTileForMessage(GameManager.Tile tile, int i, int j) 
   {
-    if(tile.fertilityState < 3) 
+    if(tile.fertilityState < GameManager.Instance.fertilityWarningMessageThreshhold) 
     {
-      fertilityTilesMessage.Enqueue(tile);
+      fertilityTilesMessage.Enqueue((tile, (i, j)));
     }
     
-    if (tile.reservedResources <= 20)
+    if (tile.resourceAmount <= GameManager.Instance.resourcesWarningMessageThreshhold)
     {
-      fertilityTilesMessage.Enqueue(tile);
+      resourcesTilesMessage.Enqueue((tile, (i, j)));
     }
 
-    if(tile.distanceAntHill > 10 && tile.assignedAnts > 0) 
+    if(tile.distanceAntHill > GameManager.Instance.distanceWarningMessageThreshhold && tile.assignedAnts > 0) 
     {
-      distanceAntsMessage.Enqueue(tile);
+      distanceAntsMessage.Enqueue((tile, (i, j)));
     }
+  }
+
+  /// <summary>
+  /// Returns a string of all low resource tiles, the player occupies
+  /// </summary>
+  /// <returns></returns>
+  private string ResourcesTilesMessageString() 
+  {
+    string tile_string = "";
+    int message_size = 0;
+    foreach (var item in resourcesTilesMessage)
+    {
+      if(message_size == 10) 
+      {
+        tile_string += "..." + "\n";
+        break;
+      }
+      tile_string += "[" + item.Item2.Item1 + " , " + item.Item2.Item2 + "]" + "\n";
+      message_size++;
+    }
+    resourcesTilesMessage.Clear();
+    return tile_string;
+  }
+
+  /// <summary>
+  /// Returns a string of all low fertility tiles the player occupies 
+  /// </summary>
+  /// <returns></returns>
+  private string FertilityTilesMessageString()
+  {
+    string tile_string = "";
+    int message_size = 0;
+    foreach (var item in fertilityTilesMessage)
+    {
+      if (message_size == 10)
+      {
+        tile_string += "..." + "\n";
+        break;
+      }
+      tile_string += "[" + item.Item2.Item1 + " , " + item.Item2.Item2 + "]" + "\n";
+      message_size++;
+    }
+    fertilityTilesMessage.Clear();
+    return tile_string;
+  }
+
+  /// <summary>
+  /// Returns a string of all long distance tiles from a street or the anthill
+  /// </summary>
+  /// <returns></returns>
+  private string DistanceTilesMessageString()
+  {
+    string tile_string = "";
+    int message_size = 0;
+    foreach (var item in distanceAntsMessage)
+    {
+      if (message_size == 10)
+      {
+        tile_string += "..." + "\n";
+        break;
+      }
+      tile_string += "[" + item.Item2.Item1 + " , " + item.Item2.Item2 + "]" + "\n";
+      message_size++;
+    }
+    distanceAntsMessage.Clear();
+    return tile_string;
   }
 }

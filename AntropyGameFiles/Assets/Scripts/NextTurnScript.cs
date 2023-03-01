@@ -109,7 +109,6 @@ public class NextTurnScript : MonoBehaviour
       GameManager.Instance.income = GameManager.Instance.maxResourceStorage - GameManager.Instance.resources;
     }
 
-
     GameManager.Instance.resources += GameManager.Instance.income;
 
     if (GameManager.Instance.resources < 0)
@@ -122,19 +121,16 @@ public class NextTurnScript : MonoBehaviour
     // historic data
     GameManager.Instance.totalResources += GameManager.Instance.income;
 
-    // Reset goal check
-    //GameManager.Instance.currentGoalProgress = 0;
-
     // update left resources on tiles
     for (int i = 0; i < GameManager.Instance.rows; i++)
     {
       for (int j = 0; j < GameManager.Instance.columns; j++)
       {
-        
-        
         // reduce by harvested amount
         if (GameManager.Instance.Map[i,j].occupiedByPlayer)
         {
+          GameManager.Instance.messageSystemInstance.SaveTileForMessage(GameManager.Instance.Map[i, j], i, j);
+
           GameManager.Instance.Map[i,j].resourceAmount -= Mathf.Min(GameManager.Instance.Map[i,j].assignedAnts * GameManager.Instance.resourceGatherRate, 
                                                                       GameManager.Instance.Map[i,j].resourceAmount); 
 
@@ -151,29 +147,10 @@ public class NextTurnScript : MonoBehaviour
           GameManager.Instance.currentGoalProgress -= 1;
           GameManager.Instance.mapInstance.mapMatrix[i, j].deleteFlagOnTile();
           Debug.Log("Delete flag on tile: " + i + "|"  + j);
-      // update visuals of grass tile
-        }
-
-        //Message checks
-        GameManager.Instance.messageSystemInstance.SaveTileForMessage(GameManager.Instance.Map[i, j]);
+        }  
       }
-       
     }
-    /*
-    if ((GameManager.Instance.resources - GameManager.Instance.currentUpkeep) > 0) 
-    {
-      GameManager.Instance.resources -= GameManager.Instance.currentUpkeep;
-    }
-    else 
-    {
-      GameManager.Instance.resources = 0;
-    }
-   
-    if (GameManager.Instance.resources > GameManager.Instance.maxResourceStorage)
-    {
-      GameManager.Instance.resources = GameManager.Instance.maxResourceStorage;
-    }
-    */
+  
     // update population
     //Population growth
     int new_pop =  GameManager.Instance.Juniors();
@@ -188,13 +165,6 @@ public class NextTurnScript : MonoBehaviour
     // ------------------ WINNING / LOSING condition and message triggers --------------------
     //Check if we reached the prototype goal
     GameManager.Instance.prototypeLooseCheck();
-
-    if (GameManager.Instance.resources < GameManager.Instance.maxResourceStorage * 0.1)
-    {
-      // Trigger for low food warning.
-    }
-    
- 
   }
   void MapTurn() 
   {
