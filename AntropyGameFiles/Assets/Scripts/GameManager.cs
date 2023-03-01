@@ -275,8 +275,11 @@ public class GameManager : MonoBehaviour
     public float droughtResourceAffectionRate = 0.2f;
     public int heavyFogAntsLostAmount = 5;
     public int lightFogAntsLostAmount = 2;
+    public int fertilityWarningMessageThreshhold = 2;
+    public int resourcesWarningMessageThreshhold = 250;
+    public int distanceWarningMessageThreshhold = 10;
 
-    [Header("MessageSystem Messages")]
+  [Header("MessageSystem Messages")]
     //Enables Messages
     public bool tutorialEnabled = false;
     public bool generalEnabled = false;
@@ -284,6 +287,7 @@ public class GameManager : MonoBehaviour
     public bool warningEnabled = false;
     public bool eventEnabled = false;
     public bool winterEnabled = true;
+    public bool criticalEnabled = true;
 
   [Header("Statistics (cummulated data)")]
 
