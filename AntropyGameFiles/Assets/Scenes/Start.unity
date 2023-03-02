@@ -1738,7 +1738,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: OK
+  m_text: Back
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 0b65c99348f068b49bef5db0bb76a6e4, type: 2}
   m_sharedMaterial: {fileID: 21809785584020342, guid: 0b65c99348f068b49bef5db0bb76a6e4, type: 2}
@@ -1840,7 +1840,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 720719453}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
@@ -2498,6 +2498,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   backtogame: 0
+  GameRunning: 0
   rows: 20
   columns: 20
   anthillX: 0
@@ -2571,7 +2572,6 @@ MonoBehaviour:
   showAntsMovement: 1
   showWeatherEffects: 1
   showGrassMovement: 1
-  GameRunning: 1
   summerMusic: {fileID: 8300000, guid: 9572b81223dd68943bdeb36f67fb727e, type: 3}
   autmnMusic: {fileID: 8300000, guid: 37be31a312bd4fe4b96389a376d7faf3, type: 3}
   springMusic: {fileID: 8300000, guid: a7992452c65054a42b72c942e5041952, type: 3}
@@ -3590,11 +3590,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8682624006653776542, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -104.39
+      value: -296
       objectReference: {fileID: 0}
     - target: {fileID: 8682624006653776542, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 59
+      value: 76.532
       objectReference: {fileID: 0}
     - target: {fileID: 8682624006653776542, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -4023,7 +4023,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 2
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -4033,8 +4033,8 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
+    m_HighlightedSprite: {fileID: 21300000, guid: 05ef55e5084e1f04fbbefcb2f40b5efd, type: 3}
+    m_PressedSprite: {fileID: 21300000, guid: 184d8ffefa3b21e4194382772ae8b146, type: 3}
     m_SelectedSprite: {fileID: 0}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
@@ -4218,7 +4218,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 2
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -4228,8 +4228,8 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
+    m_HighlightedSprite: {fileID: 21300000, guid: 05ef55e5084e1f04fbbefcb2f40b5efd, type: 3}
+    m_PressedSprite: {fileID: 21300000, guid: 184d8ffefa3b21e4194382772ae8b146, type: 3}
     m_SelectedSprite: {fileID: 0}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:

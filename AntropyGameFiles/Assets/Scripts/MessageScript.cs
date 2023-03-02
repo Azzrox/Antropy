@@ -937,6 +937,7 @@ public class MessageScript : MonoBehaviour
     foreach (var item in MessageSystemDataInstance.eventMessages)
     {
       Message currentMessage = new Message();
+      Debug.Log("Current event Name: " + item.eventName + ", GameManager eventmessageTurn: " + GameManager.Instance.eventInstance.GetEventMessageTurn.Peek().Item1);
       
       if (item.eventName.Equals("heavyRain") && GameManager.Instance.eventInstance.GetEventMessageTurn.Peek().Item1.Equals("heavyRain"))
       {

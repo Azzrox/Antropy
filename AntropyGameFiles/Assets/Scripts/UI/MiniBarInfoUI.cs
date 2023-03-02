@@ -60,7 +60,7 @@ public class MiniBarInfoUI : MonoBehaviour
 
   public void MiniBarInfoUpdate()
   {
-    Debug.Log("Function: update of minibar Info: " + GameManager.Instance.income);
+    //Debug.Log("Function: update of minibar Info: " + GameManager.Instance.income);
     int income = GameManager.Instance.income;
     string incomeString = income < 0 ? " (<color=red>" + income + "</color>)/" : " (+" + income + ")/";
     resourcesValue.text = GameManager.Instance.resources + incomeString + GameManager.Instance.maxResourceStorage;

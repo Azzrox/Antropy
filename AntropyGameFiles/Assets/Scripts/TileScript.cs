@@ -53,14 +53,14 @@ public class TileScript : MonoBehaviour, IPointerClickHandler
   //private void OnMouseDown()
   public void OnPointerClick (PointerEventData eventData)
   {
-    Debug.Log("CLICKED");
+    
     //if (uiListener.isUIOverride)
     //{
     //  Debug.Log("Cancelled OnMouseDown! A UI element has override this object!");
     //}
     //else
     //{
-      Debug.Log("in click mode");
+      
       if (xPos == GameManager.Instance.anthillX && zPos == GameManager.Instance.anthillY)
       {
         GameObject anthillUI = GameObject.Find("Anthill");
@@ -89,7 +89,7 @@ public class TileScript : MonoBehaviour, IPointerClickHandler
         GameObject uiMiniBarInfo = GameObject.Find("MiniBarInfo");
         uiMiniBarInfo.GetComponent<MiniBarInfoUI>().MiniBarInfoUpdate();
       }
-      Debug.Log("element clicked" + UnityEngine.Random.Range(0, 40) + " pos: " + XPos + "|" + ZPos);
+      //Debug.Log("element clicked" + UnityEngine.Random.Range(0, 40) + " pos: " + XPos + "|" + ZPos);
     //}
   }
 
