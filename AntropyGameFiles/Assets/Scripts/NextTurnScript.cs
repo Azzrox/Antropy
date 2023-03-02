@@ -60,6 +60,7 @@ public class NextTurnScript : MonoBehaviour
       GameManager.Instance.UpdateIncomeGrowth();
       GameManager.Instance.miniBarInfoInstance.MiniBarInfoUpdate();
       antCounter.UpdateAntText();
+      antCounter.UpdateSlider();
 
         if (previousSeason == GameManager.Instance.currentSeason)
         {

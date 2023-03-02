@@ -394,7 +394,7 @@ public class EventScript : MonoBehaviour
           {
             if (GameManager.Instance.heavyFogAntsLostAmount > GameManager.Instance.Map[i, j].assignedAnts)
             {
-              int lost_ants  = GameManager.Instance.heavyFogAntsLostAmount - GameManager.Instance.Map[i, j].assignedAnts;
+              int lost_ants  = GameManager.Instance.Map[i, j].assignedAnts;
               
               GameManager.Instance.Map[i, j].assignedAnts -= lost_ants;
               GameManager.Instance.totalAnts -= lost_ants;
@@ -412,6 +412,7 @@ public class EventScript : MonoBehaviour
               Debug.Log("Fog Lost [" + i + "]" + "[" + j + "]" + ": " + GameManager.Instance.heavyFogAntsLostAmount + "Ants");
             }
           }
+          GameManager.Instance.mapInstance.UpdatePrefabAppearance(i,j);
         }
         //Fog effect?
         //GameManager.Instance.mapInstance.UpdatePrefab(i, j, 3);
@@ -439,7 +440,7 @@ public class EventScript : MonoBehaviour
           {
             if (GameManager.Instance.lightFogAntsLostAmount > GameManager.Instance.Map[i, j].assignedAnts)
             {
-              int lost_ants = GameManager.Instance.lightFogAntsLostAmount - GameManager.Instance.Map[i, j].assignedAnts;
+              int lost_ants = GameManager.Instance.Map[i, j].assignedAnts;
               GameManager.Instance.Map[i, j].assignedAnts -= lost_ants;
               GameManager.Instance.totalAnts -= lost_ants;
               fogEventLostAnts.Enqueue(lost_ants);
@@ -456,6 +457,7 @@ public class EventScript : MonoBehaviour
               Debug.Log("Fog Lost [" + i + "]" + "[" + j + "]" + ": " + GameManager.Instance.lightFogAntsLostAmount + "Ants");
             }
           }
+          GameManager.Instance.mapInstance.UpdatePrefabAppearance(i,j);
         }
         //Fog effect?
         //GameManager.Instance.mapInstance.UpdatePrefab(i, j, 3);
