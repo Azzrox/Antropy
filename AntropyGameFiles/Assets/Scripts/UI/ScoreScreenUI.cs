@@ -16,12 +16,6 @@ public class ScoreScreenUI : MonoBehaviour
 
   public Button replayButton; 
 
-  private GameManager gameManager;
-
-  private void Awake()
-  {
-    gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
-  }
 
   private void Start()
   {
@@ -31,12 +25,12 @@ public class ScoreScreenUI : MonoBehaviour
 
   void showScore() 
   {
-    goal.text = "Goal: " + gameManager.currentGoalProgress  + "/" +  gameManager.goal;
-    turns.text = "Turns: " + gameManager.currentTurnCount;
-    totalResources.text = "Total Resources: " + gameManager.TotalResources;
-    totalAnts.text = "Total Population: " + gameManager.totalAnts;
+    goal.text = "Goal: " + GameManager.Instance.currentGoalProgress  + "/" + GameManager.Instance.goal;
+    turns.text = "Turns: " + GameManager.Instance.currentTurnCount;
+    totalResources.text = "Total Resources: " + GameManager.Instance.TotalResources;
+    totalAnts.text = "Total Population: " + GameManager.Instance.totalAnts;
     //deaths.text = "Deaths: " + gameManager.TotalDeaths;
-    score.text = (gameManager.currentTurnCount + gameManager.TotalResources + gameManager.totalAnts - gameManager.TotalDeaths).ToString();
+    score.text = (GameManager.Instance.currentTurnCount + GameManager.Instance.TotalResources + GameManager.Instance.totalAnts - GameManager.Instance.TotalDeaths).ToString();
   }
 
   void ReplayGame() 
