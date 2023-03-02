@@ -88,12 +88,16 @@ public class MessageScript : MonoBehaviour
     /*Always Displayed Critical Messages*/
     PlayCriticalMessage();
 
-    //Button Assignment
-    GameManager.Instance.messageSideBarUIInstance.spawnMessageButton(PlayGeneralMessage, currentGeneralMessageQueue.Count, Color.blue, "generalMessage");
-    GameManager.Instance.messageSideBarUIInstance.spawnMessageButton(PlayStrategicMessage, currentSeasonMessageQueue.Count, Color.red, "strategicMessage");
-    GameManager.Instance.messageSideBarUIInstance.spawnMessageButton(PlayWarningMessage, currentWarningMessageQueue.Count, Color.yellow, "warningMessage");
-    GameManager.Instance.messageSideBarUIInstance.spawnMessageButton(PlayEventMessage, currentEventMessageQueue.Count, Color.green, "eventMessage");
-    GameManager.Instance.messageSideBarUIInstance.spawnMessageButton(PlayWinterMessage, currentWinterMessageQueue.Count, Color.magenta, "winterMessage");
+    //if(GameManager.Instance.currentSeason != 3) 
+    {
+      //Button Assignment
+      GameManager.Instance.messageSideBarUIInstance.spawnMessageButton(PlayGeneralMessage, currentGeneralMessageQueue.Count, Color.blue, "generalMessage");
+      GameManager.Instance.messageSideBarUIInstance.spawnMessageButton(PlayStrategicMessage, currentSeasonMessageQueue.Count, Color.red, "strategicMessage");
+      GameManager.Instance.messageSideBarUIInstance.spawnMessageButton(PlayWarningMessage, currentWarningMessageQueue.Count, Color.yellow, "warningMessage");
+      GameManager.Instance.messageSideBarUIInstance.spawnMessageButton(PlayEventMessage, currentEventMessageQueue.Count, Color.green, "eventMessage");
+      GameManager.Instance.messageSideBarUIInstance.spawnMessageButton(PlayWinterMessage, currentWinterMessageQueue.Count, Color.magenta, "winterMessage");
+    }
+   
   }
 
   /// <summary>
@@ -107,9 +111,9 @@ public class MessageScript : MonoBehaviour
     currentSeasonMessageQueue.Clear();
     currentWarningMessageQueue.Clear();
     currentWinterMessageQueue.Clear();
-    resourcesTilesMessage.Clear();
-    distanceAntsMessage.Clear();
-    fertilityTilesMessage.Clear();
+    //resourcesTilesMessage.Clear();
+    //distanceAntsMessage.Clear();
+    //fertilityTilesMessage.Clear();
   }
 
   /// <summary>
@@ -319,7 +323,7 @@ public class MessageScript : MonoBehaviour
     }
     if (!GameManager.Instance.criticalEnabled)
     {
-      currentWinterMessageQueue.Clear();
+      currentCriticalMessageQueue.Clear();
     }
   }
 
@@ -334,6 +338,8 @@ public class MessageScript : MonoBehaviour
     GameManager.Instance.strategicEnabled = false;
     GameManager.Instance.warningEnabled = false;
     GameManager.Instance.eventEnabled = false;
+    GameManager.Instance.criticalEnabled = false;
+    GameManager.Instance.winterEnabled = false;
   }
 
   //TODO Implementation with the rest of the weather
@@ -377,7 +383,6 @@ public class MessageScript : MonoBehaviour
   /// <returns></returns>
   private bool CheckTilesFertility()
   {
-    
     if(fertilityTilesMessage.Count > 0) 
     {
       return true;
@@ -398,7 +403,6 @@ public class MessageScript : MonoBehaviour
   {
     if(distanceAntsMessage.Count > 0) 
     {
-      distanceAntsMessage.Clear();
       return true;
     }
     else 
@@ -950,6 +954,16 @@ public class MessageScript : MonoBehaviour
         currentMessage.speaker = item.speaker;
         currentMessage.portrait = Resources.Load<Texture2D>("Images/EngineerAnt");
         currentEventMessageQueue.Enqueue(currentMessage);
+        setCrtiticalMessage(currentMessage);
+      }
+      else if (item.eventName.Equals("lightFog") && GameManager.Instance.eventInstance.GetEventMessageTurn.Peek().Item1.Equals("lightFog"))
+      {
+        currentMessage.eventName = item.eventName;
+        currentMessage.messageText = ApplyVariableDecoding(item.messageText);
+        currentMessage.speaker = item.speaker;
+        currentMessage.portrait = Resources.Load<Texture2D>("Images/EngineerAnt");
+        currentEventMessageQueue.Enqueue(currentMessage);
+        setCrtiticalMessage(currentMessage);
       }
       else if (item.eventName.Equals("flood") && GameManager.Instance.eventInstance.GetEventMessageTurn.Peek().Item1.Equals("flood"))
       {
@@ -970,6 +984,15 @@ public class MessageScript : MonoBehaviour
         currentEventMessageQueue.Enqueue(currentMessage);
       }
       else if (item.eventName.Equals("drought") && GameManager.Instance.eventInstance.GetEventMessageTurn.Peek().Item1.Equals("drought"))
+      {
+        currentMessage.eventName = item.eventName;
+        currentMessage.messageText = ApplyVariableDecoding(item.messageText);
+        currentMessage.speaker = item.speaker;
+        currentMessage.portrait = Resources.Load<Texture2D>("Images/EngineerAnt");
+        currentEventMessageQueue.Enqueue(currentMessage);
+        setCrtiticalMessage(currentMessage);
+      }
+      else if (item.eventName.Equals("undoFog") && GameManager.Instance.eventInstance.GetEventMessageTurn.Peek().Item1.Equals("undoFog"))
       {
         currentMessage.eventName = item.eventName;
         currentMessage.messageText = ApplyVariableDecoding(item.messageText);
@@ -1023,8 +1046,9 @@ public class MessageScript : MonoBehaviour
       resourcesTilesMessage.Enqueue((tile, (i, j)));
     }
 
-    if(tile.distanceAntHill > GameManager.Instance.distanceWarningMessageThreshhold && tile.assignedAnts > 0) 
+    if(tile.distanceAntHill > GameManager.Instance.distanceWarningMessageThreshhold) 
     {
+      Debug.Log("DISTANCE");
       distanceAntsMessage.Enqueue((tile, (i, j)));
     }
   }
@@ -1044,7 +1068,14 @@ public class MessageScript : MonoBehaviour
         tile_string += "..." + "\n";
         break;
       }
-      tile_string += "[" + item.Item2.Item1 + " , " + item.Item2.Item2 + "]" + "\n";
+      if (message_size == 0)
+      {
+        tile_string += "[" + item.Item2.Item1 + " , " + item.Item2.Item2 + "]";
+      }
+      else
+      {
+        tile_string += ",  [" + item.Item2.Item1 + " , " + item.Item2.Item2 + "]";
+      }
       message_size++;
     }
     resourcesTilesMessage.Clear();
@@ -1066,7 +1097,14 @@ public class MessageScript : MonoBehaviour
         tile_string += "..." + "\n";
         break;
       }
-      tile_string += "[" + item.Item2.Item1 + " , " + item.Item2.Item2 + "]" + "\n";
+      if (message_size == 0)
+      {
+        tile_string += "[" + item.Item2.Item1 + " , " + item.Item2.Item2 + "]";
+      }
+      else
+      {
+        tile_string += ",  [" + item.Item2.Item1 + " , " + item.Item2.Item2 + "]";
+      }
       message_size++;
     }
     fertilityTilesMessage.Clear();
@@ -1088,7 +1126,15 @@ public class MessageScript : MonoBehaviour
         tile_string += "..." + "\n";
         break;
       }
-      tile_string += "[" + item.Item2.Item1 + " , " + item.Item2.Item2 + "]" + "\n";
+      if(message_size == 0) 
+      {
+        tile_string += "[" + item.Item2.Item1 + " , " + item.Item2.Item2 + "]";
+      }
+      else 
+      {
+        tile_string += ",  [" + item.Item2.Item1 + " , " + item.Item2.Item2 + "]";
+      }
+      
       message_size++;
     }
     distanceAntsMessage.Clear();

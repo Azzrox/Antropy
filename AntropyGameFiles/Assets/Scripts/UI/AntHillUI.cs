@@ -78,8 +78,6 @@ public class AntHillUI : MonoBehaviour
       if(GameManager.Instance.resources >= GameManager.Instance.hatcheryCost[GameManager.Instance.hatcheryLevel])
       {
         hatcheryLevelText.text = "Hatchery Level: " + (GameManager.Instance.hatcheryLevel + 1);
-
-        //take resources from the player update the maxSupportedAnts and add +1 to the level and (correct the upkeep "needs to be implemented);
         GameManager.Instance.resources -= GameManager.Instance.hatcheryCost[GameManager.Instance.hatcheryLevel];
         GameManager.Instance.hatcheryLevel += 1;
         GameManager.Instance.currentMaximumPopulationCapacity = GameManager.Instance.populationCapacityAmount[GameManager.Instance.hatcheryLevel];
@@ -114,7 +112,6 @@ public class AntHillUI : MonoBehaviour
       //check cost
       if(GameManager.Instance.resources >= GameManager.Instance.storageCost[GameManager.Instance.storageLevel])
       {
-        //(correct the upkeep "needs to be implemented)
         storageLevelText.text = "Storage Level: " + (GameManager.Instance.storageLevel + 1);
         GameManager.Instance.resources -= GameManager.Instance.storageCost[GameManager.Instance.storageLevel];
         GameManager.Instance.storageLevel += 1;

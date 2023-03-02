@@ -193,14 +193,17 @@ public class NextTurnScript : MonoBehaviour
     else{
       GameManager.Instance.freeAnts += new_pop;
     }
-    GameManager.Instance.totalAnts += new_pop;
-
-
-    if(GameManager.Instance.totalAnts + new_pop > GameManager.Instance.currentMaximumPopulationCapacity)
+   
+    //GameManager.Instance.totalAnts += Mathf.Clamp(new_pop, GameManager.Instance.totalAnts, GameManager.Instance.currentMaximumPopulationCapacity);
+    if ((GameManager.Instance.totalAnts + new_pop) <= GameManager.Instance.currentMaximumPopulationCapacity)
     {
-      new_pop = GameManager.Instance.currentMaximumPopulationCapacity - GameManager.Instance.totalAnts;
+      GameManager.Instance.totalAnts += new_pop;
     }
-    
+    else 
+    {
+      GameManager.Instance.totalAnts = GameManager.Instance.currentMaximumPopulationCapacity;
+    }
+
     GameManager.Instance.UpdateGrowth();
     
     // ------------------ WINNING / LOSING condition and message triggers --------------------

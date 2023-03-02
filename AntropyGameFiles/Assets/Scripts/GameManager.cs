@@ -517,12 +517,12 @@ public class GameManager : MonoBehaviour
       
       UpdateIncomeGrowth();
       hatcheryCost =             new int[] {200,  400, 600,   800,  1600, 3200, 4800, 5400, 5800, 6500, 7000, 7500 };
-      storageCapacityAmount =    new int[] {350,  500, 1000,  1500, 2000, 4000, 8000, 10000, 15000, 20000, 30000};
+      storageCapacityAmount =    new int[] {350,  500, 1000,  1500, 2000, 4000, 8000, 10000, 15000, 20000, 30000, 40000};
       storageCost =              new int[] {100,  200, 400,   600,  1200, 1800, 2400, 3000, 3600, 4200, 4800};
       populationCapacityAmount = new int[] {250,  400, 550,   700,  1000, 1200, 1400, 2000, 2500, 3000, 6000, 12000};
 
-      hatcheryMaxLevel = populationCapacityAmount.Length;
-      storageMaxLevel = storageCapacityAmount.Length;
+      hatcheryMaxLevel = populationCapacityAmount.Length - 1;
+      storageMaxLevel = storageCapacityAmount.Length - 1;
       //miniBarInfoInstance.MiniBarInfoUpdate();
     }
 
@@ -709,33 +709,34 @@ public class GameManager : MonoBehaviour
 
     public int Juniors()
     {
-    // use nurse ants == free ants
-    if ((resources + income) < 0)
-    {
-      if(currentSeason == 3) 
+      if(totalAnts == currentMaximumPopulationCapacity) 
       {
-        //Starving in Winter
-        return -(int)(Mathf.Ceil(antDeathLackofResourcesRate) + (Mathf.Ceil(antWinterDeathRate)));
+        return 0;
       }
-      else
+      if ((resources + income) < 0)
       {
-        int cannibalRate = 5;
-        // if no food is left, one ant feeds cannibalRate others
-        return (int) Mathf.Floor( (resources + foodPerAnt * totalAnts * cannibalRate )/ (foodPerAnt + foodPerAnt * cannibalRate) - totalAnts);
+        if(currentSeason == 3) 
+        {
+          //Starving in Winter
+          return -(int)(Mathf.Ceil(antDeathLackofResourcesRate) + (Mathf.Ceil(antWinterDeathRate)));
+        }
+        else
+        {
+          int cannibalRate = 5;
+          // if no food is left, one ant feeds cannibalRate others
+          return (int) Mathf.Floor( (resources + foodPerAnt * totalAnts * cannibalRate )/ (foodPerAnt + foodPerAnt * cannibalRate) - totalAnts);
 
-       // return -(int)Mathf.Ceil(antDeathLackofResourcesRate);
+         // return -(int)Mathf.Ceil(antDeathLackofResourcesRate);
+        }
       }
-    }
-    else if(currentSeason == 3) 
-    {
-      return -(int)Mathf.Ceil(antWinterDeathRate);
-    }
-    else 
-    {
-      return (int)Mathf.Ceil(freeAnts * 3 * antPopGrowthPerTurn);
-    } 
-      // old: 
-      //return (int)Mathf.Ceil((float)totalAnts * antPopGrowthPerTurn);
+      else if(currentSeason == 3) 
+      {
+        return -(int)Mathf.Ceil(antWinterDeathRate);
+      }
+      else 
+      {
+        return (int)Mathf.Ceil(freeAnts * 3 * antPopGrowthPerTurn);
+      } 
     }
     
   /// <summary>
@@ -753,7 +754,6 @@ public class GameManager : MonoBehaviour
     {
       resources += income;//Mathf.Clamp(resources- income, 0, 1);
     }
-    totalResources += income;
 
     //Population
     if (resources <= 0) 
@@ -932,5 +932,11 @@ public class GameManager : MonoBehaviour
 
         StartCoroutine(StartFadeIn(source, duration, targetVolume));
 
+    }
+
+    public void resetGameVariables()
+    {
+       hatcheryLevel = 0;
+       storageLevel = 0;
     }
 }

@@ -24,6 +24,9 @@
 3;starvation;Your royalty, we are starving if we do not bring more harvest home next week. We thought you would protect us and bring us through the winter. If there is no food we will abandon you.; Lyra;
 4;heavyRain;Your majesty, heavy rain has reduced the gather effictiveness of your subjects;Lyra
 4;lightRain;Your majesty, light rain is showering our lands, our lands will be more fertile.;Lyra
-4;heavyFog;Your majesty, thick fog has covered our lands, %11 of you loyal subjects disappeared.;Lyra
+4;drought;Your majesty, intense sunshine has led to a draught - our surrounding lands loose their fertility - we need to take measures to replan our harvesting!;Lyra
+4;heavyFog;Your majesty, thick fog has covered our lands, %11 of your loyal subjects disappeared. Let's hope some of them find back.;Lyra
+4;undoFog;Ants %11 found back.;Lyra
+4;lightFog;Your majesty, some fog has covered our lands, %11 of your loyal subjects disappeared. Let's hope some of them find back.;Lyra
 4;flood;Your majesty, immense rainfall have flooded serveral regions of our lands, %11 of you loyal subjects have drowned. Tiles affected with fertility < %12 ;Lyra
 5;winterStart;Your majesty, %8 is here, we need to brace ourselves for what is here! %10 %10 We need to survive.; Cedric;
