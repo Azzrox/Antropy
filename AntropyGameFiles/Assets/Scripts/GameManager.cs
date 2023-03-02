@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine.SceneManagement;
 using UnityEngine;
 
@@ -43,7 +42,8 @@ public class GameManager : MonoBehaviour
       // (0 - not passable (water), 1 - hard-to-cross (rock), 2 - rough, 3 - normal plain land, 4 - ant path, 5 - ant street, 6 - ant highway )
       public float foodTransportCost;
     }
-
+    public int backtogame;
+    public bool GameRunning;
     public Tile[,] Map;
     [Header("Map properties")]
     public int rows;
@@ -149,7 +149,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// current audio source that is playing the current audio clip
     /// </summary>
-    public static AudioSource currentAudioSource = new AudioSource();
+    public AudioSource currentAudioSource;
 
     /// <summary>
     /// [0]sun, [1]rain, [2]overcast, [3]fog, [4] snow
@@ -273,11 +273,14 @@ public class GameManager : MonoBehaviour
     [Header("EventSystem")]
     public int floodFertilityThreshhold = 3;
     public float antsLostFloodpercentage = 0.5f;
-    public float droughtResourceAffectionRate = 0.5f;
+    public float droughtResourceAffectionRate = 0.2f;
     public int heavyFogAntsLostAmount = 5;
     public int lightFogAntsLostAmount = 2;
+    public int fertilityWarningMessageThreshhold = 2;
+    public int resourcesWarningMessageThreshhold = 250;
+    public int distanceWarningMessageThreshhold = 10;
 
-    [Header("MessageSystem Messages")]
+  [Header("MessageSystem Messages")]
     //Enables Messages
     public bool tutorialEnabled = false;
     public bool generalEnabled = false;
@@ -285,6 +288,7 @@ public class GameManager : MonoBehaviour
     public bool warningEnabled = false;
     public bool eventEnabled = false;
     public bool winterEnabled = true;
+    public bool criticalEnabled = true;
 
   [Header("Statistics (cummulated data)")]
 
@@ -298,7 +302,7 @@ public class GameManager : MonoBehaviour
     public bool showWeatherEffects;
     public bool showGrassMovement;
 
-    public bool GameRunning;
+
 
 
     public AudioClip summerMusic;
@@ -337,6 +341,7 @@ public class GameManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
+
         // optional: load last gameplay (if saved)
         //LoadLastGame();
 
@@ -367,9 +372,11 @@ public class GameManager : MonoBehaviour
         //nextTurnInstance = GameObject.Find("NextTurnCanvas").GetComponent<NextTurnScript>();
 
         currentAudioSource = GetComponent<AudioSource>();
-        currentAudioSource.clip = mainMenuMusic;
-        currentAudioSource.Play();
-  }
+
+        if (currentAudioSource == null)
+            currentAudioSource = new AudioSource();
+
+    }
 
   [System.Serializable]
     class SaveData
@@ -509,10 +516,10 @@ public class GameManager : MonoBehaviour
       storageLevel = 0;
       
       UpdateIncomeGrowth();
-      hatcheryCost =             new int[] {200,  400, 600,   800,  1600, 3200, 4800, 5400, 5800, 6500, 7000 };
-      storageCapacityAmount =    new int[] {350,  500, 1000,  1500, 2000, 2500, 3000, 3500, 4000, 5000, 7000 };
-      storageCost =              new int[] {100,  200, 400,   600,  1200, 1800, 2400, 3000, 3600, 4200, 4800 };
-      populationCapacityAmount = new int[] {250,  400, 550,   700,  1000, 1200, 1400, 2000, 2500, 3000, 6000};
+      hatcheryCost =             new int[] {200,  400, 600,   800,  1600, 3200, 4800, 5400, 5800, 6500, 7000, 7500 };
+      storageCapacityAmount =    new int[] {350,  500, 1000,  1500, 2000, 4000, 8000, 10000, 15000, 20000, 30000};
+      storageCost =              new int[] {100,  200, 400,   600,  1200, 1800, 2400, 3000, 3600, 4200, 4800};
+      populationCapacityAmount = new int[] {250,  400, 550,   700,  1000, 1200, 1400, 2000, 2500, 3000, 6000, 12000};
 
       hatcheryMaxLevel = populationCapacityAmount.Length;
       storageMaxLevel = storageCapacityAmount.Length;
@@ -602,7 +609,18 @@ public class GameManager : MonoBehaviour
       }
       for (int i = X + 1; i < rows; i++)
       {
-        for (int j = 0; j < columns; j++)
+        for (int j = X; j < columns; j++)
+        {
+          if (i < rows - 1)
+          {weights[i + 1, j] = Mathf.Min(weights[i, j] +  GameManager.Instance.Map[i + 1, j].foodTransportCost,  weights[i + 1, j]);}
+          if (i >0)
+          {weights[i - 1, j]  = Mathf.Min(weights[i, j] +  GameManager.Instance.Map[i - 1, j].foodTransportCost,  weights[i - 1, j]);}
+          if (j < columns - 1)
+          {weights[i, j + 1] = Mathf.Min(weights[i, j] +  GameManager.Instance.Map[i, j + 1].foodTransportCost,  weights[i, j + 1]);}
+          if (j > 0)
+          {weights[i, j - 1] = Mathf.Min(weights[i, j] +  GameManager.Instance.Map[i, j - 1].foodTransportCost,  weights[i, j - 1]);}
+        }
+        for (int j = X; j >= 0; j--)
         {
           if (i < rows - 1)
           {weights[i + 1, j] = Mathf.Min(weights[i, j] +  GameManager.Instance.Map[i + 1, j].foodTransportCost,  weights[i + 1, j]);}
@@ -692,7 +710,7 @@ public class GameManager : MonoBehaviour
     public int Juniors()
     {
     // use nurse ants == free ants
-    if (resources <= 0 && income < 0)
+    if ((resources + income) < 0)
     {
       if(currentSeason == 3) 
       {
@@ -701,7 +719,11 @@ public class GameManager : MonoBehaviour
       }
       else
       {
-        return -(int)Mathf.Ceil(antDeathLackofResourcesRate);
+        int cannibalRate = 5;
+        // if no food is left, one ant feeds cannibalRate others
+        return (int) Mathf.Floor( (resources + foodPerAnt * totalAnts * cannibalRate )/ (foodPerAnt + foodPerAnt * cannibalRate) - totalAnts);
+
+       // return -(int)Mathf.Ceil(antDeathLackofResourcesRate);
       }
     }
     else if(currentSeason == 3) 
@@ -759,9 +781,9 @@ public class GameManager : MonoBehaviour
       if(currentGoalProgress >= goal || currentTurnCount >= maxTurnCount) 
       {
         SceneManager.LoadScene("PrototypeEndScreen", LoadSceneMode.Additive);
-      }
-      
+        GameObject.Find("WinterCountdownSystem").SetActive(false);
     }
+  }
   public void prototypeLooseCheck() 
   {
     if (totalAnts < 1)
@@ -819,5 +841,96 @@ public class GameManager : MonoBehaviour
       {
         totalDeaths = value;
       }
+    }
+
+    public float MusicVolume
+    {
+        get
+        {
+            return musicVolume;
+        }
+        set
+        {
+            musicVolume = value;
+        }
+    }
+
+
+
+    public void playMusic(AudioClip clip)
+    {
+        Debug.Log("Starting music fade out routine.");
+        StartCoroutine(transitionMusic(currentAudioSource, 10.0f, musicVolume, clip));
+    }
+
+
+    public void setCurrentAudioVolume()
+    {
+        Debug.Log("Music volume set to " + musicVolume);
+
+        if (currentAudioSource == null)
+            currentAudioSource = GetComponent<AudioSource>();
+
+        currentAudioSource.volume = musicVolume;
+    }
+
+    public static IEnumerator wait(float time)
+    {
+        Debug.Log("Waiting " + time + " seconds");
+        yield return new WaitForSeconds(time);
+    }
+
+
+    public static IEnumerator StartFadeIn(AudioSource source, float duration, float targetVolume)
+    {
+        Debug.Log("Fade in started.");
+        float currentTime = 0.0f;
+
+        source.volume = 0.0f;
+
+        source.Play();
+
+        Debug.Log("Volume Fade In Start: " + source.volume);
+        while(currentTime < duration)
+        {
+            currentTime += Time.deltaTime;
+
+
+            source.volume = Mathf.Lerp(source.volume, targetVolume, currentTime / duration);
+        }
+
+        Debug.Log("Volume Fade In End: " + source.volume);
+        yield return null;
+    }
+
+    public static IEnumerator StartFadeOut(AudioSource source, float duration)
+    {
+        Debug.Log("Fading out started");
+        float currentTime = 0.0f;
+        float targetVolume = 0.0f;
+
+        Debug.Log("Volume Fade out Start: " + source.volume);
+        while (currentTime < duration)
+        {
+            currentTime += Time.deltaTime;
+
+            source.volume = Mathf.Lerp(source.volume, targetVolume, currentTime / duration);
+        }
+
+        Debug.Log("Volume Fade out end: " + source.volume);
+        yield return null;
+    }
+
+    public IEnumerator transitionMusic(AudioSource source, float duration, float targetVolume, AudioClip newClip)
+    {
+        if(source != null && source.isPlaying)
+            yield return StartCoroutine(StartFadeOut(source, duration));
+
+        currentAudioSource.clip = newClip;
+        currentAudioSource.volume = 0.0f;
+        currentAudioSource.loop = true;
+
+        StartCoroutine(StartFadeIn(source, duration, targetVolume));
+
     }
 }

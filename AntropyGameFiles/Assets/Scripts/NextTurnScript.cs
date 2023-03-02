@@ -51,6 +51,7 @@ public class NextTurnScript : MonoBehaviour
       else 
       {
         winterTurnSequence();
+        GameManager.Instance.prototypeGoalCheck();
       }
      
       //Update the infobars
@@ -65,35 +66,30 @@ public class NextTurnScript : MonoBehaviour
             GameManager.Instance.prototypeGoalCheck();
             return;
         }
-        if (GameManager.Instance.currentSeason == ((int)t_season.SPRING))
-        {
-            Debug.Log("Playing spring music");
-            GameManager.currentAudioSource.clip = GameManager.Instance.springMusic;
-            GameManager.currentAudioSource.Play();
-            previousSeason = GameManager.Instance.currentSeason;
-        }
-        else if (GameManager.Instance.currentSeason == ((int)t_season.FALL))
-        {
-            Debug.Log("Playing fall music");
-            GameManager.currentAudioSource.clip = GameManager.Instance.autmnMusic;
-            GameManager.currentAudioSource.Play();
-            previousSeason = GameManager.Instance.currentSeason;
-        }
-        else if (GameManager.Instance.currentSeason == ((int)t_season.SUMMER))
-        {
-            Debug.Log("Playing summer music");
-            GameManager.currentAudioSource.clip = GameManager.Instance.summerMusic;
-            GameManager.currentAudioSource.Play();
-            previousSeason = GameManager.Instance.currentSeason;
-        }
-        else
-        {
-            Debug.Log("Playing winter music");
-            GameManager.currentAudioSource.clip = GameManager.Instance.winterMusic;
-            GameManager.currentAudioSource.Play();
-            previousSeason = GameManager.Instance.currentSeason;
-        }
-        GameManager.currentAudioSource.loop = true;
+            if (GameManager.Instance.currentSeason == ((int)t_season.SPRING))
+            {
+                Debug.Log("Playing spring music");
+                GameManager.Instance.playMusic(GameManager.Instance.springMusic);
+                previousSeason = (int)t_season.SPRING;
+            }
+            else if (GameManager.Instance.currentSeason == ((int)t_season.FALL))
+            {
+                Debug.Log("Playing autmn music");
+                GameManager.Instance.playMusic(GameManager.Instance.autmnMusic);
+                previousSeason = (int)t_season.FALL;
+            }
+            else if (GameManager.Instance.currentSeason == ((int)t_season.SUMMER))
+            {
+                Debug.Log("Playing summer music");
+                GameManager.Instance.playMusic(GameManager.Instance.summerMusic);
+                previousSeason = (int)t_season.SUMMER;
+            }
+            else
+            {
+                Debug.Log("Playing winter music");
+                GameManager.Instance.playMusic(GameManager.Instance.winterMusic);
+                previousSeason = (int)t_season.WINTER;
+            }
     }   
     else 
     {
@@ -104,6 +100,10 @@ public class NextTurnScript : MonoBehaviour
 
   void AntTurn() 
   {
+
+
+
+
     // update resources
     // Storage room check 
     if (GameManager.Instance.resources + GameManager.Instance.income > GameManager.Instance.maxResourceStorage)
@@ -115,22 +115,26 @@ public class NextTurnScript : MonoBehaviour
 
     GameManager.Instance.resources += GameManager.Instance.income;
 
+    if (GameManager.Instance.resources < 0)
+    {
+      // Trigger for storage underflow
+      // effectively stored income (needed for historic data)
+      GameManager.Instance.resources = 0;
+    }
+
     // historic data
     GameManager.Instance.totalResources += GameManager.Instance.income;
-
-    // Reset goal check
-    //GameManager.Instance.currentGoalProgress = 0;
 
     // update left resources on tiles
     for (int i = 0; i < GameManager.Instance.rows; i++)
     {
       for (int j = 0; j < GameManager.Instance.columns; j++)
       {
-        
-        
         // reduce by harvested amount
         if (GameManager.Instance.Map[i,j].occupiedByPlayer)
         {
+          GameManager.Instance.messageSystemInstance.SaveTileForMessage(GameManager.Instance.Map[i, j], i, j);
+
           GameManager.Instance.Map[i,j].resourceAmount -= Mathf.Min(GameManager.Instance.Map[i,j].assignedAnts * GameManager.Instance.resourceGatherRate, 
                                                                       GameManager.Instance.Map[i,j].resourceAmount); 
 
@@ -147,46 +151,60 @@ public class NextTurnScript : MonoBehaviour
           GameManager.Instance.currentGoalProgress -= 1;
           GameManager.Instance.mapInstance.mapMatrix[i, j].deleteFlagOnTile();
           Debug.Log("Delete flag on tile: " + i + "|"  + j);
-      // update visuals of grass tile
-        }
-
-        //Message checks
-        GameManager.Instance.messageSystemInstance.SaveTileForMessage(GameManager.Instance.Map[i, j]);
+        }  
       }
-       
     }
-    /*
-    if ((GameManager.Instance.resources - GameManager.Instance.currentUpkeep) > 0) 
-    {
-      GameManager.Instance.resources -= GameManager.Instance.currentUpkeep;
-    }
-    else 
-    {
-      GameManager.Instance.resources = 0;
-    }
-   
-    if (GameManager.Instance.resources > GameManager.Instance.maxResourceStorage)
-    {
-      GameManager.Instance.resources = GameManager.Instance.maxResourceStorage;
-    }
-    */
+  
     // update population
     //Population growth
-    int new_pop =  GameManager.Instance.Juniors();
-    GameManager.Instance.freeAnts += new_pop;
+    int new_pop =  GameManager.Instance.growth;
+    
+    if ( new_pop < 0)
+    {
+      int toBeDeleted = 0;
+      for (int k = 0; k < Mathf.Abs(new_pop); k++)
+      {
+        toBeDeleted = 0;
+        if (GameManager.Instance.freeAnts > 0)
+        {
+          GameManager.Instance.freeAnts--;
+        }
+        else
+        {
+          for (int i = 0; i < GameManager.Instance.columns; i++)
+          {
+            for (int j = 0; j < GameManager.Instance.rows; j++)
+            {
+             
+              if ((GameManager.Instance.Map[i,j].assignedAnts > 0) && (toBeDeleted == 0))
+              {
+                GameManager.Instance.Map[i,j].assignedAnts--;
+                GameManager.Instance.mapInstance.UpdatePrefabAppearance(i,j);
+                toBeDeleted = 1;
+                
+
+              }
+            }
+          }
+        }
+      }
+    }
+    else{
+      GameManager.Instance.freeAnts += new_pop;
+    }
     GameManager.Instance.totalAnts += new_pop;
+
+
+    if(GameManager.Instance.totalAnts + new_pop > GameManager.Instance.currentMaximumPopulationCapacity)
+    {
+      new_pop = GameManager.Instance.currentMaximumPopulationCapacity - GameManager.Instance.totalAnts;
+    }
+    
     GameManager.Instance.UpdateGrowth();
     
     // ------------------ WINNING / LOSING condition and message triggers --------------------
     //Check if we reached the prototype goal
     GameManager.Instance.prototypeLooseCheck();
-
-    if (GameManager.Instance.resources < GameManager.Instance.maxResourceStorage * 0.1)
-    {
-      // Trigger for low food warning.
-    }
-    
- 
   }
   void MapTurn() 
   {
@@ -317,7 +335,7 @@ public class NextTurnScript : MonoBehaviour
 
     //Start the automated WinterTurn
     StartCoroutine(winterTurn(1));
-    GameManager.Instance.prototypeGoalCheck();
+    
   }
 
   /// <summary>
@@ -331,6 +349,7 @@ public class NextTurnScript : MonoBehaviour
     {
       GameManager.Instance.winterCountDownInstance.WinterCountdownUpdate();
       GameManager.Instance.prototypeLooseCheck();
+      GameManager.Instance.prototypeGoalCheck();
       GameManager.Instance.adjustWeek();
       GameManager.Instance.WinterAntTurn();
       EventTurn();

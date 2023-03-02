@@ -37,13 +37,15 @@ public class SceneScript : MonoBehaviour
         quitGame.onClick.AddListener(QuitGame);
         saveGame.onClick.AddListener(SaveGame);
         loadGame.onClick.AddListener(LoadGame);
-        SettingsOK.onClick.AddListener(BackToMenu);
+        SettingsOK.onClick.AddListener(BackToMenuOrGame);
         openSettings.onClick.AddListener(OpenSettings);
         backToGame.onClick.AddListener(BackToGame);
         if (GameManager.Instance.GameRunning)
         {
             backToMenu.enabled = true;
         }
+
+        GameManager.Instance.playMusic(GameManager.Instance.mainMenuMusic);
 
     }
 
@@ -56,7 +58,10 @@ public class SceneScript : MonoBehaviour
     public void NewGame(){
         // generate map if no map was loaded
         GameManager.Instance.GameRunning = false;
+        GameManager.Instance.backtogame = 100;
         SceneManager.LoadScene("Prototype_v3 1");
+        GameManager.Instance.playMusic(GameManager.Instance.springMusic);
+
     }
 
     public void QuitGame(){
@@ -67,9 +72,16 @@ public class SceneScript : MonoBehaviour
         #endif 
     }
 
-    public void BackToMenu(){
-        Settings.enabled = false;
+    public void BackToMenuOrGame(){
+        if (GameManager.Instance.GameRunning)
+        {
+            BackToGame();
+        }
+        else
+        {
+            Settings.enabled = false;
         Menu.enabled = true;
+        }        
     }
 
     public void OpenMap(){
@@ -83,17 +95,22 @@ public class SceneScript : MonoBehaviour
     public void OpenSettings(){
         Settings.enabled = true;
         Menu.enabled = false;
+        backToMenu.enabled = false;
     }
 
     public void SaveGame(){
-        SceneManager.LoadScene("Menu");
+        //SceneManager.LoadScene("Menu");
+        SceneManager.LoadScene("Credits");
     }
 
     public void LoadGame(){
         //SceneManager.LoadScene("Menu");
     }
     public void BackToGame(){
-        SceneManager.LoadScene("Prototype_v3 1");
+        if(GameManager.Instance.backtogame > 0)
+        {
+          SceneManager.LoadScene("Prototype_v3 1");
+        }
     }
 
 }

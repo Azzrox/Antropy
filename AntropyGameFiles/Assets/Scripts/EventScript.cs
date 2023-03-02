@@ -295,7 +295,8 @@ public class EventScript : MonoBehaviour
     {
       for (int j = 0; j < GameManager.Instance.columns; j++)
       {
-        if (GameManager.Instance.Map[i, j].explored && GameManager.Instance.Map[i, j].fertilityState < GameManager.Instance.floodFertilityThreshhold && GameManager.Instance.Map[i, j].partOfAnthill == false) 
+        if (GameManager.Instance.Map[i, j].explored && GameManager.Instance.Map[i, j].fertilityState < GameManager.Instance.floodFertilityThreshhold 
+            && GameManager.Instance.Map[i, j].partOfAnthill == false && GameManager.Instance.Map[i, j].type != 3 && GameManager.Instance.Map[i, j].type != 0) 
         {
           floodTiles.Enqueue((GameManager.Instance.Map[i, j],(i,j)));
           if(GameManager.Instance.Map[i, j].assignedAnts > 0)
@@ -357,6 +358,8 @@ public class EventScript : MonoBehaviour
           GameManager.Instance.Map[i, j].resourceAmount = (int)Mathf.Clamp(GameManager.Instance.Map[i, j].resourceAmount - (GameManager.Instance.Map[i, j].resourceAmount * GameManager.Instance.droughtResourceAffectionRate), 0, GameManager.Instance.Map[i, j].resourceMaxAmount);
         
           GameManager.Instance.Map[i, j].fertilityState = (int)Mathf.Clamp(GameManager.Instance.Map[i, j].fertilityState - 1, 0, 6);
+          GameManager.Instance.Map[i, j].regrowResource = GameManager.Instance.regrowRateVector[GameManager.Instance.Map[i, j].fertilityState];
+          
 
           // update visuals of grass tile
           if (GameManager.Instance.Map[i, j].type == 1 || GameManager.Instance.Map[i, j].type == 2)
@@ -366,6 +369,8 @@ public class EventScript : MonoBehaviour
           }
         GameManager.Instance.mapInstance.TileErosionCheck(i, j);
         GameManager.Instance.mapInstance.UpdatePrefabAppearance(i, j);
+        //UpdateAntText
+
       }
     }
     GameManager.Instance.UpdateIncomeGrowth();
@@ -519,8 +524,12 @@ public class EventScript : MonoBehaviour
         if(GameManager.Instance.Map[i, j].type != 3 && GameManager.Instance.Map[i, j].type != 4 && GameManager.Instance.Map[i, j].type != 0) 
         {
           //Increase Fertility for all
-          GameManager.Instance.Map[i, j].fertilityState = Mathf.Clamp(GameManager.Instance.Map[i, j].fertilityState + 1, 0, 6);
-          GameManager.Instance.mapInstance.UpgradeFertilityColor(i, j, GameManager.Instance.Map[i, j].fertilityState);
+          if(GameManager.Instance.Map[i, j].fertilityState <= 6) 
+          {
+            GameManager.Instance.Map[i, j].fertilityState += 1;
+            GameManager.Instance.Map[i, j].regrowResource = GameManager.Instance.regrowRateVector[GameManager.Instance.Map[i, j].fertilityState];
+            GameManager.Instance.mapInstance.UpgradeFertilityColor(i, j, GameManager.Instance.Map[i, j].fertilityState);
+          }
         }
       }
     }
