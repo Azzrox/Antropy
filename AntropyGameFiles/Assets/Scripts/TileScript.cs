@@ -142,7 +142,8 @@ public class TileScript : MonoBehaviour, IPointerClickHandler
 
   public void RemoveAnt() 
   {
-      // some ants might fall outside that area?
+    // some ants might fall outside that area?
+    Debug.Log("Remove Ant");
       if (ant != null)
       {
           Destroy(ant);

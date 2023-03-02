@@ -61,8 +61,9 @@ public class SceneScript : MonoBehaviour
         GameManager.Instance.backtogame = 100;
         SceneManager.LoadScene("Prototype_v3 1");
         GameManager.Instance.playMusic(GameManager.Instance.springMusic);
+        GameManager.Instance.resetGameVariables();
 
-    }
+  }
 
     public void QuitGame(){
         #if UNITY_EDITOR

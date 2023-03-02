@@ -384,6 +384,7 @@ public class EventScript : MonoBehaviour
   /// <param name="eventMessage"></param>
   private void HeavyFogEvent()
   {
+    antsEventValue = 0;
     for (int i = 0; i < GameManager.Instance.rows; i++)
     {
       for (int j = 0; j < GameManager.Instance.columns; j++)
@@ -392,7 +393,7 @@ public class EventScript : MonoBehaviour
         {
           if (GameManager.Instance.Map[i, j].assignedAnts > 0 && GameManager.Instance.Map[i, j].constructionState < 4)
           {
-            if (GameManager.Instance.heavyFogAntsLostAmount > GameManager.Instance.Map[i, j].assignedAnts)
+            if (GameManager.Instance.heavyFogAntsLostAmount >= GameManager.Instance.Map[i, j].assignedAnts)
             {
               int lost_ants  = GameManager.Instance.Map[i, j].assignedAnts;
               
@@ -400,11 +401,12 @@ public class EventScript : MonoBehaviour
               GameManager.Instance.totalAnts -= lost_ants;
               fogEventLostAnts.Enqueue(lost_ants);
               antsEventValue += lost_ants;
+              GameManager.Instance.mapInstance.mapMatrix[i, j].RemoveAnt();
               Debug.Log("Fog Lost [" + i + "]" + "[" + j + "]" + ": " + (GameManager.Instance.heavyFogAntsLostAmount - GameManager.Instance.Map[i, j].assignedAnts) + "Ants");
             }
             else
             {
-              int lost_ants = GameManager.Instance.Map[i, j].assignedAnts - GameManager.Instance.heavyFogAntsLostAmount;
+              int lost_ants =  GameManager.Instance.heavyFogAntsLostAmount;
               GameManager.Instance.Map[i, j].assignedAnts -= lost_ants;
               GameManager.Instance.totalAnts -= lost_ants;
               fogEventLostAnts.Enqueue(lost_ants);
@@ -430,6 +432,7 @@ public class EventScript : MonoBehaviour
   /// <param name="eventMessage"></param>
   private void LightFogEvent()
   {
+    antsEventValue = 0;
     for (int i = 0; i < GameManager.Instance.rows; i++)
     {
       for (int j = 0; j < GameManager.Instance.columns; j++)
@@ -438,22 +441,24 @@ public class EventScript : MonoBehaviour
         {
           if (GameManager.Instance.Map[i, j].assignedAnts > 0 && GameManager.Instance.Map[i, j].constructionState < 4)
           {
-            if (GameManager.Instance.lightFogAntsLostAmount > GameManager.Instance.Map[i, j].assignedAnts)
+            if (GameManager.Instance.lightFogAntsLostAmount >= GameManager.Instance.Map[i, j].assignedAnts)
             {
               int lost_ants = GameManager.Instance.Map[i, j].assignedAnts;
               GameManager.Instance.Map[i, j].assignedAnts -= lost_ants;
               GameManager.Instance.totalAnts -= lost_ants;
               fogEventLostAnts.Enqueue(lost_ants);
               antsEventValue += lost_ants;
+              GameManager.Instance.mapInstance.mapMatrix[i, j].RemoveAnt();
               Debug.Log("Fog Lost [" + i + "]" + "[" + j + "]" + ": " + (GameManager.Instance.lightFogAntsLostAmount - GameManager.Instance.Map[i, j].assignedAnts) + "Ants");
             }
             else
             {
-              int lost_ants = GameManager.Instance.Map[i, j].assignedAnts - GameManager.Instance.lightFogAntsLostAmount;
+              int lost_ants = GameManager.Instance.lightFogAntsLostAmount;
               GameManager.Instance.Map[i, j].assignedAnts -= lost_ants;
               GameManager.Instance.totalAnts -= lost_ants;
               fogEventLostAnts.Enqueue(lost_ants);
               antsEventValue += lost_ants;
+
               Debug.Log("Fog Lost [" + i + "]" + "[" + j + "]" + ": " + GameManager.Instance.lightFogAntsLostAmount + "Ants");
             }
           }
@@ -486,9 +491,9 @@ public class EventScript : MonoBehaviour
     GameManager.Instance.miniBarInfoInstance.MiniBarInfoUpdate();
 
     //Assert.IsTrue(antsThatFoundHome == antsEventValue);
-    antsEventValue = 0;
+    fogEventLostAnts.Clear();
     //Default back to sun
-    ClearDaysEvent();
+    AddToQueues("undoFog", 0, 1);
   }
 
   /// <summary>
@@ -556,3 +561,4 @@ public class EventScript : MonoBehaviour
     AddToQueues("overcastDays", 2, Random.Range(1, 4));
   }
 }
+
