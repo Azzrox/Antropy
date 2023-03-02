@@ -37,7 +37,7 @@ public class SceneScript : MonoBehaviour
         quitGame.onClick.AddListener(QuitGame);
         saveGame.onClick.AddListener(SaveGame);
         loadGame.onClick.AddListener(LoadGame);
-        SettingsOK.onClick.AddListener(BackToMenu);
+        SettingsOK.onClick.AddListener(BackToMenuOrGame);
         openSettings.onClick.AddListener(OpenSettings);
         backToGame.onClick.AddListener(BackToGame);
         if (GameManager.Instance.GameRunning)
@@ -72,9 +72,16 @@ public class SceneScript : MonoBehaviour
         #endif 
     }
 
-    public void BackToMenu(){
-        Settings.enabled = false;
+    public void BackToMenuOrGame(){
+        if (GameManager.Instance.GameRunning)
+        {
+            BackToGame();
+        }
+        else
+        {
+            Settings.enabled = false;
         Menu.enabled = true;
+        }        
     }
 
     public void OpenMap(){
@@ -88,6 +95,7 @@ public class SceneScript : MonoBehaviour
     public void OpenSettings(){
         Settings.enabled = true;
         Menu.enabled = false;
+        backToMenu.enabled = false;
     }
 
     public void SaveGame(){

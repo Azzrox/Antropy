@@ -40,7 +40,9 @@ public class SettingsScript : MonoBehaviour
     }
 
     void UpdateMusic(){
+        Debug.Log("Current music value " + music.value);
         GameManager.Instance.musicVolume = music.value;
+        GameManager.Instance.setCurrentAudioVolume();
     }
 
     void UpdateWeatherEffects(){

@@ -358,6 +358,8 @@ public class EventScript : MonoBehaviour
           GameManager.Instance.Map[i, j].resourceAmount = (int)Mathf.Clamp(GameManager.Instance.Map[i, j].resourceAmount - (GameManager.Instance.Map[i, j].resourceAmount * GameManager.Instance.droughtResourceAffectionRate), 0, GameManager.Instance.Map[i, j].resourceMaxAmount);
         
           GameManager.Instance.Map[i, j].fertilityState = (int)Mathf.Clamp(GameManager.Instance.Map[i, j].fertilityState - 1, 0, 6);
+          GameManager.Instance.Map[i, j].regrowResource = GameManager.Instance.regrowRateVector[GameManager.Instance.Map[i, j].fertilityState];
+          
 
           // update visuals of grass tile
           if (GameManager.Instance.Map[i, j].type == 1 || GameManager.Instance.Map[i, j].type == 2)

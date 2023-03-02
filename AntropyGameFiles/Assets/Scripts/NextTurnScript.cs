@@ -100,6 +100,10 @@ public class NextTurnScript : MonoBehaviour
 
   void AntTurn() 
   {
+
+
+
+
     // update resources
     // Storage room check 
     if (GameManager.Instance.resources + GameManager.Instance.income > GameManager.Instance.maxResourceStorage)
@@ -153,13 +157,49 @@ public class NextTurnScript : MonoBehaviour
   
     // update population
     //Population growth
-    int new_pop =  GameManager.Instance.Juniors();
+    int new_pop =  GameManager.Instance.growth;
+    
+    if ( new_pop < 0)
+    {
+      int toBeDeleted = 0;
+      for (int k = 0; k < Mathf.Abs(new_pop); k++)
+      {
+        toBeDeleted = 0;
+        if (GameManager.Instance.freeAnts > 0)
+        {
+          GameManager.Instance.freeAnts--;
+        }
+        else
+        {
+          for (int i = 0; i < GameManager.Instance.columns; i++)
+          {
+            for (int j = 0; j < GameManager.Instance.rows; j++)
+            {
+             
+              if ((GameManager.Instance.Map[i,j].assignedAnts > 0) && (toBeDeleted == 0))
+              {
+                GameManager.Instance.Map[i,j].assignedAnts--;
+                GameManager.Instance.mapInstance.UpdatePrefabAppearance(i,j);
+                toBeDeleted = 1;
+                
+
+              }
+            }
+          }
+        }
+      }
+    }
+    else{
+      GameManager.Instance.freeAnts += new_pop;
+    }
+    GameManager.Instance.totalAnts += new_pop;
+
+
     if(GameManager.Instance.totalAnts + new_pop > GameManager.Instance.currentMaximumPopulationCapacity)
     {
       new_pop = GameManager.Instance.currentMaximumPopulationCapacity - GameManager.Instance.totalAnts;
     }
-    GameManager.Instance.freeAnts += new_pop;
-    GameManager.Instance.totalAnts += new_pop;
+    
     GameManager.Instance.UpdateGrowth();
     
     // ------------------ WINNING / LOSING condition and message triggers --------------------

@@ -240,7 +240,7 @@ public class AntCounter : MonoBehaviour
     public void UpdateAntText()
     { 
     resources.text = "Resources: " + GameManager.Instance.Map[posX, posZ].resourceAmount;
-    tileName.text = GameManager.Instance.TileName(GameManager.Instance.Map[posX, posZ].type) + "[" + posX + "," + posZ + "]";
+    tileName.text = GameManager.Instance.TileName(GameManager.Instance.Map[posX, posZ].type) + ": [" + posX + "," + posZ + "]";
     fertilityText.text = GameManager.Instance.FertilityNames[GameManager.Instance.Map[posX, posZ].fertilityState];
     if (GameManager.Instance.Map[posX, posZ].fertilityState < GameManager.Instance.fertilityUpgradeCost.Length){
       fertilityUpgradeCost.text = "Cost: " + GameManager.Instance.fertilityUpgradeCost[GameManager.Instance.Map[posX, posZ].fertilityState];

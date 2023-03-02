@@ -43,6 +43,7 @@ public class GameManager : MonoBehaviour
       public float foodTransportCost;
     }
     public int backtogame;
+    public bool GameRunning;
     public Tile[,] Map;
     [Header("Map properties")]
     public int rows;
@@ -301,7 +302,7 @@ public class GameManager : MonoBehaviour
     public bool showWeatherEffects;
     public bool showGrassMovement;
 
-    public bool GameRunning;
+
 
 
     public AudioClip summerMusic;
@@ -515,10 +516,10 @@ public class GameManager : MonoBehaviour
       storageLevel = 0;
       
       UpdateIncomeGrowth();
-      hatcheryCost =             new int[] {200,  400, 600,   800,  1600, 3200, 4800, 5400, 5800, 6500, 7000 };
+      hatcheryCost =             new int[] {200,  400, 600,   800,  1600, 3200, 4800, 5400, 5800, 6500, 7000, 7500 };
       storageCapacityAmount =    new int[] {350,  500, 1000,  1500, 2000, 4000, 8000, 10000, 15000, 20000, 30000};
-      storageCost =              new int[] {100,  200, 400,   600,  1200, 1800, 2400, 3000, 3600, 4200, 4800 };
-      populationCapacityAmount = new int[] {250,  400, 550,   700,  1000, 1200, 1400, 2000, 2500, 3000, 6000};
+      storageCost =              new int[] {100,  200, 400,   600,  1200, 1800, 2400, 3000, 3600, 4200, 4800};
+      populationCapacityAmount = new int[] {250,  400, 550,   700,  1000, 1200, 1400, 2000, 2500, 3000, 6000, 12000};
 
       hatcheryMaxLevel = populationCapacityAmount.Length;
       storageMaxLevel = storageCapacityAmount.Length;
@@ -608,7 +609,18 @@ public class GameManager : MonoBehaviour
       }
       for (int i = X + 1; i < rows; i++)
       {
-        for (int j = 0; j < columns; j++)
+        for (int j = X; j < columns; j++)
+        {
+          if (i < rows - 1)
+          {weights[i + 1, j] = Mathf.Min(weights[i, j] +  GameManager.Instance.Map[i + 1, j].foodTransportCost,  weights[i + 1, j]);}
+          if (i >0)
+          {weights[i - 1, j]  = Mathf.Min(weights[i, j] +  GameManager.Instance.Map[i - 1, j].foodTransportCost,  weights[i - 1, j]);}
+          if (j < columns - 1)
+          {weights[i, j + 1] = Mathf.Min(weights[i, j] +  GameManager.Instance.Map[i, j + 1].foodTransportCost,  weights[i, j + 1]);}
+          if (j > 0)
+          {weights[i, j - 1] = Mathf.Min(weights[i, j] +  GameManager.Instance.Map[i, j - 1].foodTransportCost,  weights[i, j - 1]);}
+        }
+        for (int j = X; j >= 0; j--)
         {
           if (i < rows - 1)
           {weights[i + 1, j] = Mathf.Min(weights[i, j] +  GameManager.Instance.Map[i + 1, j].foodTransportCost,  weights[i + 1, j]);}
@@ -698,7 +710,7 @@ public class GameManager : MonoBehaviour
     public int Juniors()
     {
     // use nurse ants == free ants
-    if (resources <= 0 && income < 0)
+    if ((resources + income) < 0)
     {
       if(currentSeason == 3) 
       {
@@ -707,7 +719,11 @@ public class GameManager : MonoBehaviour
       }
       else
       {
-        return -(int)Mathf.Ceil(antDeathLackofResourcesRate);
+        int cannibalRate = 5;
+        // if no food is left, one ant feeds cannibalRate others
+        return (int) Mathf.Floor( (resources + foodPerAnt * totalAnts * cannibalRate )/ (foodPerAnt + foodPerAnt * cannibalRate) - totalAnts);
+
+       // return -(int)Mathf.Ceil(antDeathLackofResourcesRate);
       }
     }
     else if(currentSeason == 3) 
