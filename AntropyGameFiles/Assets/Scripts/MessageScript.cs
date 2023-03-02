@@ -4,11 +4,7 @@ using System.IO;
 using System;
 using Newtonsoft.Json;
 using TMPro;
-using System.Collections;
 using UnityEngine.UI;
-using static MessageScript;
-using Unity.VisualScripting;
-using UnityEditor.Search;
 
 public class MessageScript : MonoBehaviour
 {
