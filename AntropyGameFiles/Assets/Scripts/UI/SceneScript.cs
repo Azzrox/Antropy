@@ -14,7 +14,7 @@ public class SceneScript : MonoBehaviour
     
     public Button newGame; 
     public Button quitGame; 
-    public Button saveGame; 
+    public Button credits; 
     public Button loadGame; 
     public Button openSettings;
     public Button SettingsOK;
@@ -35,8 +35,8 @@ public class SceneScript : MonoBehaviour
     {
         newGame.onClick.AddListener(NewGame);
         quitGame.onClick.AddListener(QuitGame);
-        saveGame.onClick.AddListener(SaveGame);
-        loadGame.onClick.AddListener(LoadGame);
+        credits.onClick.AddListener(Credits);
+        //loadGame.onClick.AddListener(LoadGame);
         SettingsOK.onClick.AddListener(BackToMenuOrGame);
         openSettings.onClick.AddListener(OpenSettings);
         backToGame.onClick.AddListener(BackToGame);
@@ -99,7 +99,7 @@ public class SceneScript : MonoBehaviour
         backToMenu.enabled = false;
     }
 
-    public void SaveGame(){
+    public void Credits(){
         //SceneManager.LoadScene("Menu");
         SceneManager.LoadScene("Credits");
     }

@@ -7,11 +7,11 @@ using UnityEngine.UI;
 
 public class ScoreScreenUI : MonoBehaviour
 {
-  public TextMeshProUGUI goal;
-  public TextMeshProUGUI turns;
-  public TextMeshProUGUI totalResources;
-  public TextMeshProUGUI totalAnts;
-  public TextMeshProUGUI deaths;
+  public TextMeshProUGUI Title; 
+  public TextMeshProUGUI totalCollectedResources;
+  public TextMeshProUGUI finalAnts;
+  public TextMeshProUGUI finalResources;
+  public TextMeshProUGUI cannibalizedAnts;
   public TextMeshProUGUI score;
 
   public Button replayButton; 
@@ -24,18 +24,26 @@ public class ScoreScreenUI : MonoBehaviour
   }
 
   void showScore() 
-  {
-    goal.text = "Goal: " + GameManager.Instance.currentGoalProgress  + "/" + GameManager.Instance.goal;
-    turns.text = "Turns: " + GameManager.Instance.currentTurnCount;
-    totalResources.text = "Total Resources: " + GameManager.Instance.TotalResources;
-    totalAnts.text = "Total Population: " + GameManager.Instance.totalAnts;
-    //deaths.text = "Deaths: " + gameManager.TotalDeaths;
-    score.text = (GameManager.Instance.currentTurnCount + GameManager.Instance.TotalResources + GameManager.Instance.totalAnts - GameManager.Instance.TotalDeaths).ToString();
+  { 
+    if (GameManager.Instance.totalAnts <= 0)
+    {
+      Title.text = "Your state failed - you didn't survive the winter :(";
+    }
+    else{
+       Title.text = "Congratulations - you survived your first winter!";
+    }
+    finalResources.text = "Final Resources: " + GameManager.Instance.resources;
+    totalCollectedResources.text = "Collected Resources (in total): " + GameManager.Instance.totalResources;
+    finalAnts.text = "Final Population: " + GameManager.Instance.totalAnts;
+    cannibalizedAnts.text = "Cannibalized Ants: " + GameManager.Instance.totalDeaths;
+    score.text = "Final Score: " + (GameManager.Instance.resources + GameManager.Instance.totalResources + GameManager.Instance.totalAnts - GameManager.Instance.totalDeaths).ToString();
   }
 
   void ReplayGame() 
   {
-    SceneManager.UnloadSceneAsync("Prototype_v3");
-    SceneManager.LoadScene("Prototype_v3", LoadSceneMode.Single);
+    GameManager.Instance.GameRunning = false;
+    GameManager.Instance.backtogame = 100;
+    GameManager.Instance.resetGameVariables();
+    SceneManager.LoadScene("Start");
   }
 }

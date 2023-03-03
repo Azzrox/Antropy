@@ -37,10 +37,12 @@ public class WinterCountdownUI : MonoBehaviour
     if (GameManager.Instance.totalAnts > 0.5 * GameManager.Instance.currentMaximumPopulationCapacity)
     {
       growthTextBox.SetLeftRight(0, 0.5f, 1, 0);
+      populationValue.horizontalAlignment = HorizontalAlignmentOptions.Left;
     }
     else
     {
       growthTextBox.SetLeftRight(0, 1, 1, 0);
+      populationValue.horizontalAlignment =  HorizontalAlignmentOptions.Right;
     }
 
 
@@ -51,10 +53,12 @@ public class WinterCountdownUI : MonoBehaviour
     if (GameManager.Instance.resources > 0.5 * GameManager.Instance.maxResourceStorage)
     {
       resourceTextBox.SetLeftRight(0, 0.5f, 1, 0);
+      resourcesValue.horizontalAlignment = HorizontalAlignmentOptions.Left;
     }
     else
     {
       resourceTextBox.SetLeftRight(0, 1, 1, 0);
+      resourcesValue.horizontalAlignment =  HorizontalAlignmentOptions.Right;
     }
     if (GameManager.Instance.resources + GameManager.Instance.income > GameManager.Instance.maxResourceStorage)
     {

@@ -1903,6 +1903,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Load Game
       objectReference: {fileID: 0}
+    - target: {fileID: 8682624006653776537, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8682624006653776542, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -2002,17 +2006,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 8682624006653776542, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
   m_PrefabInstance: {fileID: 753572299}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &753572301 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8682624006653776543, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
-  m_PrefabInstance: {fileID: 753572299}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &794397961
 GameObject:
   m_ObjectHideFlags: 0
@@ -2514,11 +2507,11 @@ MonoBehaviour:
   growth: 0
   currentTurnCount: 0
   currentGoalProgress: 0
-  winterFoodUse: 0
+  winterFoodUse: 1
+  antWinterDeathRate: 5
   foodPerAnt: 5
   antPopGrowthPerTurn: 0.3
   antDeathLackofResourcesRate: 2
-  antWinterDeathRate: 0
   distanceGatheringReductionRate: 0.06931472
   resourceGatherRate: 10
   tileRegrowAmount: 20
@@ -2556,7 +2549,7 @@ MonoBehaviour:
   heavyFogAntsLostAmount: 5
   lightFogAntsLostAmount: 2
   fertilityWarningMessageThreshhold: 2
-  resourcesWarningMessageThreshhold: 250
+  resourcesWarningMessageThreshhold: 150
   distanceWarningMessageThreshhold: 10
   tutorialEnabled: 1
   generalEnabled: 1
@@ -3203,11 +3196,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8682624006653776542, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 271.36
+      value: 260
       objectReference: {fileID: 0}
     - target: {fileID: 8682624006653776542, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -32
+      value: -30
       objectReference: {fileID: 0}
     - target: {fileID: 8682624006653776542, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -3324,11 +3317,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8682624006653776542, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 271.36
+      value: 260
       objectReference: {fileID: 0}
     - target: {fileID: 8682624006653776542, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -78
+      value: -80
       objectReference: {fileID: 0}
     - target: {fileID: 8682624006653776542, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -3538,7 +3531,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8682624006653776542, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8682624006653776542, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
       propertyPath: m_AnchorMax.y
@@ -3546,7 +3539,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8682624006653776542, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8682624006653776542, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
       propertyPath: m_AnchorMin.y
@@ -3590,11 +3583,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8682624006653776542, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -296
+      value: 260
       objectReference: {fileID: 0}
     - target: {fileID: 8682624006653776542, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 76.532
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 8682624006653776542, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -3956,8 +3949,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   newGame: {fileID: 339535249}
   quitGame: {fileID: 1718071577}
-  saveGame: {fileID: 1942787089}
-  loadGame: {fileID: 753572301}
+  credits: {fileID: 1942787089}
+  loadGame: {fileID: 0}
   openSettings: {fileID: 1372068646}
   SettingsOK: {fileID: 1708139402}
   backToGame: {fileID: 1815872431}
@@ -4379,7 +4372,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8682624006653776542, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 271.36
+      value: 260
       objectReference: {fileID: 0}
     - target: {fileID: 8682624006653776542, guid: 6e208e19c42f64f6da703df40b1f0bf1, type: 3}
       propertyPath: m_AnchoredPosition.y
