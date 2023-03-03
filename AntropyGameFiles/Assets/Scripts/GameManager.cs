@@ -103,6 +103,12 @@ public class GameManager : MonoBehaviour
     public int winterFoodUse;
     //public int weatherPrediction;
 
+    /// <summary>
+    /// Death of Ants per turn due to winter attrition
+    /// </summary>
+    public float antWinterDeathRate;
+
+    public int winterCannibalRate = 10;
 
     [Header("Grow / degrow rates")]
 
@@ -121,10 +127,6 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public float antDeathLackofResourcesRate;
 
-    /// <summary>
-    /// Death of Ants per turn due to winter attrition
-    /// </summary>
-    public float antWinterDeathRate;
 
     /// <summary>
     /// Gathering distance deduction
@@ -292,8 +294,8 @@ public class GameManager : MonoBehaviour
 
   [Header("Statistics (cummulated data)")]
 
-    public int totalResources;
-    public int totalDeaths;
+    public int totalResources = 0;
+    public int totalDeaths = 0;
 
     [Header("Settings")]
     public float musicVolume;
@@ -681,11 +683,19 @@ public class GameManager : MonoBehaviour
     
     public int Upkeep()
     {
-      int upkeep =  (int) Mathf.Ceil(totalAnts * foodPerAnt);
-      if (totalAnts  > currentMaximumPopulationCapacity)
+      int upkeep = 0;
+      if(currentSeason == 3)  // winter
       {
-        // To be be discussed
-          upkeep += (int) Mathf.Ceil((totalAnts -  currentMaximumPopulationCapacity) * (foodPerAnt * 5));
+        upkeep = (int) Mathf.Ceil(totalAnts * winterFoodUse);
+      }
+      else
+      {
+        upkeep =  (int) Mathf.Ceil(totalAnts * foodPerAnt);
+        if (totalAnts  > currentMaximumPopulationCapacity)
+        {
+          // To be be discussed -> not possible anymore since growth is limited
+            upkeep += (int) Mathf.Ceil((totalAnts -  currentMaximumPopulationCapacity) * (foodPerAnt * 5));
+        }
       }
       return upkeep;
     }
@@ -699,6 +709,11 @@ public class GameManager : MonoBehaviour
     public void UpdateGrowth()
     {
       growth = Juniors();
+      if (totalAnts + growth > currentMaximumPopulationCapacity)
+      {
+        // optional: if totalAnts shall be really limited
+        //growth = currentMaximumPopulationCapacity - totalAnts;
+      }
     }
 
     public void UpdateIncomeGrowth()
@@ -709,29 +724,30 @@ public class GameManager : MonoBehaviour
 
     public int Juniors()
     {
-      if(totalAnts == currentMaximumPopulationCapacity) 
-      {
-        return 0;
-      }
       if ((resources + income) < 0)
       {
         if(currentSeason == 3) 
         {
           //Starving in Winter
-          return -(int)(Mathf.Ceil(antDeathLackofResourcesRate) + (Mathf.Ceil(antWinterDeathRate)));
+          int cannibalVictims = (int)(Mathf.Floor(totalAnts - (resources + winterFoodUse * totalAnts * winterCannibalRate )/ (winterFoodUse + winterFoodUse * winterCannibalRate) ));
+          totalDeaths += cannibalVictims;
+          return -cannibalVictims - (int)Mathf.Ceil(generateNormalRandom(antWinterDeathRate, 2));
+          //return -(int)(Mathf.Ceil(antDeathLackofResourcesRate) + (Mathf.Ceil(antWinterDeathRate)));
         }
         else
         {
           int cannibalRate = 5;
+          int cannibalVictims = (int) Mathf.Floor( totalAnts - (resources + foodPerAnt * totalAnts * cannibalRate )/ (foodPerAnt + foodPerAnt * cannibalRate));
+          totalDeaths += cannibalVictims;
           // if no food is left, one ant feeds cannibalRate others
-          return (int) Mathf.Floor( (resources + foodPerAnt * totalAnts * cannibalRate )/ (foodPerAnt + foodPerAnt * cannibalRate) - totalAnts);
+          return -cannibalVictims;
 
          // return -(int)Mathf.Ceil(antDeathLackofResourcesRate);
         }
       }
       else if(currentSeason == 3) 
       {
-        return -(int)Mathf.Ceil(antWinterDeathRate);
+        return -(int)Mathf.Ceil( generateNormalRandom(antWinterDeathRate, 2));
       }
       else 
       {
@@ -745,26 +761,12 @@ public class GameManager : MonoBehaviour
   public void WinterAntTurn() 
   {
     //Resources
+    
     income = -Upkeep();
-    if(income > resources) 
-    {
-      resources = 0;
-    }
-    else 
-    {
-      resources += income;//Mathf.Clamp(resources- income, 0, 1);
-    }
-
-    //Population
-    if (resources <= 0) 
-    {
-      AntDeath((int)Mathf.Ceil(antDeathLackofResourcesRate));
-      AntDeath((int)Mathf.Ceil(antWinterDeathRate));
-    }
-    else 
-    {
-      AntDeath((int)Mathf.Ceil(antWinterDeathRate));
-    }
+    UpdateGrowth();
+    resources += income;
+    totalAnts += growth;
+   
   }
 
   public void AntDeath(int amount) 
@@ -773,16 +775,16 @@ public class GameManager : MonoBehaviour
     UpdateGrowth();
   }
 
-    /// <summary>
-    /// Prototype end screen (Remove Later)
-    /// </summary>
-    public void prototypeGoalCheck() 
-    { 
-      if(currentGoalProgress >= goal || currentTurnCount >= maxTurnCount) 
-      {
-        SceneManager.LoadScene("PrototypeEndScreen", LoadSceneMode.Additive);
-        GameObject.Find("WinterCountdownSystem").SetActive(false);
-    }
+  /// <summary>
+  /// Prototype end screen (Remove Later)
+  /// </summary>
+  public void prototypeGoalCheck() 
+  { 
+    if(currentGoalProgress >= goal || currentTurnCount >= maxTurnCount) 
+    {
+      SceneManager.LoadScene("PrototypeEndScreen", LoadSceneMode.Additive);
+      GameObject.Find("WinterCountdownSystem").SetActive(false);
+  }
   }
   public void prototypeLooseCheck() 
   {
@@ -813,35 +815,8 @@ public class GameManager : MonoBehaviour
     currentSeason = Mathf.CeilToInt(currentTurnCount / seasonLength);
   }
 
-    /// <summary>
-    /// Endscore resource counter
-    /// </summary>
-    public int TotalResources
-    {
-      get
-      {
-        return totalResources;
-      }
-      set
-      {
-        totalResources = value;
-      }
-    }
+    
 
-    /// <summary>
-    /// Endscore death counter
-    /// </summary>
-    public int TotalDeaths
-    {
-      get
-      {
-        return totalDeaths;
-      }
-      set
-      {
-        totalDeaths = value;
-      }
-    }
 
     public float MusicVolume
     {
@@ -939,4 +914,15 @@ public class GameManager : MonoBehaviour
        hatcheryLevel = 0;
        storageLevel = 0;
     }
+
+    public static float generateNormalRandom(float mu, float sigma)
+    {
+        float rand1 = Random.Range(0.0f, 1.0f);
+        float rand2 = Random.Range(0.0f, 1.0f);
+
+        float n = Mathf.Sqrt(-2.0f * Mathf.Log(rand1)) * Mathf.Cos((2.0f * Mathf.PI) * rand2);
+
+        return (mu + sigma * n);
+    }
+
 }
