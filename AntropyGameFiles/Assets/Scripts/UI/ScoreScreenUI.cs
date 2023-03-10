@@ -33,7 +33,7 @@ public class ScoreScreenUI : MonoBehaviour
        Title.text = "Congratulations - you survived your first winter!";
     }
     finalResources.text = "Final Resources: " + GameManager.Instance.resources;
-    totalCollectedResources.text = "Collected Resources (in total): " + GameManager.Instance.totalResources;
+    totalCollectedResources.text = "Collected Resources: " + GameManager.Instance.totalResources;
     finalAnts.text = "Final Population: " + GameManager.Instance.totalAnts;
     cannibalizedAnts.text = "Cannibalized Ants: " + GameManager.Instance.totalDeaths;
     score.text = "Final Score: " + (GameManager.Instance.resources + GameManager.Instance.totalResources + GameManager.Instance.totalAnts - GameManager.Instance.totalDeaths).ToString();
