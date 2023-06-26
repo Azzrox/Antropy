@@ -1,9 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting.Dependencies.NCalc;
+//using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
+using System;
+//using Unity.VisualScripting;
+using UnityEditor;
+using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 
-public class TileScript : MonoBehaviour
+public class TileScript : MonoBehaviour, IPointerClickHandler
 {
   /// <summary>
   /// Eucledian Distance to the anthill in steps (no diagonal)
@@ -13,198 +18,153 @@ public class TileScript : MonoBehaviour
   /// <summary>
   /// X,Z Pos of the tile
   /// </summary>
-  int xPos;
-  int zPos;
+  public int xPos;
+  public int zPos;
 
   /// <summary>
-  /// Type of the tile
+  /// Flag currently displayed on the tile
   /// </summary>
-  int type;
+  GameObject flag;
+
+  GameObject road;
+
+  GameObject ant;
 
   /// <summary>
-  /// Ants on tile
+  /// Flag Prefab for Owned Tiles
   /// </summary>
-  int assignedAnts;
+  public GameObject redFlagPrefab;
+  public GameObject[] roadPrefab;
+  public GameObject antPrefab;
+
+  private MouseListenerUI uiListener;
 
 
-  /// <summary>
-  /// Free Ants Global
-  /// </summary>
-  int freeAnts;
-
-  /// <summary>
-  /// Resources on the tile
-  /// </summary>
-  double resourceAmount;
-
-  /// <summary>
-  /// Maximum of resources a tile can hold
-  /// </summary>
-  int resource_max_amount;
-
-  /// <summary>
-  /// Owned by player
-  /// </summary>
-  bool ownedByPlayer = false;
-
-  /// <summary>
-  /// Canvas for menu buttons
-  /// </summary>
-  public GameObject canvas;
-
-  private void Awake()
+  private void Start()
   {
-    type = 0;
-    resourceAmount = 0;
-    resource_max_amount = 0;
-    distanceAnthill = 0;
-    assignedAnts = 0;
-    freeAnts = 0;
+    uiListener = GameObject.Find("NextTurnCanvas").GetComponent<MouseListenerUI>();
   }
+ 
 
+  
   /// <summary>
-  /// Assignment Over
+  /// Tile UI Activation
   /// </summary>
-  private void OnMouseDown()
+  //private void OnMouseDown()
+  public void OnPointerClick (PointerEventData eventData)
   {
-    Debug.Log("in click mode");
-    canvas.SetActive(true);
+    
+    //if (uiListener.isUIOverride)
+    //{
+    //  Debug.Log("Cancelled OnMouseDown! A UI element has override this object!");
+    //}
+    //else
+    //{
+      
+      if (xPos == GameManager.Instance.anthillX && zPos == GameManager.Instance.anthillY)
+      {
+        GameObject anthillUI = GameObject.Find("Anthill");
+        anthillUI.GetComponent<Canvas>().enabled = true;
+        AntHillUI antHill = anthillUI.GetComponent<AntHillUI>();
+        antHill.tile = this;
+        antHill.UpdateAntText();
 
-    AntCounter antCounter = canvas.GetComponent<AntCounter>();
-    antCounter.tile = this;
-    antCounter.UpdateAntText();
+        GameObject uiMiniBarInfo = GameObject.Find("MiniBarInfo");
+        uiMiniBarInfo.GetComponent<MiniBarInfoUI>().MiniBarInfoUpdate();
+      }
+      else
+      {
+        GameObject uiAssignAnts = GameObject.Find("AssignAnts");
+        uiAssignAnts.GetComponent<Canvas>().enabled = true;
+      
+        AntCounter antCounter = uiAssignAnts.GetComponent<AntCounter>();
+        antCounter.SetSelectedTile(XPos, ZPos);
+        antCounter.UpdateAntText();
+        GameObject highlight = GameObject.Find("HighlightTile");
+        highlight.transform.position = new Vector3(XPos, 0, ZPos);
+        highlight.GetComponent<MeshRenderer>().enabled = true;
 
-    Debug.Log("element clicked" + Random.Range(0, 40) + " pos: " + XPos + "|" + ZPos);
+
+        //Why is here an update of MiniBarInfoUpdate necessary?
+        GameObject uiMiniBarInfo = GameObject.Find("MiniBarInfo");
+        uiMiniBarInfo.GetComponent<MiniBarInfoUI>().MiniBarInfoUpdate();
+      }
+      //Debug.Log("element clicked" + UnityEngine.Random.Range(0, 40) + " pos: " + XPos + "|" + ZPos);
+    //}
   }
 
+  
+
   /// <summary>
-  /// Calculate new tile resource count
+  /// Spawns the owned flag prefab on the tile
   /// </summary>
-  /// <param name="percentage_of_change"> multiplicator </param>
-  public void CalculateNewResourceAmount(double percentage_of_change)
+  public void spawnOwnedFlagOnTile()
   {
-    ResourceAmount += (ResourceAmount / 100) * percentage_of_change;
-
-    if (ResourceAmount < 0)
+    if(flag != null) 
     {
-      ResourceAmount = 0;
+      Destroy(flag);
     }
-
-    if (ResourceAmount > MaxResourceAmount)
-    {
-      ResourceAmount = MaxResourceAmount;
-    }
+    flag = Instantiate<GameObject>(redFlagPrefab, new Vector3(xPos + 0.5f, 0.2f, zPos + 0.5f), Quaternion.identity, transform);
   }
 
   /// <summary>
-  /// Adds an integer number to the current resource amount on the tile
+  /// Destroys any flag object on the tile
   /// </summary>
-  /// <param name="amount_of_change"></param>
-  public void CalculateNewResourceAmountFlat(int amount_of_change)
+  public void deleteFlagOnTile() 
   {
-    ResourceAmount += amount_of_change;
-
-    if (ResourceAmount < 0)
+    if(flag != null) 
     {
-      ResourceAmount = 0;
-    }
-
-    if (ResourceAmount > MaxResourceAmount)
-    {
-      ResourceAmount = MaxResourceAmount;
+      Destroy(flag);
     }
   }
 
-
-  /// <summary>
-  ///  Ants on Tile, getter and setter
-  /// </summary>
-  public int AssignedAnts
+  public void spawnRoadOnTile(int level)
   {
-    get
-    {
-      return assignedAnts;
-    }
-    set
-    {
-      assignedAnts = value;
+    if (road != null)
+    {Destroy(road);}
+    if (level >= 0 && level < roadPrefab.Length){
+      GameManager.Instance.mapInstance.mapMatrix[xPos, zPos].GetComponent<MapTileGeneration>().RemoveDecorationForRoads();
+      road = Instantiate<GameObject>(roadPrefab[level], new Vector3(xPos,0.02f - level/100, zPos), Quaternion.identity, transform);
     }
   }
 
-  /// <summary>
-  ///  Canvas for menu buttons, getter and setter
-  /// </summary>
-  public GameObject CanvasAssign
+  public void deleteRoad()
+  {if (road != null)
+    {Destroy(road);}
+  }
+
+  public void SpawnAnt() 
   {
-    get
-    {
-      return canvas;
-    }
-    set
-    {
-      canvas = value;
-    }
+      ant = Instantiate<GameObject>(antPrefab, new Vector3(xPos + 0.5f, 0.2f, zPos + 0.5f), Quaternion.identity, transform) ;
+      ant.GetComponent<AntPathing>().coordinates = new int[] {xPos, zPos};
+
   }
 
-  /// <summary>
-  /// Tile type, getter and setter
-  /// </summary>
-  public int TileType 
-  { 
-    get 
-    { 
-      return type; 
-    }
-    set
-    {
-      type = value;
-    }
-  }
-
-  /// <summary>
-  /// Tile distance to anthill, getter and setter
-  /// </summary>
-  public int TileDistance
+  public void RemoveAnt() 
   {
-    get
-    {
-      return distanceAnthill;
-    }
-    set
-    {
-      distanceAnthill = value;
-    }
+    // some ants might fall outside that area?
+    Debug.Log("Remove Ant");
+      if (ant != null)
+      {
+          Destroy(ant);
+      }
   }
 
-  /// <summary>
-  /// Tile resources, getter and setter
-  /// </summary>
-  public double ResourceAmount
+  public void AdjustAntSize(int assignedAnts)
   {
-    get 
+    if (ant == null)
     {
-      return resourceAmount;
+      SpawnAnt();
     }
-    set 
-    {
-      resourceAmount = value;
-    }
+
+    var scale = ant.transform.localScale;
+    float size = Mathf.Sqrt(assignedAnts);
+    scale.Set(size, size, size);
+    ant.transform.localScale = scale;
+      
   }
 
-  /// <summary>
-  /// Tile resources, getter and setter
-  /// </summary>
-  public int FreeAnts
-  {
-    get
-    {
-      return freeAnts;
-    }
-    set
-    {
-      freeAnts = value;
-    }
-  }
+
 
   /// <summary>
   /// XPos tile, getter and setter
@@ -236,33 +196,4 @@ public class TileScript : MonoBehaviour
     }
   }
 
-  /// <summary>
-  /// Max tile resources, getter and setter
-  /// </summary>
-  public int  MaxResourceAmount
-  {
-    get
-    {
-      return resource_max_amount;
-    }
-    set
-    {
-      resource_max_amount = value;
-    }
-  }
-
-  /// <summary>
-  /// Owner Status, getter/setter
-  /// </summary>
-  public bool OwnedByPlayer 
-  {
-    get
-    {
-      return ownedByPlayer;
-    }
-    set
-    {
-      ownedByPlayer = value;
-    }
-  }
 }

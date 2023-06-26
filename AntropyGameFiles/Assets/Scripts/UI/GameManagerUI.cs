@@ -4,22 +4,25 @@ using UnityEngine;
 
 public class GameManagerUI : MonoBehaviour
 {
-    public int totalAnts;
-    public int freeAnts;
     public GameObject redTile;
     public GameObject blackTile;
 
-  void Start()
+    public MapScript mapInstance;
+
+    private void Awake()
     {
-    //SpawnTiles(3,4);
-    MapScript.mapInstance.SpawnRandomMap();
+      mapInstance = GameObject.Find("MapTiles").GetComponent<MapScript>();
     }
+
+    
 
     // Update is called once per frame
     void Update()
     {
         
     }
+
+
     void SpawnTiles(int nx, int nz) {
 
         GameObject tile;
